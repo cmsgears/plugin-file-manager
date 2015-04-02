@@ -1,0 +1,32 @@
+{
+	"name": "cmsgears/plugin-file-manager",
+	"description": "The file manager plugin for CMSGears. It can be used by the projects which require file uploader and browser.",
+	"homepage": "http://www.cmsgears.org",
+	"type": "package",
+	"keywords": [ "yii2", "cmsgears", "plugin", "file uploader" ],
+	"license": "GPLv3",
+	"authors": [
+		{
+			"name": "Bhagwat Singh Chouhan",
+			"email": "bhagwat.chouhan@vulpinecode.com",
+			"homepage": "http://www.cmsgears.org/",
+			"role": "Founder and project lead."
+		}
+	],
+	"support": {
+        "source": "http://www.cmsgears.org/downloads/modules/forms",
+		"forum": "http://forum.cmsgears.org/",
+		"resources": "http://resources.cmsgears.org/",
+		"issues": "https://www.amazingdesk.com/cmsgears/issues/",
+		"blog": "http://cmsgears.tutorials24x7.com/"
+	},
+	"autoload": {
+		"psr-4": {
+			"cmsgears\\files\\": ""
+		}
+	},
+    "require": {
+        "php": ">=5.4.0",
+        "cmsgears/module-core": "*"
+    }
+}
