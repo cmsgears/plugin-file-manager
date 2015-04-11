@@ -9,10 +9,20 @@ function showAvatarChooser() {
 	var boxLeft			= ( screenWidth - boxWidth ) / 2;
 
 	jQuery( '#avatar-chooser' ).show( 'slow' );
-	
+
 	avatarUploader.css( { top: boxTop, left: boxLeft } );
 }
 
 function uploadAvatar( listenerId, avatarId ) {
 
+}
+
+
+// Library ----------------------------------------------------------------------
+
+// Dependencies: cmg-browser-features.js
+
+function isImageEditorSupported() {
+
+	return isFileApiSupported() && isFormDataSupported() && isCanvasDataUrlSupported() && isCanvasSupported();
 }

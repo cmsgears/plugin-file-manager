@@ -26,8 +26,9 @@ class AssetLoaderUploader extends AssetBundle {
 		// Load Javascript
 
 	    $this->js      = [
+	    		"scripts/cmg-browser-features.js",
 	            "scripts/cmg-file-uploader.js",
-	            "scripts/main.js"
+	            "scripts/cmg-image-editor.js"
 	    ];
 
 		// Define the Position to load Assets

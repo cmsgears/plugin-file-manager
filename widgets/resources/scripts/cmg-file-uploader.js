@@ -3,7 +3,7 @@
 cmg-file-uploader.js, version - 1.0.0, http://www.cmsgears.com/license,
 http://www.cmsgears.com/jquery/cmg-file-uploader/
 ****************************************************************************************************
-Dependencies: jQuery 1.11.0
+Dependencies: jQuery 1.11.0, cmg-browser-features.js
 Description: The file uploader uploads files using either xhr for modern browsers or form data for
 			 older browsers.
 ***************************************************************************************************/
@@ -302,25 +302,4 @@ function uploadTraditionalFile( parentId, selector, type ) {
 			fileUploaded( parentId, selector, type, response['data'] );
 		}
 	});
-}
-
-/* Browser Features ======================================== */
-
-function isCanvasSupported() {
-
-	var elem = document.createElement('canvas');
-	
-	return !!(elem.getContext && elem.getContext('2d'));
-}
-
-function isFileApiSupported() {
-
-	var xhr = new XMLHttpRequest();
-	
-	return window.File && window.FileList && window.FileReader && xhr.upload;
-}
-
-function isFormDataSupported() {
-
-	return !! window.FormData;
 }
