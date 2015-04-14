@@ -15,8 +15,8 @@ class AvatarUploader extends Widget {
 	// Public Variables --------------------
 
 	public $options 		= [];
-	public $listenerId;
 	public $avatarId;
+	public $listenerId;
 	public $includeScripts	= false;
 	public $footer			= false;
 
@@ -44,9 +44,9 @@ class AvatarUploader extends Widget {
 
 			$this->renderHtml();
 			
-			$listenerJs = "jQuery( '#$this->listenerId' ).click( function() { showAvatarChooser(); });
-						   jQuery( '#btn-avatar-cancel' ).click( function() { jQuery( '#avatar-chooser').hide( 'slow' ); });
-						   jQuery( '#btn-avatar-upload' ).click( function() { uploadAvatar( '$this->listenerId', '$this->avatarId' ); });";
+			$listenerJs = "jQuery( '#$this->listenerId' ).click( function() { showAvatarUploader(); } );
+						   jQuery( '#btn-avatar-cancel' ).click( function() { hideAvatarUploader(); } );
+						   jQuery( '#btn-avatar-upload' ).click( function() { uploadAvatar(); } );";
 
 			$this->getView()->registerJs( $listenerJs, View::POS_READY );
 		}
@@ -54,25 +54,28 @@ class AvatarUploader extends Widget {
 		// Output Javascript at the end of Page
 		if( $this->includeScripts ) {
 
-        	AssetLoaderUploader::register( $this->getView() );
+        	AvatarUploaderAssetLoader::register( $this->getView() );
 		}
     }
 
 	public function renderFooter() {
 ?>
-		<div id="avatar-chooser" class="wrap-avatar-uploader">
-			<div class="box-avatar-uploader">
+		<div id="wrap-avatar-uploader">
+			<div id="avatar-uploader">
 				<div class="header">Change Avatar
 					<span class="btn btn-medium">
 						Choose Avatar
-						<input type="file" />
+						<input type="file" class="avatar-chooser" />
 					</span>
 				</div>
 				<div class="content">
 					<div class="actions">
-						<span class="cmt-zoom-in"></span>
+						<span class="cmt-icon medium cmt-zoom-in"></span>
+						<span class="cmt-icon medium cmt-zoom-out"></span>
+						<span class="cmt-icon medium cmt-rotate-clock"></span>
+						<span class="cmt-icon medium cmt-rotate-anti-clock"></span>
 					</div>
-					<div class="avatar-canvas"></div>
+					<div class="avatar-wrap"></div>
 				</div>
 				<div class="clearfix">
 					<div class="col2"><input id="btn-avatar-cancel" type="button" value="Cancel" /></div>
@@ -100,7 +103,7 @@ class AvatarUploader extends Widget {
 
 			if( isset( $avatar ) ) {
 
-				$avatarUrl	= Yii::$app->cmgFileManager->uploadUrl . $avatar->url;
+				$avatarUrl	= $avatar->getFileUrl();
 
 				echo "<div id='$this->avatarId' class='avatar'><img src='$avatarUrl' /></div>";
 			}
