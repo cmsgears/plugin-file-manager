@@ -26,7 +26,7 @@ class AvatarUploaderAssetLoader extends AssetBundle {
 		// Load Javascript
 
 	    $this->js      = [
-	            "scripts/cmg-image-editor.js"
+	            "scripts/cmt-image-editor.js"
 	    ];
 
 		// Define the Position to load Assets
