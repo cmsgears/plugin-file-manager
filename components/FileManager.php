@@ -12,6 +12,7 @@ use cmsgears\files\utilities\ImageResize;
 
 /**
  * The file manager accepts single file at a time uploaded by either xhr or file data using ajax post.
+ * It also accept file data sent via Post.
  */
 class FileManager extends Component {
 
@@ -22,8 +23,13 @@ class FileManager extends Component {
 	public $generateImageThumb	= true;
 	public $thumbWidth			= 120;
 	public $thumbHeight			= 120;
-	public $uploadDirectory		= null;
+	public $uploadDir			= null;
 	public $uploadUrl			= null;
+
+	public function __construct() {
+
+		$this->uploadDir	= Yii::getAlias( "@uploads" ) . "/";
+	}
 
 	// File Uploading -------------------------------------------------------------------
 
@@ -51,6 +57,30 @@ class FileManager extends Component {
 			else {
 
 				echo "Error: extension not allowed.";
+			}
+		}
+		// File Data
+		else if( isset( $_POST[ 'fileData' ] ) && $_POST[ 'fileData' ] ) {
+
+	        $filename = $_POST[ 'fileName' ];
+
+			if( $filename ) {
+
+				$extension 	= $_POST[ 'fileExtension' ];
+
+				if( in_array( strtolower($extension), $this->allowedExtensions ) ) {
+
+					// Decoding file data
+					$file 	= $_POST[ 'file' ];
+    				$file 	= str_replace( ' ', '+', $file );
+    				$file 	= base64_decode( $file );
+
+					return $this->saveTempFile( $file, $selector, $filename, $extension );
+				}
+				else {
+
+					echo "Error: extension not allowed.";
+				}
 			}
 		}
 		// Legacy System using file data----
@@ -100,11 +130,11 @@ class FileManager extends Component {
 
 		// Create Directory if not exist
 		$tempUrl		 = "temp/$selector/";
-		$uploadDirectory = $this->uploadDirectory . $tempUrl;
+		$uploadDir = $this->uploadDir . $tempUrl;
 
-		if( !file_exists( $uploadDirectory ) ) {
+		if( !file_exists( $uploadDir ) ) {
 
-			mkdir( $uploadDirectory , 0777, true );
+			mkdir( $uploadDir , 0777, true );
 		}
 
 		// Generate File Name
@@ -122,7 +152,7 @@ class FileManager extends Component {
 		$filename	= $name . "." . $extension;
 
 		// Save File
-		if( file_put_contents( $uploadDirectory . $filename, $file_contents ) ) {
+		if( file_put_contents( $uploadDir . $filename, $file_contents ) ) {
 
 			$result	= array();
 
@@ -159,7 +189,7 @@ class FileManager extends Component {
 
 		// Save Image File
 		$file->setDirectory( $fileDir );
-		$file->setCreatedOn( $date );
+		$file->setcreatedAt( $date );
 		$file->setAuthorId( $user->id );
 		$file->setType( CmgFile::TYPE_PUBLIC );
 		$file->setUrl( $fileUrl );
@@ -167,9 +197,9 @@ class FileManager extends Component {
 
 	public function saveFile( $sourceFile, $targetDir, $filePath ) {
 
-		$sourceFile	= $this->uploadDirectory . "temp/" . $sourceFile;
-		$targetDir	= $this->uploadDirectory . $targetDir;
-		$filePath	= $this->uploadDirectory . $filePath;
+		$sourceFile	= $this->uploadDir . "temp/" . $sourceFile;
+		$targetDir	= $this->uploadDir . $targetDir;
+		$filePath	= $this->uploadDir . $filePath;
 
 		// move file from temp to final destination
 		if( !file_exists( $targetDir ) ) {
@@ -199,7 +229,7 @@ class FileManager extends Component {
 		$this->saveImageAndThumb( $sourceFile, $targetDir, $imageUrl, $imageThumbUrl, $width, $height );
 
 		// Save Image File
-		$file->createdOn	= $date;
+		$file->createdAt	= $date;
 		$file->authorId		= $user->id;
 		$file->type			= CmgFile::TYPE_PUBLIC;
 		$file->url			= $imageUrl;
@@ -212,10 +242,10 @@ class FileManager extends Component {
 
 	public function saveImageAndThumb( $sourceFile, $targetDir, $filePath, $thumbPath, $width = null, $height = null ) {
 
-		$sourceFile	= $this->uploadDirectory . "temp/" . $sourceFile;
-		$targetDir	= $this->uploadDirectory . $targetDir;
-		$filePath	= $this->uploadDirectory . $filePath;
-		$thumbPath	= $this->uploadDirectory . $thumbPath;
+		$sourceFile	= $this->uploadDir . "temp/" . $sourceFile;
+		$targetDir	= $this->uploadDir . $targetDir;
+		$filePath	= $this->uploadDir . $filePath;
+		$thumbPath	= $this->uploadDir . $thumbPath;
 
 		// move file from temp to final destination
 		if( !file_exists( $targetDir ) ) {
@@ -246,7 +276,7 @@ class FileManager extends Component {
 	public function save_qr_code( $url ) {
 
 		$date				= date('Y-m-d');
-		$design_directory 	= $this->uploadDirectory . "temp/" . $date . "/";
+		$design_directory 	= $this->uploadDir . "temp/" . $date . "/";
 
 		if( !file_exists( $design_directory ) ) {
 
