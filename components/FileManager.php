@@ -188,11 +188,11 @@ class FileManager extends Component {
 		$this->saveFile( $sourceFile, $fileDir, $fileUrl );
 
 		// Save Image File
-		$file->setDirectory( $fileDir );
-		$file->setcreatedAt( $date );
-		$file->setAuthorId( $user->id );
-		$file->setType( CmgFile::TYPE_PUBLIC );
-		$file->setUrl( $fileUrl );
+		$file->directory	= $fileDir;
+		$file->createdAt	= $date;
+		$file->createdBy	= $user->id;
+		$file->type			= CmgFile::TYPE_PUBLIC;
+		$file->url			= $imageUrl;
 	}
 
 	public function saveFile( $sourceFile, $targetDir, $filePath ) {
@@ -230,7 +230,7 @@ class FileManager extends Component {
 
 		// Save Image File
 		$file->createdAt	= $date;
-		$file->authorId		= $user->id;
+		$file->createdBy	= $user->id;
 		$file->type			= CmgFile::TYPE_PUBLIC;
 		$file->url			= $imageUrl;
 
