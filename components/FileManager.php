@@ -45,7 +45,7 @@ class FileManager extends Component {
 		// Get the filename submitted by user
 		$filename = ( isset( $_SERVER['HTTP_X_FILENAME'] ) ? $_SERVER['HTTP_X_FILENAME'] : false );
 
-		// Modern Style using Xhr -----
+		// Modern Style using Xhr
 		if( $filename ) {
 
 			$extension 	= pathinfo( $filename, PATHINFO_EXTENSION );
@@ -59,7 +59,7 @@ class FileManager extends Component {
 				echo "Error: extension not allowed.";
 			}
 		}
-		// File Data
+		// Modern Style using File Data
 		else if( isset( $_POST[ 'fileData' ] ) && $_POST[ 'fileData' ] ) {
 
 	        $filename = $_POST[ 'fileName' ];
@@ -83,7 +83,7 @@ class FileManager extends Component {
 				}
 			}
 		}
-		// Legacy System using file data----
+		// Legacy System using file
 		else {
 
 			if( isset( $_FILES['file'] ) ) {
