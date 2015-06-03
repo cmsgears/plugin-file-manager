@@ -54,7 +54,7 @@ class AvatarUploader extends Widget {
 		// Output Javascript at the end of Page
 		if( $this->includeScripts ) {
 
-        	AvatarUploaderAssetLoader::register( $this->getView() );
+        	AvatarUploaderAssetBundle::register( $this->getView() );
 		}
     }
 

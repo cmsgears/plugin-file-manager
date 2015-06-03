@@ -4,6 +4,7 @@ namespace cmsgears\files\components;
 // Yii Imports
 use \Yii;
 use yii\base\Component;
+use yii\helpers\Url;
 
 // CMG Imports
 use cmsgears\core\common\models\entities\CmgFile;
@@ -12,30 +13,38 @@ use cmsgears\files\utilities\ImageResize;
 
 /**
  * The file manager accepts single file at a time uploaded by either xhr or file data using ajax post.
- * It also accept file data sent via Post.
+ * It also accept file data sent via Post using forms.
  */
 class FileManager extends Component {
 
+	// The extensions allowed by this file uploader.
 	public $allowedExtensions 	= [ 'png', 'jpg', 'jpeg', 'gif', 'zip' , 'pdf' ];
+
+	// Either of these must be set to true. Generate Name generate a unique name using Yii Security Component whereas pretty names use the file name provided by user and replace space by hyphen(-).
 	public $generateName		= true;
-	public $prettyNames			= true;
+	public $prettyNames			= false;
+
+	// TODO - Check max size for the file uploaded by user
 	public $maxSize				= 5; // In MB
+
+	// Image Thumb Generation
 	public $generateImageThumb	= true;
 	public $thumbWidth			= 120;
 	public $thumbHeight			= 120;
+
+	// These must be set to allow file manager to work. The default values are set in constructor.
 	public $uploadDir			= null;
 	public $uploadUrl			= null;
 
 	public function __construct() {
 
 		$this->uploadDir	= Yii::getAlias( "@uploads" ) . "/";
+		$this->uploadUrl 	= Url::to( Yii::getAlias( "@web" ). "/uploads/", true );
 	}
 
 	// File Uploading -------------------------------------------------------------------
 
 	public function handleFileUpload( $selector ) {
-		
-		// TODO: Initial checks to ensure file is valid
 
 		return $this->processFileUpload( $selector );
 	}
@@ -49,7 +58,8 @@ class FileManager extends Component {
 		if( $filename ) {
 
 			$extension 	= pathinfo( $filename, PATHINFO_EXTENSION );
-
+			
+			// check allowed extensions
 			if( in_array( strtolower( $extension ), $this->allowedExtensions ) ) {
 
 				return $this->saveTempFile( file_get_contents( 'php://input' ), $selector, $filename, $extension );
@@ -67,7 +77,8 @@ class FileManager extends Component {
 			if( $filename ) {
 
 				$extension 	= $_POST[ 'fileExtension' ];
-
+				
+				// check allowed extensions
 				if( in_array( strtolower($extension), $this->allowedExtensions ) ) {
 
 					// Decoding file data
@@ -91,18 +102,19 @@ class FileManager extends Component {
 			    if( $_FILES['file']['error'] > 0 ) {
 
 			        echo 'Error: ' . $_FILES['file']['error'];
-			    } 
+			    }
 			    else {
 
 			        $filename = $_FILES['file']['name'];
-					
+
 					if( $filename ) {
 
 						$extension 	= pathinfo( $filename, PATHINFO_EXTENSION );
-			
+
+						// check allowed extensions
 						if( in_array( strtolower($extension), $this->allowedExtensions ) ) {
 							
-							return $this->saveTempFile( file_get_contents( $_FILES['file']['tmp_name'] ), $selector, $filename, $extension );
+							return $this->saveTempFile( file_get_contents( $_FILES['file']['name'] ), $selector, $filename, $extension );
 						}
 						else {
 
@@ -172,7 +184,7 @@ class FileManager extends Component {
 
 	// File Processing ------------------------------------------------------------------
 
-	public function processFile( $date, $user, $file ) {
+	public function processFile( $file ) {
 
 		$dateDir	= date( 'Y-m-d' );
 		$fileName	= $file->name;
@@ -190,9 +202,7 @@ class FileManager extends Component {
 		// Save Image File
 		$file->directory	= $fileDir;
 		$file->createdAt	= $date;
-		$file->createdBy	= $user->id;
-		$file->type			= CmgFile::TYPE_PUBLIC;
-		$file->url			= $imageUrl;
+		$file->url			= $fileUrl;
 	}
 
 	public function saveFile( $sourceFile, $targetDir, $filePath ) {
@@ -201,18 +211,21 @@ class FileManager extends Component {
 		$targetDir	= $this->uploadDir . $targetDir;
 		$filePath	= $this->uploadDir . $filePath;
 
-		// move file from temp to final destination
+		// create required directories if not exist
 		if( !file_exists( $targetDir ) ) {
 
 			mkdir( $targetDir , 0777, true );
 		}
 
+		// Move file from temp to destined directory
 		rename( $sourceFile, $filePath );
 	}	
 
 	// Image Processing -----------------------------------------------------------------
 	
-	public function processImage( $date, $user, $file, $width = null, $height = null ) {
+	// Save Image -------------
+
+	public function processImage( $file, $width = null, $height = null, $twidth = null, $theight = null ) {
 
 		$dateDir	= date( 'Y-m-d' );
 		$imageName	= $file->name;
@@ -225,13 +238,11 @@ class FileManager extends Component {
 		$targetDir		= $dateDir . '/' . $imageDir . '/';
 		$imageUrl		= $targetDir . $imageName . '.' . $imageExt;
 		$imageThumbUrl	= $targetDir . $imageName . '-thumb.' . $imageExt;
-
-		$this->saveImageAndThumb( $sourceFile, $targetDir, $imageUrl, $imageThumbUrl, $width, $height );
-
-		// Save Image File
-		$file->createdAt	= $date;
-		$file->createdBy	= $user->id;
-		$file->type			= CmgFile::TYPE_PUBLIC;
+		
+		// Save Image and Thumb
+		$this->saveImageAndThumb( $sourceFile, $targetDir, $imageUrl, $imageThumbUrl, $width, $height, $twidth = null, $theight = null );
+		
+		// Update URL and Thumb
 		$file->url			= $imageUrl;
 
 		if( $this->generateImageThumb ) {
@@ -240,37 +251,49 @@ class FileManager extends Component {
 		}
 	}
 
-	public function saveImageAndThumb( $sourceFile, $targetDir, $filePath, $thumbPath, $width = null, $height = null ) {
+	public function saveImageAndThumb( $sourceFile, $targetDir, $filePath, $thumbPath, $width = null, $height = null, $twidth = null, $theight = null ) {
 
 		$sourceFile	= $this->uploadDir . "temp/" . $sourceFile;
 		$targetDir	= $this->uploadDir . $targetDir;
 		$filePath	= $this->uploadDir . $filePath;
 		$thumbPath	= $this->uploadDir . $thumbPath;
 
-		// move file from temp to final destination
+		// create required directories if not exist
 		if( !file_exists( $targetDir ) ) {
 
 			mkdir( $targetDir , 0777, true );
 		}
 
+		// Move file from temp to destined directory
 		rename( $sourceFile, $filePath );
 
 		// Resize Image
-		if( isset($width) && isset($height) && intval($width) > 0 && intval($height) > 0 ) {
+		if( isset( $width ) && isset( $height ) && intval( $width ) > 0 && intval( $height ) > 0 ) {
 
 			$resizeObj = new ImageResize( $filePath );
-			$resizeObj -> resizeImage( $width, $height, 'exact' );
-			$resizeObj -> saveImage( $filePath, 100 );
+			$resizeObj->resizeImage( $width, $height, 'exact' );
+			$resizeObj->saveImage( $filePath, 100 );
 		}
 
 		// Save Thumb
 		if( $this->generateImageThumb && isset( $thumbPath ) ) {
 
 			$resizeObj = new ImageResize( $filePath );
-			$resizeObj -> resizeImage( $this->thumbWidth, $this->thumbHeight, 'crop' );
-			$resizeObj -> saveImage( $thumbPath, 100 );
+			
+			if( isset( $twidth ) && isset( $theight ) && intval( $twidth ) > 0 && intval( $theight ) > 0 ) {
+
+				$resizeObj->resizeImage( $twidth, $theight, 'crop' );
+			}
+			else {
+				
+				$resizeObj->resizeImage( $this->thumbWidth, $this->thumbHeight, 'crop' );
+			}
+
+			$resizeObj->saveImage( $thumbPath, 100 );
 		}
 	}
+
+	// Generate QR Code -------
 
 	/*
 	public function save_qr_code( $url ) {
@@ -293,6 +316,8 @@ class FileManager extends Component {
 	}
 	*/
 
+	// Convert to target DPI --
+	
 	private function convertTo300DPI( $jpgPath ) {
 
        	$filename 	= $jpgPath;

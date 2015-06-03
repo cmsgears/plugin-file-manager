@@ -5,7 +5,7 @@ namespace cmsgears\files\widgets;
 use yii\web\AssetBundle;
 use yii\web\View;
 
-class AvatarUploaderAssetLoader extends AssetBundle {
+class AvatarUploaderAssetBundle extends AssetBundle {
 
 	// Constructor and Initialisation ------------------------------
 
