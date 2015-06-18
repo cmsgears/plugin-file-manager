@@ -13,7 +13,7 @@ use cmsgears\files\utilities\ImageResize;
 
 /**
  * The file manager accepts single file at a time uploaded by either xhr or file data using ajax post.
- * It also accept file data sent via Post using forms.
+ * It also accept file data sent via Post using forms. It need PHP5 and GD library for PHP for image processing.
  */
 class FileManager extends Component {
 
@@ -22,9 +22,9 @@ class FileManager extends Component {
 
 	// Either of these must be set to true. Generate Name generate a unique name using Yii Security Component whereas pretty names use the file name provided by user and replace space by hyphen(-).
 	public $generateName		= true;
+	// TODO - Check for existing file having same name
 	public $prettyNames			= false;
 
-	// TODO - Check max size for the file uploaded by user
 	public $maxSize				= 5; // In MB
 
 	// Image Thumb Generation
@@ -32,14 +32,13 @@ class FileManager extends Component {
 	public $thumbWidth			= 120;
 	public $thumbHeight			= 120;
 
-	// These must be set to allow file manager to work. The default values are set in constructor.
+	// These must be set to allow file manager to work.
 	public $uploadDir			= null;
 	public $uploadUrl			= null;
 
 	public function __construct() {
 
 		$this->uploadDir	= Yii::getAlias( "@uploads" ) . "/";
-		$this->uploadUrl 	= Url::to( Yii::getAlias( "@web" ). "/uploads/", true );
 	}
 
 	// File Uploading -------------------------------------------------------------------
@@ -79,7 +78,7 @@ class FileManager extends Component {
 				$extension 	= $_POST[ 'fileExtension' ];
 				
 				// check allowed extensions
-				if( in_array( strtolower($extension), $this->allowedExtensions ) ) {
+				if( in_array( strtolower( $extension ), $this->allowedExtensions ) ) {
 
 					// Decoding file data
 					$file 	= $_POST[ 'file' ];
@@ -112,9 +111,9 @@ class FileManager extends Component {
 						$extension 	= pathinfo( $filename, PATHINFO_EXTENSION );
 
 						// check allowed extensions
-						if( in_array( strtolower($extension), $this->allowedExtensions ) ) {
+						if( in_array( strtolower( $extension ), $this->allowedExtensions ) ) {
 							
-							return $this->saveTempFile( file_get_contents( $_FILES['file']['name'] ), $selector, $filename, $extension );
+							return $this->saveTempFile( file_get_contents( $_FILES['file']['tmp_name'] ), $selector, $filename, $extension );
 						}
 						else {
 
@@ -129,20 +128,20 @@ class FileManager extends Component {
 	}
 
 	private function saveTempFile( $file_contents, $selector, $filename, $extension ) {
-		
+
 		// Check allowed file size
 		$sizeInMb = number_format( $file_contents / 1048576, 2 );
-		
+
 		if( $sizeInMb > $this->maxSize ) {
-			
+
 			echo "Error: Max size reached.";
 			
 			return false;			
 		}
 
 		// Create Directory if not exist
-		$tempUrl		 = "temp/$selector/";
-		$uploadDir = $this->uploadDir . $tempUrl;
+		$tempUrl		= "temp/$selector/";
+		$uploadDir 		= $this->uploadDir . $tempUrl;
 
 		if( !file_exists( $uploadDir ) ) {
 
@@ -219,10 +218,10 @@ class FileManager extends Component {
 
 		// Move file from temp to destined directory
 		rename( $sourceFile, $filePath );
-	}	
+	}
 
 	// Image Processing -----------------------------------------------------------------
-	
+
 	// Save Image -------------
 
 	public function processImage( $file, $width = null, $height = null, $twidth = null, $theight = null ) {
@@ -279,13 +278,13 @@ class FileManager extends Component {
 		if( $this->generateImageThumb && isset( $thumbPath ) ) {
 
 			$resizeObj = new ImageResize( $filePath );
-			
+
 			if( isset( $twidth ) && isset( $theight ) && intval( $twidth ) > 0 && intval( $theight ) > 0 ) {
 
 				$resizeObj->resizeImage( $twidth, $theight, 'crop' );
 			}
 			else {
-				
+
 				$resizeObj->resizeImage( $this->thumbWidth, $this->thumbHeight, 'crop' );
 			}
 
@@ -293,32 +292,9 @@ class FileManager extends Component {
 		}
 	}
 
-	// Generate QR Code -------
-
-	/*
-	public function save_qr_code( $url ) {
-
-		$date				= date('Y-m-d');
-		$design_directory 	= $this->uploadDir . "temp/" . $date . "/";
-
-		if( !file_exists( $design_directory ) ) {
-
-			mkdir( $design_directory , 0777, true );
-		}
-
-		$name		= md5( date('Y-m-d H:i:s:u') );
-		$filename	= $name . ".png";
-		$filepath 	= $design_directory . $name . ".png";
-		
-		QRcode::png( $url,  $filepath, "L", 8, 4);
-
-		return EmblmCommerce::$temp_images_dir . $date . "/" . $filename;;
-	}
-	*/
-
 	// Convert to target DPI --
-	
-	private function convertTo300DPI( $jpgPath ) {
+
+	private function convertToDPI( $jpgPath, $dpi ) {
 
        	$filename 	= $jpgPath;
         $input 		= imagecreatefromjpeg( $filename );
@@ -337,9 +313,9 @@ class FileManager extends Component {
         imagejpeg( $output );
 
         $contents =  ob_get_contents();
-		
-        //Converting Image DPI to 300DPI                
-        $contents = substr_replace( $contents, pack( "cnn", 1, 300, 300 ), 13, 5 );
+
+        //Converting Image DPI to $dpi                
+        $contents = substr_replace( $contents, pack( "cnn", 1, $dpi, $dpi ), 13, 5 );
         ob_end_clean();
 
 		file_put_contents( $filename, $contents );
