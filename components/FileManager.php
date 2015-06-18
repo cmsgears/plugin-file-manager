@@ -4,11 +4,8 @@ namespace cmsgears\files\components;
 // Yii Imports
 use \Yii;
 use yii\base\Component;
-use yii\helpers\Url;
 
 // CMG Imports
-use cmsgears\core\common\models\entities\CmgFile;
-
 use cmsgears\files\utilities\ImageResize;
 
 /**
