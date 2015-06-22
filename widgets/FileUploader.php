@@ -35,9 +35,13 @@ class FileUploader extends Widget {
 	public $chooser			= true;
 	public $preview			= true;
 	public $preloader		= true;
-	public $postaction		= false;
-	public $postactionurl	= null;
-	public $postactionid	= "frm-ajax-avatar";
+
+	public $postaction			= false;
+	public $postactionurl		= null;
+	public $postactionvisible	= false;
+	public $postactionid		= "frm-ajax-avatar";
+	public $postactiongroup		= 0;
+	public $postactionkey		= 0;
 
 	// preview dimensions for drag/drop
 	public $previewWidth	= 120;
@@ -166,21 +170,26 @@ class FileUploader extends Widget {
 		$fieldsHtml		= $this->renderFields();
 		$infoFieldsHtml	= $this->renderInfoFields();
 
-		$postactionHtml	= "<div class='post-action'>";
+		$postactionHtml	= '';
 
-		if( $this->postaction ) {
+		if( $this->postaction && isset( $this->postactionurl ) ) {
 
-			$postactionHtml	.= "<form id='$this->postactionid' class='frm-ajax' group='0' key='100000' action='$this->postactionurl' method='post'>";
-		}
+			$paClass = 'post-action';
 
-		$postactionHtml	.= $fieldsHtml . $infoFieldsHtml;
+			if( $this->postactionvisible ) {
 
-		if( $this->postaction ) {
+				$paClass = 'post-action-v';
+			}
 
+			$postactionHtml	 = "<div class='$paClass'><form id='$this->postactionid' class='frm-ajax' group='$this->postactiongroup' key='$this->postactionkey' action='$this->postactionurl' method='post'>";
+			$postactionHtml	.= $fieldsHtml . $infoFieldsHtml;
 			$postactionHtml	.= "<input type='submit' value='Save' /> </form>";
+			$postactionHtml	.= "</div>";
 		}
+		else {
 
-		$postactionHtml	.= "</div>";
+			$postactionHtml	.= $fieldsHtml . $infoFieldsHtml;
+		}
 
 		return $postactionHtml;
 	}
@@ -193,7 +202,7 @@ class FileUploader extends Widget {
 
 		// File Fields
 		if( isset( $this->model ) ) {
-			
+
 			$model 			= $this->model;
 			$modelClass		= $this->modelClass;
 			$fieldsHtml 	= "<div class='fields'>
@@ -232,13 +241,28 @@ class FileUploader extends Widget {
 
 		// File Fields
 		if( $this->infoFields ) {
+				
+			$model		= $this->model;
+			$modelClass	= $this->modelClass;
+			
+			if( isset( $model ) ) {
+				
+				$infoFieldsHtml	= "<div class='fields'>
+										<label>Title</label> <input type='text' name='$modelClass"."[title]' value='$model->title' />
+										<label>Description</label> <input type='text' name='$modelClass"."[description]' value='$model->description' />
+										<label>Alternate Text</label> <input type='text' name='$modelClass"."[altText]' value='$model->altText' />
+										<label>Link</label> <input type='text' name='$modelClass"."[link]' value='$model->link' />
+									</div>";
+			}
+			else {
 
-			$infoFieldsHtml	= "<div class='fields'>
-									<label>Title</label> <input type='text' name='$modelClass"."[title]' />
-									<label>Description</label> <input type='text' name='$modelClass"."[description]' />
-									<label>Alternate Text</label> <input type='text' name='$modelClass"."[altText]' />
-									<label>Link</label> <input type='text' name='$modelClass"."[link]' />
-								</div>";
+				$infoFieldsHtml	= "<div class='fields'>
+										<label>Title</label> <input type='text' name='$modelClass"."[title]' />
+										<label>Description</label> <input type='text' name='$modelClass"."[description]' />
+										<label>Alternate Text</label> <input type='text' name='$modelClass"."[altText]' />
+										<label>Link</label> <input type='text' name='$modelClass"."[link]' />
+									</div>";
+			}
 		}
 
 		return $infoFieldsHtml;
