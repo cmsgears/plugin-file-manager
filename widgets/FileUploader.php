@@ -97,11 +97,24 @@ class FileUploader extends Widget {
 
 			if( isset( $this->model ) ) {
 
-				$url			= $this->model->getFileUrl();
-				$postviewHtml	= "<div class='postview'>
+				$name			= $this->model->name;
+				
+				if( isset( $name ) ) {
+					
+					$url			= $this->model->getFileUrl();
+
+					$postviewHtml	= "<div class='postview'>
 										<div class='btn-show-chooser $btnChooserIcon'></div>
 										<div class='wrap-image'><img src='$url' class='fluid' /></div>
 							   		</div>";
+				}
+				else {
+
+					$postviewHtml	= "<div class='postview'>
+										<div class='btn-show-chooser $btnChooserIcon'></div>
+										<div class='wrap-image'></div>
+							   		</div>";
+				}
 			}
 			else {
 
