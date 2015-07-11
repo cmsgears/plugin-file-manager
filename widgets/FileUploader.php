@@ -40,8 +40,8 @@ class FileUploader extends Widget {
 	public $postactionurl		= null;
 	public $postactionvisible	= false;
 	public $postactionid		= "frm-ajax-avatar";
-	public $postactiongroup		= 0;
-	public $postactionkey		= 0;
+	public $cmtcontroller		= 'default';
+	public $cmtaction			= 'default';
 
 	// preview dimensions for drag/drop
 	public $previewWidth	= 120;
@@ -119,9 +119,9 @@ class FileUploader extends Widget {
 			else {
 
 				$postviewHtml	= "<div class='postview'>
-									<div class='btn-show-chooser $btnChooserIcon'></div>
-									<div class='wrap-image'><span class='$postviewIcon'></span></div>
-							   </div>";
+										<div class='btn-show-chooser $btnChooserIcon'></div>
+										<div class='wrap-image'><span class='$postviewIcon'></span></div>
+								   </div>";
 			}
 		}
 
@@ -194,7 +194,7 @@ class FileUploader extends Widget {
 				$paClass = 'post-action-v';
 			}
 
-			$postactionHtml	 = "<div class='$paClass'><form id='$this->postactionid' class='frm-ajax' cmt-controller='$this->postactiongroup' cmt-action='$this->postactionkey' action='$this->postactionurl' method='post'>";
+			$postactionHtml	 = "<div class='$paClass'><form id='$this->postactionid' class='frm-ajax' cmt-controller='$this->cmtcontroller' cmt-action='$this->cmtaction' action='$this->postactionurl' method='post'>";
 			$postactionHtml	.= $fieldsHtml . $infoFieldsHtml;
 			$postactionHtml	.= "<input type='submit' value='Save' /> </form>";
 			$postactionHtml	.= "</div>";
@@ -254,12 +254,12 @@ class FileUploader extends Widget {
 
 		// File Fields
 		if( $this->infoFields ) {
-				
+
 			$model		= $this->model;
 			$modelClass	= $this->modelClass;
-			
+
 			if( isset( $model ) ) {
-				
+
 				$infoFieldsHtml	= "<div class='fields'>
 										<label>Title</label> <input type='text' name='$modelClass"."[title]' value='$model->title' />
 										<label>Description</label> <input type='text' name='$modelClass"."[description]' value='$model->description' />
