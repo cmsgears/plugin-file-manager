@@ -112,7 +112,7 @@ class FileUploader extends Widget {
 
 					$postviewHtml	= "<div class='postview'>
 										<div class='btn-show-chooser $btnChooserIcon'></div>
-										<div class='wrap-image'></div>
+										<div class='wrap-image'><span class='$postviewIcon'></span></div>
 							   		</div>";
 				}
 			}
