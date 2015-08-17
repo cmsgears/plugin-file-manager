@@ -15,9 +15,6 @@ class AvatarUploader extends Widget {
 	// Public Variables --------------------
 
 	public $options 		= [];
-	public $avatarId;
-	public $listenerId;
-	public $includeScripts	= false;
 	public $footer			= false;
 
 	// Constructor and Initialisation ------------------------------
@@ -43,18 +40,6 @@ class AvatarUploader extends Widget {
 		else {
 
 			$this->renderHtml();
-			
-			$listenerJs = "jQuery( '#$this->listenerId' ).click( function() { showAvatarUploader(); } );
-						   jQuery( '#btn-avatar-cancel' ).click( function() { hideAvatarUploader(); } );
-						   jQuery( '#btn-avatar-upload' ).click( function() { uploadAvatar(); } );";
-
-			$this->getView()->registerJs( $listenerJs, View::POS_READY );
-		}
-
-		// Output Javascript at the end of Page
-		if( $this->includeScripts ) {
-
-        	AvatarUploaderAssetLoader::register( $this->getView() );
 		}
     }
 
@@ -94,7 +79,7 @@ class AvatarUploader extends Widget {
 
 		if( Yii::$app->user->isGuest ) {
 
-			echo "<div id='$this->avatarId' class='avatar'><img src='$defaultAvatar' /></div>"; 
+			echo "<div class='avatar'><img src='$defaultAvatar' /></div>"; 
 		}
 		else {
 
@@ -105,17 +90,17 @@ class AvatarUploader extends Widget {
 
 				$avatarUrl	= $avatar->getFileUrl();
 
-				echo "<div id='$this->avatarId' class='avatar'><img src='$avatarUrl' /></div>";
+				echo "<div class='avatar'><img src='$avatarUrl' /></div>";
 			}
 			else {
 
-				echo "<div id='$this->avatarId' class='avatar'><img src='$defaultAvatar' /></div>";
+				echo "<div class='avatar'><img src='$defaultAvatar' /></div>";
 			}
 		}
 ?>
 
 			<div>
-				<span id="<?=$this->listenerId?>" class="btn">Change Profile Picture</span>
+				<span class="btn">Change Profile Picture</span>
 			</div>
 		</div>
 <?php
