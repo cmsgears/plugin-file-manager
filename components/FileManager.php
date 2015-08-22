@@ -166,7 +166,23 @@ class FileManager extends Component {
 
 			$result['name'] 		= $name;
 			$result['extension'] 	= $extension;
-			$result['tempUrl'] 		= $this->uploadUrl . $tempUrl . $filename;
+
+			// Special processing for Avatar Uploader
+			if( strcmp( $selector, "avatar" ) == 0 ) {
+
+				// Generate Thumb
+				$thumbName	= $name . '-thumb' . "." . $extension;
+				$resizeObj 	= new ImageResize( $uploadDir . $filename );
+
+				$resizeObj->resizeImage( $this->thumbWidth, $this->thumbHeight, 'crop' );
+				$resizeObj->saveImage( $uploadDir . $thumbName, 100 );
+
+				$result['tempUrl'] 		= $this->uploadUrl . $tempUrl . $thumbName;
+			}
+			else {
+
+				$result['tempUrl'] 		= $this->uploadUrl . $tempUrl . $filename;	
+			}
 
 			return $result;
 		}
