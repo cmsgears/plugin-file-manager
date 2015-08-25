@@ -104,14 +104,14 @@ class FileUploader extends Widget {
 					$url			= $this->model->getFileUrl();
 
 					$postviewHtml	= "<div class='postview'>
-										<div class='btn-show-chooser $btnChooserIcon'></div>
+										<div class='btn-show-chooser $btnChooserIcon' title='Update Image'></div>
 										<div class='wrap-image'><img src='$url' class='fluid' /></div>
 							   		</div>";
 				}
 				else {
 
 					$postviewHtml	= "<div class='postview'>
-										<div class='btn-show-chooser $btnChooserIcon'></div>
+										<div class='btn-show-chooser $btnChooserIcon' title='Update Image'></div>
 										<div class='wrap-image'><span class='$postviewIcon'></span></div>
 							   		</div>";
 				}
@@ -119,7 +119,7 @@ class FileUploader extends Widget {
 			else {
 
 				$postviewHtml	= "<div class='postview'>
-										<div class='btn-show-chooser $btnChooserIcon'></div>
+										<div class='btn-show-chooser $btnChooserIcon' title='Update Image'></div>
 										<div class='wrap-image'><span class='$postviewIcon'></span></div>
 								   </div>";
 			}
