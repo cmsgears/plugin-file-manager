@@ -15,7 +15,10 @@ use cmsgears\files\utilities\ImageResize;
 class FileManager extends Component {
 
 	// The extensions allowed by this file uploader.
-	public $allowedExtensions 	= [ 'png', 'jpg', 'jpeg', 'gif', 'zip' , 'pdf' ];
+	public $imageExtensions 		= [ 'png', 'jpg', 'jpeg', 'gif' ];
+	public $videoExtensions 		= [ 'mp4', 'flv', 'ogv', 'avi' ];
+	public $docExtensions 			= [ 'pdf' ];
+	public $compressedExtensions 	= [ 'rar', 'zip' ];
 
 	// Either of these must be set to true. Generate Name generate a unique name using Yii Security Component whereas pretty names use the file name provided by user and replace space by hyphen(-).
 	public $generateName		= true;
@@ -40,12 +43,42 @@ class FileManager extends Component {
 
 	// File Uploading -------------------------------------------------------------------
 
-	public function handleFileUpload( $selector ) {
+	public function handleFileUpload( $directory, $type ) {
 
-		return $this->processFileUpload( $selector );
+		return $this->processFileUpload( $directory, $type );
 	}
 
-	private function processFileUpload( $selector ) {
+	private function processFileUpload( $directory, $type ) {
+
+		$allowedExtensions	= [];
+
+		switch( $type ) {
+			
+			case 'image': {
+				
+				$allowedExtensions = $this->imageExtensions;
+
+				break;
+			},
+			case 'video': {
+
+				$allowedExtensions = $this->videoExtensions;
+
+				break;
+			},
+			case 'doc': {
+
+				$allowedExtensions = $this->docExtensions;
+
+				break;
+			}
+			case 'compressed': {
+				
+				$allowedExtensions = $this->compressedExtensions;
+				
+				break;
+			}
+		}
 
 		// Get the filename submitted by user
 		$filename = ( isset( $_SERVER['HTTP_X_FILENAME'] ) ? $_SERVER['HTTP_X_FILENAME'] : false );
@@ -56,9 +89,9 @@ class FileManager extends Component {
 			$extension 	= pathinfo( $filename, PATHINFO_EXTENSION );
 			
 			// check allowed extensions
-			if( in_array( strtolower( $extension ), $this->allowedExtensions ) ) {
+			if( in_array( strtolower( $extension ), $allowedExtensions ) ) {
 
-				return $this->saveTempFile( file_get_contents( 'php://input' ), $selector, $filename, $extension );
+				return $this->saveTempFile( file_get_contents( 'php://input' ), $directory, $filename, $extension );
 			}
 			else {
 
@@ -75,14 +108,14 @@ class FileManager extends Component {
 				$extension 	= $_POST[ 'fileExtension' ];
 				
 				// check allowed extensions
-				if( in_array( strtolower( $extension ), $this->allowedExtensions ) ) {
+				if( in_array( strtolower( $extension ), $allowedExtensions ) ) {
 
 					// Decoding file data
 					$file 	= $_POST[ 'file' ];
     				$file 	= str_replace( ' ', '+', $file );
     				$file 	= base64_decode( $file );
 
-					return $this->saveTempFile( $file, $selector, $filename, $extension );
+					return $this->saveTempFile( $file, $directory, $filename, $extension );
 				}
 				else {
 
@@ -108,9 +141,9 @@ class FileManager extends Component {
 						$extension 	= pathinfo( $filename, PATHINFO_EXTENSION );
 
 						// check allowed extensions
-						if( in_array( strtolower( $extension ), $this->allowedExtensions ) ) {
+						if( in_array( strtolower( $extension ), $allowedExtensions ) ) {
 							
-							return $this->saveTempFile( file_get_contents( $_FILES['file']['tmp_name'] ), $selector, $filename, $extension );
+							return $this->saveTempFile( file_get_contents( $_FILES['file']['tmp_name'] ), $directory, $filename, $extension );
 						}
 						else {
 
@@ -124,7 +157,7 @@ class FileManager extends Component {
 		return false;
 	}
 
-	private function saveTempFile( $file_contents, $selector, $filename, $extension ) {
+	private function saveTempFile( $file_contents, $directory, $filename, $extension ) {
 
 		// Check allowed file size
 		$sizeInMb = number_format( $file_contents / 1048576, 2 );
@@ -137,7 +170,7 @@ class FileManager extends Component {
 		}
 
 		// Create Directory if not exist
-		$tempUrl		= "temp/$selector/";
+		$tempUrl		= "temp/$directory/";
 		$uploadDir 		= $this->uploadDir . $tempUrl;
 
 		if( !file_exists( $uploadDir ) ) {
@@ -168,7 +201,7 @@ class FileManager extends Component {
 			$result['extension'] 	= $extension;
 
 			// Special processing for Avatar Uploader
-			if( strcmp( $selector, "avatar" ) == 0 ) {
+			if( strcmp( $directory, "avatar" ) == 0 ) {
 
 				// Generate Thumb
 				$thumbName	= $name . '-thumb' . "." . $extension;
