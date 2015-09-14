@@ -59,13 +59,13 @@ class FileManager extends Component {
 				$allowedExtensions = $this->imageExtensions;
 
 				break;
-			},
+			}
 			case 'video': {
 
 				$allowedExtensions = $this->videoExtensions;
 
 				break;
-			},
+			}
 			case 'doc': {
 
 				$allowedExtensions = $this->docExtensions;
