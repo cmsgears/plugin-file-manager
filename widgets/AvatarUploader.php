@@ -30,8 +30,8 @@ class AvatarUploader extends Widget {
 
 	// uploader components
 	public $postview		= true;
-	public $btnChooserIcon	= "cmt-action-icon cmt-edit";
-	public $postviewIcon	= "cmt-icon cmt-user";
+	public $btnChooserIcon	= "cmti cmti-edit";
+	public $postviewIcon	= "cmti cmti-5x cmti-user";
 	public $chooser			= true;
 	public $preview			= true;
 	public $preloader		= true;
