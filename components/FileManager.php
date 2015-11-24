@@ -6,6 +6,8 @@ use \Yii;
 use yii\base\Component;
 
 // CMG Imports
+use cmsgears\files\config\FileProperties;
+
 use cmsgears\files\utilities\ImageResize;
 
 /**
@@ -14,11 +16,13 @@ use cmsgears\files\utilities\ImageResize;
  */
 class FileManager extends Component {
 
+	public $ignoreDbConfig			= false;
+
 	// The extensions allowed by this file uploader.
 	public $imageExtensions 		= [ 'png', 'jpg', 'jpeg', 'gif' ];
 	public $videoExtensions 		= [ 'mp4', 'flv', 'ogv', 'avi' ];
 	public $docExtensions 			= [ 'pdf' ];
-	public $compressedExtensions 	= [ 'rar', 'zip' ];
+	public $zipExtensions 			= [ 'rar', 'zip' ];
 
 	// Either of these must be set to true. Generate Name generate a unique name using Yii Security Component whereas pretty names use the file name provided by user and replace space by hyphen(-).
 	public $generateName		= true;
@@ -36,9 +40,34 @@ class FileManager extends Component {
 	public $uploadDir			= null;
 	public $uploadUrl			= null;
 
-	public function __construct() {
+	public function __construct( $config = [] ) {
 
-		$this->uploadDir	= Yii::getAlias( "@uploads" ) . "/";
+        if( !empty( $config ) ) {
+
+            Yii::configure( $this, $config );
+        }
+		
+		if( !$this->ignoreDbConfig ) {
+
+			$properties				= FileProperties::getInstance();
+	
+			// Use properties configured in DB on priority, else fallback to the one defined in this class.
+			$this->imageExtensions		= $properties->getImageExtensions( $this->imageExtensions );
+			$this->videoExtensions		= $properties->getVideoExtensions( $this->videoExtensions );
+			$this->docExtensions		= $properties->getDocExtensions( $this->docExtensions );
+			$this->zipExtensions		= $properties->getZipExtensions( $this->zipExtensions );
+			$this->generateName			= $properties->isGenerateName( $this->generateName );
+			$this->prettyNames			= $properties->isPrettyName( $this->prettyNames );
+			$this->maxSize				= $properties->getMaxSize( $this->maxSize );
+			$this->generateImageThumb	= $properties->isGenerateThumb( $this->generateImageThumb );
+			$this->thumbWidth			= $properties->getThumbWidth( $this->thumbWidth );
+			$this->thumbHeight			= $properties->getThumbHeight( $this->thumbHeight );
+			$this->uploadDir			= Yii::getAlias( "@uploads" ) . "/";
+			$this->uploadDir			= $properties->getUploadDir( $this->uploadDir );
+			$this->uploadUrl			= $properties->getUploadUrl( $this->uploadUrl );
+		}
+
+        $this->init();
 	}
 
 	// File Uploading -------------------------------------------------------------------
@@ -74,7 +103,7 @@ class FileManager extends Component {
 			}
 			case 'compressed': {
 				
-				$allowedExtensions = $this->compressedExtensions;
+				$allowedExtensions = $this->zipExtensions;
 				
 				break;
 			}
