@@ -13,5 +13,5 @@ INSERT INTO `cmg_core_model_meta` (`parentId`,`parentType`,`name`,`value`,`type`
 	(1,'site','Generate Thumb','1','file','input','{\"title\":\"Allows file manager to generate thumb for images.\"}'),
 	(1,'site','Thumb Width','120','file','input','{\"title\":\"Default thumb Width to generate thumb. It can be overriden by File Uploader Widgets configuration.\"}'),
 	(1,'site','Thumb Height','120','file','input','{\"title\":\"Default thumb Height to generate thumb. It can be overriden by File Uploader Widgets configuration.\"}'),
-	(1,'site','Uploads Directory','/projects/www/test/uploads','file','input','{\"title\":\"Default uploads directory.\"}'),
+	(1,'site','Uploads Directory',NULL,'file','input','{\"title\":\"Default uploads directory.\"}'),
 	(1,'site','Uploads URL','http://localhost/test/uploads','file','input','{\"title\":\"Default uploads url.\"}');
