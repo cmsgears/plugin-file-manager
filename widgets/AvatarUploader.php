@@ -199,7 +199,7 @@ class AvatarUploader extends Widget {
 				$paClass = 'post-action-v';
 			}
 
-			$postactionHtml	 = "<div class='$paClass'><form id='$this->postactionid' class='frm-ajax' cmt-controller='$this->cmtcontroller' cmt-action='$this->cmtaction' action='$this->postactionurl' method='post'>";
+			$postactionHtml	 = "<div class='$paClass'><form id='$this->postactionid' class='cmt-form' cmt-controller='$this->cmtcontroller' cmt-action='$this->cmtaction' action='$this->postactionurl' method='post'>";
 			$postactionHtml	.= $fieldsHtml . $infoFieldsHtml;
 			$postactionHtml	.= "<input type='submit' value='Save' /> </form>";
 			$postactionHtml	.= "</div>";
