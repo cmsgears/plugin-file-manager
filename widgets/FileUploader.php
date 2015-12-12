@@ -27,7 +27,8 @@ class FileUploader extends Widget {
 	public $type			= 'image';
 
 	// file fields
-	public $infoFields		= false;
+	public $infoFields			= false;
+	public $infoFieldsSeoOnly	= false;
 
 	// uploader components
 	public $postview		= true;
@@ -261,22 +262,40 @@ class FileUploader extends Widget {
 			$modelClass	= $this->modelClass;
 
 			if( isset( $model ) ) {
+				
+				if( $this ->infoFieldsSeoOnly ) {
 
-				$infoFieldsHtml	= "<div class='fields'>
-										<label>Title</label> <input type='text' name='$modelClass"."[title]' value='$model->title' />
-										<label>Description</label> <input type='text' name='$modelClass"."[description]' value='$model->description' />
-										<label>Alternate Text</label> <input type='text' name='$modelClass"."[altText]' value='$model->altText' />
-										<label>Link</label> <input type='text' name='$modelClass"."[link]' value='$model->link' />
-									</div>";
+					$infoFieldsHtml	= "<div class='fields'>
+											<label>Alternate Text</label> <input type='text' name='$modelClass"."[altText]' value='$model->altText' />
+										</div>";
+				}
+				else {
+
+					$infoFieldsHtml	= "<div class='fields'>
+											<label>Title</label> <input type='text' name='$modelClass"."[title]' value='$model->title' />
+											<label>Description</label> <input type='text' name='$modelClass"."[description]' value='$model->description' />
+											<label>Alternate Text</label> <input type='text' name='$modelClass"."[altText]' value='$model->altText' />
+											<label>Link</label> <input type='text' name='$modelClass"."[link]' value='$model->link' />
+										</div>";
+				}
 			}
 			else {
 
-				$infoFieldsHtml	= "<div class='fields'>
-										<label>Title</label> <input type='text' name='$modelClass"."[title]' />
-										<label>Description</label> <input type='text' name='$modelClass"."[description]' />
-										<label>Alternate Text</label> <input type='text' name='$modelClass"."[altText]' />
-										<label>Link</label> <input type='text' name='$modelClass"."[link]' />
-									</div>";
+				if( $this ->infoFieldsSeoOnly ) {
+
+					$infoFieldsHtml	= "<div class='fields'>
+											<label>Alternate Text</label> <input type='text' name='$modelClass"."[altText]' />
+										</div>";
+				}
+				else {
+
+					$infoFieldsHtml	= "<div class='fields'>
+											<label>Title</label> <input type='text' name='$modelClass"."[title]' />
+											<label>Description</label> <input type='text' name='$modelClass"."[description]' />
+											<label>Alternate Text</label> <input type='text' name='$modelClass"."[altText]' />
+											<label>Link</label> <input type='text' name='$modelClass"."[link]' />
+										</div>";
+				}
 			}
 		}
 
