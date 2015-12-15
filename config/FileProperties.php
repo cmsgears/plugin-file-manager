@@ -13,29 +13,29 @@ class FileProperties extends CmgProperties {
 
 	const CONFIG_FILE			= 'file';
 
-	const PROP_EXTENSION_IMAGE 	= 'image-extensions';
+	const PROP_EXTENSION_IMAGE 	= 'image_extensions';
 
-	const PROP_EXTENSION_VIDEO 	= 'video-extensions';
+	const PROP_EXTENSION_VIDEO 	= 'video_extensions';
 
-	const PROP_EXTENSION_DOC 	= 'doc-extensions';
+	const PROP_EXTENSION_DOC 	= 'doc_extensions';
 
-	const PROP_EXTENSION_ZIP 	= 'zip-extensions';
+	const PROP_EXTENSION_ZIP 	= 'zip_extensions';
 
-	const PROP_NAME_GENERATE	= 'generate-name';
+	const PROP_NAME_GENERATE	= 'generate_name';
 
-	const PROP_NAME_PRETTY		= 'pretty-name';
+	const PROP_NAME_PRETTY		= 'pretty_name';
 
-	const PROP_MAX_SIZE			= 'max-size';
+	const PROP_MAX_SIZE			= 'max_size';
 
-	const PROP_GENERATE_THUMB	= 'generate-thumb';
+	const PROP_GENERATE_THUMB	= 'generate_thumb';
 	
-	const PROP_THUMB_WIDTH		= 'thumb-width';
+	const PROP_THUMB_WIDTH		= 'thumb_width';
 
-	const PROP_THUMB_HEIGHT		= 'thumb-height';
+	const PROP_THUMB_HEIGHT		= 'thumb_height';
 
-	const PROP_UPLOAD_DIR		= 'uploads-directory';
+	const PROP_UPLOAD_DIR		= 'uploads_directory';
 
-	const PROP_UPLOAD_URL		= 'uploads-url';
+	const PROP_UPLOAD_URL		= 'uploads_url';
 
 	// Singleton instance
 	private static $instance;
