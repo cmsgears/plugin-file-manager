@@ -24,7 +24,7 @@ INSERT INTO `cmg_core_form_field` (`formId`,`name`,`label`,`type`,`compress`,`va
 	(@form,'generate_thumb','Generate Thumb',20,0,'required','{\"title\":\"Generate Thumb.\"}',NULL,0),
 	(@form,'thumb_width','Thumb Width',0,0,'required','{\"title\":\"Thumb Width.\",\"placeholder\":\"Thumb Width\"}',NULL,0),
 	(@form,'thumb_height','Thumb Height',0,0,'required','{\"title\":\"Thumb Height.\",\"placeholder\":\"Thumb Height\"}',NULL,0),
-	(@form,'uploads_directory','Uploads Directory',0,0,'required','{\"title\":\"Uploads Directory.\",\"placeholder\":\"Uploads Directory\"}',NULL,0),
+	(@form,'uploads_directory','Uploads Directory',0,0,NULL,'{\"title\":\"Uploads Directory.\",\"placeholder\":\"Uploads Directory\"}',NULL,0),
 	(@form,'uploads_url','Uploads URL',0,0,'required','{\"title\":\"Uploads URL.\",\"placeholder\":\"Uploads URL\"}',NULL,0);
 
 --
