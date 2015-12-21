@@ -7,6 +7,7 @@ use yii\base\Widget;
 use yii\base\InvalidConfigException;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 class FileUploader extends Widget {
 
@@ -26,7 +27,8 @@ class FileUploader extends Widget {
 	public $type			= 'image';
 
 	// file fields
-	public $infoFields		= false;
+	public $infoFields			= false;
+	public $infoFieldsSeoOnly	= false;
 
 	// uploader components
 	public $postview		= true;
@@ -36,12 +38,12 @@ class FileUploader extends Widget {
 	public $preview			= true;
 	public $preloader		= true;
 
-	public $postaction			= false;
-	public $postactionurl		= null;
-	public $postactionvisible	= false;
-	public $postactionid		= "frm-ajax-avatar";
-	public $cmtcontroller		= 'default';
-	public $cmtaction			= 'default';
+	public $postAction			= false;
+	public $postActionUrl		= null;
+	public $postActionVisible	= false;
+	public $postActionId		= 'file-uploader';
+	public $cmtController		= 'default';
+	public $cmtAction			= 'default';
 
 	// preview dimensions for drag/drop
 	public $previewWidth	= 120;
@@ -82,9 +84,9 @@ class FileUploader extends Widget {
 		$chooserHtml	= $this->renderChooser();
 		$previewHtml	= $this->renderPreview();
 		$preloaderHtml	= $this->renderPreloader();
-		$postactionHtml	= $this->renderPostaction();
+		$postActionHtml	= $this->renderpostAction();
 
-		return $postviewHtml . "<div class='wrap-chooser'>" . $chooserHtml . $previewHtml . $preloaderHtml . "</div>" . $postactionHtml;
+		return $postviewHtml . "<div class='wrap-chooser'>" . $chooserHtml . $previewHtml . $preloaderHtml . "</div>" . $postActionHtml;
     }
 
     protected function renderPostview() {
@@ -178,33 +180,34 @@ class FileUploader extends Widget {
 		return $preloaderHtml;
 	}
 
-    protected function renderPostaction() {
+    protected function renderpostAction() {
 
 		$fieldsHtml		= $this->renderFields();
 		$infoFieldsHtml	= $this->renderInfoFields();
 
-		$postactionHtml	= '';
+		$postActionHtml	= '';
 
-		if( $this->postaction && isset( $this->postactionurl ) ) {
+		if( $this->postAction && isset( $this->postActionUrl ) ) {
 
 			$paClass = 'post-action';
 
-			if( $this->postactionvisible ) {
+			if( $this->postActionVisible ) {
 
 				$paClass = 'post-action-v';
 			}
-
-			$postactionHtml	 = "<div class='$paClass'><form id='$this->postactionid' class='frm-ajax' cmt-controller='$this->cmtcontroller' cmt-action='$this->cmtaction' action='$this->postactionurl' method='post'>";
-			$postactionHtml	.= $fieldsHtml . $infoFieldsHtml;
-			$postactionHtml	.= "<input type='submit' value='Save' /> </form>";
-			$postactionHtml	.= "</div>";
+			
+			$postActionUrl	= Url::toRoute( [ $this->postActionUrl ], true );
+			$postActionHtml	= "<div class='$paClass'><form id='$this->postActionId' class='cmt-form' cmt-controller='$this->cmtController' cmt-action='$this->cmtAction' action='$postActionUrl' method='post'>";
+			$postActionHtml	.= $fieldsHtml . $infoFieldsHtml;
+			$postActionHtml	.= "<input type='submit' value='Save' /> </form>";
+			$postActionHtml	.= "</div>";
 		}
 		else {
 
-			$postactionHtml	.= $fieldsHtml . $infoFieldsHtml;
+			$postActionHtml	.= $fieldsHtml . $infoFieldsHtml;
 		}
 
-		return $postactionHtml;
+		return $postActionHtml;
 	}
 
     protected function renderFields() {
@@ -259,22 +262,40 @@ class FileUploader extends Widget {
 			$modelClass	= $this->modelClass;
 
 			if( isset( $model ) ) {
+				
+				if( $this ->infoFieldsSeoOnly ) {
 
-				$infoFieldsHtml	= "<div class='fields'>
-										<label>Title</label> <input type='text' name='$modelClass"."[title]' value='$model->title' />
-										<label>Description</label> <input type='text' name='$modelClass"."[description]' value='$model->description' />
-										<label>Alternate Text</label> <input type='text' name='$modelClass"."[altText]' value='$model->altText' />
-										<label>Link</label> <input type='text' name='$modelClass"."[link]' value='$model->link' />
-									</div>";
+					$infoFieldsHtml	= "<div class='fields'>
+											<label>Alternate Text</label> <input type='text' name='$modelClass"."[altText]' value='$model->altText' />
+										</div>";
+				}
+				else {
+
+					$infoFieldsHtml	= "<div class='fields'>
+											<label>Title</label> <input type='text' name='$modelClass"."[title]' value='$model->title' />
+											<label>Description</label> <input type='text' name='$modelClass"."[description]' value='$model->description' />
+											<label>Alternate Text</label> <input type='text' name='$modelClass"."[altText]' value='$model->altText' />
+											<label>Link</label> <input type='text' name='$modelClass"."[link]' value='$model->link' />
+										</div>";
+				}
 			}
 			else {
 
-				$infoFieldsHtml	= "<div class='fields'>
-										<label>Title</label> <input type='text' name='$modelClass"."[title]' />
-										<label>Description</label> <input type='text' name='$modelClass"."[description]' />
-										<label>Alternate Text</label> <input type='text' name='$modelClass"."[altText]' />
-										<label>Link</label> <input type='text' name='$modelClass"."[link]' />
-									</div>";
+				if( $this ->infoFieldsSeoOnly ) {
+
+					$infoFieldsHtml	= "<div class='fields'>
+											<label>Alternate Text</label> <input type='text' name='$modelClass"."[altText]' />
+										</div>";
+				}
+				else {
+
+					$infoFieldsHtml	= "<div class='fields'>
+											<label>Title</label> <input type='text' name='$modelClass"."[title]' />
+											<label>Description</label> <input type='text' name='$modelClass"."[description]' />
+											<label>Alternate Text</label> <input type='text' name='$modelClass"."[altText]' />
+											<label>Link</label> <input type='text' name='$modelClass"."[link]' />
+										</div>";
+				}
 			}
 		}
 
