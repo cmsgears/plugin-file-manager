@@ -230,7 +230,7 @@ class FileManager extends Component {
 			$result['extension'] 	= $extension;
 
 			// Special processing for Avatar Uploader
-			if( strcmp( $directory, "avatar" ) == 0 ) {
+			if( strcmp( $directory, 'avatar' ) == 0 ) {
 
 				// Generate Thumb
 				$thumbName	= $name . '-thumb' . "." . $extension;
