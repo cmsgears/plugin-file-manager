@@ -124,7 +124,7 @@ class FileManager extends Component {
 			}
 			else {
 
-				echo "Error: extension not allowed.";
+				return [ 'error' => 'The choosen file extension is not allowed.' ];
 			}
 		}
 		// Modern Style using File Data
@@ -148,7 +148,7 @@ class FileManager extends Component {
 				}
 				else {
 
-					echo "Error: extension not allowed.";
+					return [ 'error' => 'The choosen file extension is not allowed.' ];
 				}
 			}
 		}
@@ -159,7 +159,14 @@ class FileManager extends Component {
 
 			    if( $_FILES['file']['error'] > 0 ) {
 
-			        echo 'Error: ' . $_FILES['file']['error'];
+					if( $_FILES['file']['error'] == UPLOAD_ERR_INI_SIZE || $_FILES['file']['error'] == UPLOAD_ERR_FORM_SIZE ) {
+
+						return [ 'error' => "You have exceeded the allowed file size limit of $this->maxSize MB." ];
+					}
+					else if( $_FILES['file']['error'] == UPLOAD_ERR_CANT_WRITE ) {
+
+						return [ 'error' => "Please update admin to provide write permissions to save uploaded file." ];
+					}
 			    }
 			    else {
 
@@ -176,14 +183,14 @@ class FileManager extends Component {
 						}
 						else {
 
-							echo "Error: extension not allowed.";
+							return [ 'error' => 'The choosen file extension is not allowed.' ];
 						}
 					}
 			    }
 			}
 		}
 
-		return false;
+		return [ 'error' => 'File upload failed.' ];
 	}
 
 	private function saveTempFile( $file_contents, $directory, $filename, $extension ) {
@@ -193,9 +200,7 @@ class FileManager extends Component {
 
 		if( $sizeInMb > $this->maxSize ) {
 
-			echo "Error: Max size reached.";
-			
-			return false;			
+			return [ 'error' => "You have exceeded the allowed file size limit of $this->maxSize MB." ];
 		}
 
 		// Create Directory if not exist
@@ -250,10 +255,10 @@ class FileManager extends Component {
 		}
 		else {
 
-			echo "Error: File save failed or file with same name alrady exist.";	
+			return [ 'error' => "File save failed or file with same name alrady exist." ];
 		}
 
-		return false;
+		return [ 'error' => 'File upload failed.' ];
 	}
 
 	// File Processing ------------------------------------------------------------------
@@ -268,14 +273,12 @@ class FileManager extends Component {
 		$uploadUrl	= $this->uploadUrl;
 
 		$sourceFile		= $fileDir . '/' . $fileName . '.' . $fileExt;
-		$fileDir		= $dateDir . '/' . $fileDir . '/';
+		$targetDir		= $dateDir . '/' . $fileDir . '/';
 		$fileUrl		= $fileDir . $fileName . '.' . $fileExt;
 
-		$this->saveFile( $sourceFile, $fileDir, $fileUrl );
+		$this->saveFile( $sourceFile, $targetDir, $fileUrl );
 
 		// Save Image File
-		$file->directory	= $fileDir;
-		$file->createdAt	= $date;
 		$file->url			= $fileUrl;
 	}
 
