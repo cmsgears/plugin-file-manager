@@ -11,7 +11,7 @@
 ?>
 				<div class='postview'>
 					<div class='btn-show-chooser <?= $btnChooserIcon ?>' title='Update Video'></div>
-					<div class='wrap-image'><img src='<?= $url ?>' class='fluid' /></div>
+					<div class='wrap-image'><video src='<?= $url ?>' controls class='fluid'>Video not supported.</video></div>
 					<div class='message-upload'><?= $postUploadMessage ?></div>
 				</div>
 <?php
