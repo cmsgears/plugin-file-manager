@@ -285,6 +285,8 @@ class FileManager extends Component {
 	public function saveFile( $sourceFile, $targetDir, $filePath ) {
 
 		$sourceFile	= $this->uploadDir . "temp/" . $sourceFile;
+		$targetDir	= $this->uploadDir . $targetDir;
+		$filePath	= $this->uploadDir . $filePath;
 
 		// create required directories if not exist
 		if( !file_exists( $targetDir ) ) {
