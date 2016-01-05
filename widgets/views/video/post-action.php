@@ -15,6 +15,9 @@ use yii\helpers\Url;
 
 	<div class='<?= $paClass ?>'>
 		<form id='<?= $postActionId ?>' class='cmt-form' cmt-controller='<?= $cmtController ?>' cmt-action='<?= $cmtAction ?>' action='<?= $postActionUrl ?>' method='post'>
+			<div class="max-area-cover spinner">
+				<div class="valign-center cmti cmti-2x cmti-spinner-1 spin"></div>
+			</div>
 			<?= $fieldsHtml ?>
 			<?= $infoFieldsHtml ?>
 			<input type='submit' value='Save' /> 
