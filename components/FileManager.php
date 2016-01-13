@@ -16,13 +16,20 @@ use cmsgears\files\utilities\ImageResize;
  */
 class FileManager extends Component {
 
+	const FILE_TYPE_IMAGE			= 'image';
+	const FILE_TYPE_VIDEO			= 'video';
+	const FILE_TYPE_AUDIO			= 'audio';
+	const FILE_TYPE_DOCUMENT		= 'document';
+	const FILE_TYPE_COMPRESSED		= 'compressed';
+
 	public $ignoreDbConfig			= false;
 
 	// The extensions allowed by this file uploader.
 	public $imageExtensions 		= [ 'png', 'jpg', 'jpeg', 'gif' ];
 	public $videoExtensions 		= [ 'mp4', 'flv', 'ogv', 'avi' ];
-	public $docExtensions 			= [ 'pdf' ];
-	public $zipExtensions 			= [ 'rar', 'zip' ];
+	public $audioExtensions 		= [ 'mp3', 'm4a', 'wav' ];
+	public $documentExtensions 		= [ 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt' ];
+	public $compressedExtensions 	= [ 'rar', 'zip' ];
 
 	// Either of these must be set to true. Generate Name generate a unique name using Yii Security Component whereas pretty names use the file name provided by user and replace space by hyphen(-).
 	public $generateName		= true;
@@ -54,8 +61,9 @@ class FileManager extends Component {
 			// Use properties configured in DB on priority, else fallback to the one defined in this class.
 			$this->imageExtensions		= $properties->getImageExtensions( $this->imageExtensions );
 			$this->videoExtensions		= $properties->getVideoExtensions( $this->videoExtensions );
-			$this->docExtensions		= $properties->getDocExtensions( $this->docExtensions );
-			$this->zipExtensions		= $properties->getZipExtensions( $this->zipExtensions );
+			$this->audioExtensions		= $properties->getAudioExtensions( $this->audioExtensions );
+			$this->documentExtensions	= $properties->getDocumentExtensions( $this->documentExtensions );
+			$this->compressedExtensions	= $properties->getCompressedExtensions( $this->compressedExtensions );
 			$this->generateName			= $properties->isGenerateName( $this->generateName );
 			$this->prettyNames			= $properties->isPrettyName( $this->prettyNames );
 			$this->maxSize				= $properties->getMaxSize( $this->maxSize );
@@ -83,27 +91,33 @@ class FileManager extends Component {
 
 		switch( $type ) {
 			
-			case 'image': {
+			case self::FILE_TYPE_IMAGE: {
 				
 				$allowedExtensions = $this->imageExtensions;
 
 				break;
 			}
-			case 'video': {
+			case self::FILE_TYPE_VIDEO: {
 
 				$allowedExtensions = $this->videoExtensions;
 
 				break;
 			}
-			case 'doc': {
+			case self::FILE_TYPE_AUDIO: {
 
-				$allowedExtensions = $this->docExtensions;
+				$allowedExtensions = $this->audioExtensions;
 
 				break;
 			}
-			case 'compressed': {
+			case self::FILE_TYPE_DOCUMENT: {
 				
-				$allowedExtensions = $this->zipExtensions;
+				$allowedExtensions = $this->documentExtensions;
+				
+				break;
+			}
+			case self::FILE_TYPE_COMPRESSED: {
+				
+				$allowedExtensions = $this->compressedExtensions;
 				
 				break;
 			}
@@ -178,7 +192,7 @@ class FileManager extends Component {
 
 						// check allowed extensions
 						if( in_array( strtolower( $extension ), $allowedExtensions ) ) {
-							
+
 							return $this->saveTempFile( file_get_contents( $_FILES['file']['tmp_name'] ), $directory, $filename, $extension );
 						}
 						else {
@@ -291,7 +305,7 @@ class FileManager extends Component {
 		// create required directories if not exist
 		if( !file_exists( $targetDir ) ) {
 
-			mkdir( $targetDir , 0777, true );
+			mkdir( $targetDir , 0755, true );
 		}
 
 		// Move file from temp to destined directory

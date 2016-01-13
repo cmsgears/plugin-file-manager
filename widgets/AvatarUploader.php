@@ -5,7 +5,7 @@ namespace cmsgears\files\widgets;
 use \Yii;
 use yii\helpers\Html;
 
-class AvatarUploader extends FileUploader {
+class AvatarUploader extends ImageUploader {
 
 	// Variables ---------------------------------------------------
 
@@ -17,6 +17,8 @@ class AvatarUploader extends FileUploader {
 	public $directory		= 'avatar';
 
 	// uploader components
+	public $postViewIcon		= 'cmti cmti-5x cmti-user';
+
 	public $postActionUrl		= '/apix/user/avatar';
 	public $postActionId		= "frm-ajax-avatar";
 	public $cmtController		= 'default';

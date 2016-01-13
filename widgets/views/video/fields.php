@@ -5,6 +5,7 @@
 		<input type='hidden' name='<?= $modelClass ?>[name]' class='name' value='<?= $model->name ?>' />
 		<input type='hidden' name='<?= $modelClass ?>[extension]' class='extension' value='<?= $model->extension ?>' />
 		<input type='hidden' name='<?= $modelClass ?>[directory]' value='<?= $directory ?>' />
+		<input type='hidden' name='<?= $modelClass ?>[type]' value='<?= $type ?>' />
 		<input type='hidden' name='<?= $modelClass ?>[changed]' class='change' value='<?= $model->changed ?>' />
 		<input type='hidden' name='<?= $modelClass ?>[width]' value='<?= $width ?>' />
 		<input type='hidden' name='<?= $modelClass ?>[height]' value='<?= $height ?>' />
@@ -18,6 +19,7 @@
 		<input type='hidden' name='<?= $modelClass ?>[name]' class='name' />
 		<input type='hidden' name='<?= $modelClass ?>[extension]' class='extension' />
 		<input type='hidden' name='<?= $modelClass ?>[directory]' value='<?= $directory ?>' />
+		<input type='hidden' name='<?= $modelClass ?>[type]' value='<?= $type ?>' />
 		<input type='hidden' name='<?= $modelClass ?>[changed]' class='change' />
 		<input type='hidden' name='<?= $modelClass ?>[width]' value='<?= $width ?>' />
 		<input type='hidden' name='<?= $modelClass ?>[height]' value='<?= $height ?>' />

@@ -16,8 +16,9 @@ SELECT @form := `id` FROM cmg_core_form WHERE slug = 'config-file';
 INSERT INTO `cmg_core_form_field` (`formId`,`name`,`label`,`type`,`compress`,`validators`,`htmlOptions`,`data`,`order`) VALUES 
 	(@form,'image_extensions','Image Extensions',0,0,'required','{\"title\":\"Image Extensions.\",\"placeholder\":\"Image Extensions\"}',NULL,0),
 	(@form,'video_extensions','Video Extensions',0,0,'required','{\"title\":\"Video Extensions.\",\"placeholder\":\"Video Extensions\"}',NULL,0),
-	(@form,'doc_extensions','Doc Extensions',0,0,'required','{\"title\":\"Doc Extensions.\",\"placeholder\":\"Doc Extensions\"}',NULL,0),
-	(@form,'zip_extensions','Zip Extensions',0,0,'required','{\"title\":\"Zip Extensions.\",\"placeholder\":\"Zip Extensions\"}',NULL,0),
+	(@form,'audio_extensions','Audio Extensions',0,0,'required','{\"title\":\"Audio Extensions.\",\"placeholder\":\"Audio Extensions\"}',NULL,0),
+	(@form,'document_extensions','Document Extensions',0,0,'required','{\"title\":\"Document Extensions.\",\"placeholder\":\"Document Extensions\"}',NULL,0),
+	(@form,'compressed_extensions','Compressed Extensions',0,0,'required','{\"title\":\"Compressed Extensions.\",\"placeholder\":\"Compressed Extensions\"}',NULL,0),
 	(@form,'generate_name','Generate Name',40,0,'required','{\"title\":\"Generate Name.\"}',NULL,0),
 	(@form,'pretty_name','Pretty Name',40,0,'required','{\"title\":\"Pretty Name.\"}',NULL,0),
 	(@form,'max_size','Max Size',0,0,'required','{\"title\":\"Max Size.\",\"placeholder\":\"Max Size\"}',NULL,0),
@@ -34,8 +35,9 @@ INSERT INTO `cmg_core_form_field` (`formId`,`name`,`label`,`type`,`compress`,`va
 INSERT INTO `cmg_core_model_attribute` (`parentId`,`parentType`,`name`,`type`,`valueType`,`value`) VALUES
 	(@site,'site','image_extensions','file','text','png,jpg,jpeg,gif'),
 	(@site,'site','video_extensions','file','text','mp4,flv,ogv,avi'),
-	(@site,'site','doc_extensions','file','text','pdf'),
-	(@site,'site','zip_extensions','file','text','rar,zip'),
+	(@site,'site','audio_extensions','file','text','mp3,m4a,wav'),
+	(@site,'site','document_extensions','file','text','pdf,doc,docx,xls,xlsx,txt'),
+	(@site,'site','compressed_extensions','file','text','rar,zip'),
 	(@site,'site','generate_name','file','flag','1'),
 	(@site,'site','pretty_name','file','flag','0'),
 	(@site,'site','max_size','file','text','5'),

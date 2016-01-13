@@ -5,13 +5,13 @@ namespace cmsgears\files\widgets;
 use \Yii;
 use yii\helpers\Html;
 
-class FileUploader extends \cmsgears\core\common\base\Widget {
+abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 
 	// Variables ---------------------------------------------------
 
 	// Public Variables --------------------
 
-	public $template		= 'image';
+	public $template		= null;
 
 	// html options
 	public $options		 	= [];
@@ -21,8 +21,8 @@ class FileUploader extends \cmsgears\core\common\base\Widget {
 	public $modelClass		= 'File';
 
 	// file directory and type
-	public $directory		= 'banner';
-	public $type			= 'image';
+	public $directory		= null;
+	public $type			= null;
 
 	// file fields
 	public $infoFields			= false;
@@ -31,7 +31,7 @@ class FileUploader extends \cmsgears\core\common\base\Widget {
 	// uploader components
 	public $postView		= true;
 	public $btnChooserIcon	= "cmti cmti-edit";
-	public $postViewIcon	= "cmti cmti-5x cmti-user";
+	public $postViewIcon	= "cmti cmti-5x cmti-file";
 	public $chooser			= true;
 	public $preview			= true;
 	public $preloader		= true;
