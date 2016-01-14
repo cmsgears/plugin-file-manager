@@ -18,14 +18,14 @@ use yii\helpers\Url;
 			<div class="max-area-cover spinner">
 				<div class="valign-center cmti cmti-2x cmti-spinner-1 spin"></div>
 			</div>
-			<?= $fieldsHtml ?>
-			<?= $infoFieldsHtml ?>
+			<?= $attributesHtml ?>
+			<?= $infoHtml ?>
 			<input type='submit' value='Save' /> 
 		</form>
 	</div>
 
 <?php } else { ?>
 
-			<?= $fieldsHtml ?>
-			<?= $infoFieldsHtml ?>
+			<?= $attributesHtml ?>
+			<?= $infoHtml ?>
 <?php } ?>
