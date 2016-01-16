@@ -16,6 +16,9 @@ class AvatarUploader extends ImageUploader {
 	// file directory and type
 	public $directory		= 'avatar';
 
+	// file model and model class for loading by controller
+	public $modelClass		= 'Avatar';
+
 	// uploader components
 	public $postViewIcon		= 'cmti cmti-5x cmti-user';
 

@@ -13,6 +13,9 @@ class VideoUploader extends FileUploader {
 
 	public $template		= 'video';
 
+	// file model and model class for loading by controller
+	public $modelClass		= 'Video';
+
 	// file directory and type
 	public $directory		= 'video';
 	public $type			= 'video';
