@@ -31,6 +31,8 @@ class FileManager extends Component {
 	public $documentExtensions 		= [ 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt' ];
 	public $compressedExtensions 	= [ 'rar', 'zip' ];
 
+	public $typeMap					= [ 0 => 'Select File Type', self::FILE_TYPE_IMAGE => self::FILE_TYPE_IMAGE, self::FILE_TYPE_VIDEO => self::FILE_TYPE_VIDEO, self::FILE_TYPE_AUDIO => self::FILE_TYPE_AUDIO, self::FILE_TYPE_DOCUMENT => self::FILE_TYPE_DOCUMENT, self::FILE_TYPE_COMPRESSED => self::FILE_TYPE_COMPRESSED  ];
+	
 	// Either of these must be set to true. Generate Name generate a unique name using Yii Security Component whereas pretty names use the file name provided by user and replace space by hyphen(-).
 	public $generateName		= true;
 	// TODO - Check for existing file having same name
