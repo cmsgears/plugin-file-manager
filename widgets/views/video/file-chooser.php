@@ -1,7 +1,7 @@
 <?php if( $chooser ) { ?>
 
 	<div class='chooser'>
-		<div class='btn'>Choose Video
+		<div class='btn btn-medium'>Choose Video
 			<input type='file' class='input' />
 		</div>
 	</div>
