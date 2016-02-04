@@ -20,7 +20,7 @@ use yii\helpers\Url;
 			</div>
 			<?= $attributesHtml ?>
 			<?= $infoHtml ?>
-			<div class="frm-actions align align-middle">
+			<div class="frm-actions align align-center">
 				<input class="element-medium" type="submit" value="Save" />	
 			</div> 
 		</form>
