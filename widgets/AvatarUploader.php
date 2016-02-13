@@ -22,8 +22,8 @@ class AvatarUploader extends ImageUploader {
 	// uploader components
 	public $postViewIcon		= 'cmti cmti-5x cmti-user';
 
-	public $postActionUrl		= '/apix/user/avatar';
-	public $postActionId		= "frm-ajax-avatar";
+	public $postActionUrl		= 'user/avatar';
+	public $postActionId		= 'frm-ajax-avatar';
 	public $cmtController		= 'default';
 	public $cmtAction			= 'avatar';
 }

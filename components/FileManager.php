@@ -80,6 +80,18 @@ class FileManager extends Component {
         $this->init();
 	}
 
+	public function getTypeMap( $exclude = [] ) {
+
+		$typeMap = $this->typeMap;
+
+		foreach ( $exclude as $type ) {
+
+			unset( $typeMap[ $type ] );
+		}
+
+		return $typeMap;
+	}
+	
 	// File Uploading -------------------------------------------------------------------
 
 	public function handleFileUpload( $directory, $type ) {

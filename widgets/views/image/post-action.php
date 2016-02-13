@@ -1,18 +1,14 @@
 <?php 
-use yii\helpers\Url;
+if( $postAction && isset( $postActionUrl ) ) {
 
-	if( $postAction && isset( $postActionUrl ) ) {
+	$paClass = 'post-action';
 
-			$paClass = 'post-action';
+	if( $postActionVisible ) {
 
-			if( $postActionVisible ) {
-
-				$paClass = 'post-action-v';
-			}
-
-			$postActionUrl	= Url::toRoute( [ $postActionUrl ], true );
+		$paClass = 'post-action-v';
+	}
 ?>
-
+	<form></form>
 	<div class='<?= $paClass ?>'>
 		<form id='<?= $postActionId ?>' class='cmt-form' cmt-controller='<?= $cmtController ?>' cmt-action='<?= $cmtAction ?>' action='<?= $postActionUrl ?>' method='post'>
 			<div class="max-area-cover spinner">
@@ -25,9 +21,7 @@ use yii\helpers\Url;
 			</div> 
 		</form>
 	</div>
-
 <?php } else { ?>
-
-			<?= $attributesHtml ?>
-			<?= $infoHtml ?>
+	<?= $attributesHtml ?>
+	<?= $infoHtml ?>
 <?php } ?>
