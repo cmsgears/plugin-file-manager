@@ -32,17 +32,17 @@ INSERT INTO `cmg_core_form_field` (`formId`,`name`,`label`,`type`,`compress`,`va
 -- Dumping data for table `cmg_core_model_attribute`
 --
 
-INSERT INTO `cmg_core_model_attribute` (`parentId`,`parentType`,`name`,`type`,`valueType`,`value`) VALUES
-	(@site,'site','image_extensions','file','text','png,jpg,jpeg,gif'),
-	(@site,'site','video_extensions','file','text','mp4,flv,ogv,avi'),
-	(@site,'site','audio_extensions','file','text','mp3,m4a,wav'),
-	(@site,'site','document_extensions','file','text','pdf,doc,docx,xls,xlsx,txt'),
-	(@site,'site','compressed_extensions','file','text','rar,zip'),
-	(@site,'site','generate_name','file','flag','1'),
-	(@site,'site','pretty_name','file','flag','0'),
-	(@site,'site','max_size','file','text','5'),
-	(@site,'site','generate_thumb','file','flag','1'),
-	(@site,'site','thumb_width','file','text','120'),
-	(@site,'site','thumb_height','file','text','120'),
-	(@site,'site','uploads_directory','file','text',NULL),
-	(@site,'site','uploads_url','file','text','http://localhost/test/uploads/');
+INSERT INTO `cmg_core_model_attribute` (`parentId`,`parentType`,`name`,`label`,`type`,`valueType`,`value`) VALUES
+	(@site,'site','image_extensions','Image Extensions','file','text','png,jpg,jpeg,gif'),
+	(@site,'site','video_extensions','Video Extensions','file','text','mp4,flv,ogv,avi'),
+	(@site,'site','audio_extensions','Audio Extensions','file','text','mp3,m4a,wav'),
+	(@site,'site','document_extensions','Document Extensions','file','text','pdf,doc,docx,xls,xlsx,txt'),
+	(@site,'site','compressed_extensions','Compressed Extensions','file','text','rar,zip'),
+	(@site,'site','generate_name','Generate Name','file','flag','1'),
+	(@site,'site','pretty_name','Pretty Name','file','flag','0'),
+	(@site,'site','max_size','Max Size','file','text','5'),
+	(@site,'site','generate_thumb','Generate Thumb','file','flag','1'),
+	(@site,'site','thumb_width','Thumb Width','file','text','120'),
+	(@site,'site','thumb_height','Thumb Height','file','text','120'),
+	(@site,'site','uploads_directory','Uploads Directory','file','text',NULL),
+	(@site,'site','uploads_url','Uploads URL','file','text','http://localhost/test/uploads/');
