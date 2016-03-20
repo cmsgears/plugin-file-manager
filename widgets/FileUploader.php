@@ -32,6 +32,9 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 
 	// view - chooser
 	public $chooser			= true;
+    
+    // Disable Upload
+    public $disabled        = false;
 
 	// view - preview
 	public $preview			= true;
@@ -128,17 +131,17 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 
 	protected function renderPostView( $postView ) {
 		
-		return $this->render( $postView, [ 'postView' => $this->postView, 'model' => $this->model, 'btnChooserIcon' => $this->btnChooserIcon, 'postViewIcon' => $this->postViewIcon, 'postUploadMessage' => $this->postUploadMessage ] );
+		return $this->render( $postView, [ 'postView' => $this->postView, 'model' => $this->model, 'btnChooserIcon' => $this->btnChooserIcon, 'postViewIcon' => $this->postViewIcon, 'postUploadMessage' => $this->postUploadMessage, 'disabled' => $this->disabled ] );
 	}
 
 	protected function renderChooser( $chooser ) {
 		
-		return $this->render( $chooser, [ 'chooser' => $this->chooser ] );
+		return $this->render( $chooser, [ 'chooser' => $this->chooser, 'disabled' => $this->disabled ] );
 	}
 
 	protected function renderPreview( $preview ) {
 		
-		return $this->render( $preview, [ 'preview' => $this->preview, 'previewWidth' => $this->previewWidth, 'previewHeight' => $this->previewHeight ] );
+		return $this->render( $preview, [ 'preview' => $this->preview, 'previewWidth' => $this->previewWidth, 'previewHeight' => $this->previewHeight, 'disabled' => $this->disabled ] );
 	}
 
 	protected function renderPreLoader( $preloader ) {

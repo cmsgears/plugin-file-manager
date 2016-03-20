@@ -1,4 +1,4 @@
-<?php if( $preview ) { ?>
+<?php if( $preview && !$disabled ) { ?>
 
 	<div class='preview'>
 		<div class='wrap-drag'>

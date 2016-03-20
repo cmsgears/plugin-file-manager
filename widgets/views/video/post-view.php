@@ -1,5 +1,12 @@
 <?php
 	if( $postView ) {
+	    
+        $btnShowChooser = "<div class='btn-show-chooser $btnChooserIcon' title='Update Video'></div>";
+        
+        if( $disabled ) {
+            
+            $btnShowChooser = "<div class='btn-show-chooser' title='Update Video'></div>";
+        }
 
 		if( isset( $model ) ) {
 
@@ -10,7 +17,7 @@
 				$url 	= $model->getFileUrl();
 ?>
 				<div class='postview'>
-					<div class='btn-show-chooser <?= $btnChooserIcon ?>' title='Update Video'></div>
+					<?=$btnShowChooser?>
 					<div class='wrap-file'><video src='<?= $url ?>' controls class='fluid'>Video not supported.</video></div>
 					<div class='message-upload'><?= $postUploadMessage ?></div>
 				</div>
@@ -19,7 +26,7 @@
 			else {
 ?>
 				<div class='postview'>
-					<div class='btn-show-chooser <?= $btnChooserIcon ?>' title='Update Video'></div>
+					<?=$btnShowChooser?>
 					<div class='wrap-file'><span class='<?= $postViewIcon ?>'></span></div>
 					<div class='message-upload'><?= $postUploadMessage ?></div>
 				</div>
@@ -29,7 +36,7 @@
 		else {
 ?>
 			<div class='postview'>
-				<div class='btn-show-chooser <?= $btnChooserIcon ?>' title='Update Video'></div>
+				<?=$btnShowChooser?>
 				<div class='wrap-file'><span class='<?= $postViewIcon ?>'></span></div>
 				<div class='message-upload'><?= $postUploadMessage ?></div>
 			</div>
