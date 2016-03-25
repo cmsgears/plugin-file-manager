@@ -32,7 +32,10 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 
 	// view - chooser
 	public $chooser			= true;
-    
+
+    // Disable Upload
+    public $disabled        = false;
+
     // Disable Upload
     public $disabled        = false;
 
@@ -48,7 +51,8 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 
 	// view - info
 	public $info			= false;
-	public $seoInfoOnly		= false;
+	public $infoLabel		= false;
+	public $infoFields		= [ 'title', 'description', 'alt', 'link' ];
 
 	// view - post action
 	public $postAction			= false;
@@ -111,9 +115,9 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 		$postAction		= $this->template . '/post-action';
 
 		$postViewHtml 	= $this->renderPostView( $postView );
-		
+
 		$chooserHtml	= $this->renderChooser( $chooser );
-		
+
 		$previewHtml	= $this->renderPreview( $preview );
 
 		$preloaderHtml	= $this->renderPreLoader( $preloader );
@@ -130,38 +134,38 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 	// FileUploader
 
 	protected function renderPostView( $postView ) {
-		
+
 		return $this->render( $postView, [ 'postView' => $this->postView, 'model' => $this->model, 'btnChooserIcon' => $this->btnChooserIcon, 'postViewIcon' => $this->postViewIcon, 'postUploadMessage' => $this->postUploadMessage, 'disabled' => $this->disabled ] );
 	}
 
 	protected function renderChooser( $chooser ) {
-		
+
 		return $this->render( $chooser, [ 'chooser' => $this->chooser, 'disabled' => $this->disabled ] );
 	}
 
 	protected function renderPreview( $preview ) {
-		
+
 		return $this->render( $preview, [ 'preview' => $this->preview, 'previewWidth' => $this->previewWidth, 'previewHeight' => $this->previewHeight, 'disabled' => $this->disabled ] );
 	}
 
 	protected function renderPreLoader( $preloader ) {
-		
+
 		return $this->render( $preloader, [ 'preloader' => $this->preloader ] );
 	}
 
 	protected function renderAttributes( $attributes ) {
-		
+
 		return $this->render( $attributes, [ 'model' => $this->model, 'modelClass' => $this->modelClass, 'directory' => $this->directory, 'type' => $this->type,
 							'hiddenInfo' => $this->hiddenInfo, 'hiddenInfoFields' => $this->hiddenInfoFields ] );
 	}
 
 	protected function renderInfo( $info ) {
-		
-		return $this->render( $info, [ 'info' => $this->info, 'seoInfoOnly' => $this->seoInfoOnly, 'model' => $this->model, 'modelClass' => $this->modelClass ] );
+
+		return $this->render( $info, [ 'info' => $this->info, 'infoLabel' => $this->infoLabel, 'infoFields' => $this->infoFields, 'model' => $this->model, 'modelClass' => $this->modelClass ] );
 	}
 
 	protected function renderPostAction( $postAction, $attributesHtml, $infoHtml ) {
-		
+
 		return $this->render( $postAction, [ 'attributesHtml' => $attributesHtml, 'infoHtml' => $infoHtml, 'postAction' => $this->postAction, 'postActionUrl' => $this->postActionUrl, 'postActionVisible' => $this->postActionVisible, 'postActionId' => $this-> postActionId, 'cmtController' => $this-> cmtController, 'cmtAction' => $this->cmtAction ] );
 	}
 }

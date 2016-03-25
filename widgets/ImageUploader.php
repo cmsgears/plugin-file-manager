@@ -27,10 +27,10 @@ class ImageUploader extends FileUploader {
 	public $theight			= null;
 
 	protected function renderAttributes( $attributes ) {
-		
-		return $this->render( $attributes, [ 'model' => $this->model, 'modelClass' => $this->modelClass, 'directory' => $this->directory, 'type' => $this->type, 
+
+		return $this->render( $attributes, [ 'model' => $this->model, 'modelClass' => $this->modelClass, 'directory' => $this->directory, 'type' => $this->type,
 					'hiddenInfo' => $this->hiddenInfo, 'hiddenInfoFields' => $this->hiddenInfoFields,
-					'width' => $this->width, 'height' => $this->height, 'twidth' => $this->twidth, 'theight' => $this->theight 
+					'width' => $this->width, 'height' => $this->height, 'twidth' => $this->twidth, 'theight' => $this->theight
 				]);
 	}
 }
