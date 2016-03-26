@@ -36,9 +36,6 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
     // Disable Upload
     public $disabled        = false;
 
-    // Disable Upload
-    public $disabled        = false;
-
 	// view - preview
 	public $preview			= true;
 
