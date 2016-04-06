@@ -9,7 +9,7 @@ SELECT @site := `id` FROM cmg_core_site WHERE slug = 'main';
 --
 
 INSERT INTO `cmg_core_form` (`siteId`,`templateId`,`createdBy`,`modifiedBy`,`name`,`slug`,`type`,`description`,`successMessage`,`captcha`,`visibility`,`active`,`userMail`,`adminMail`,`createdAt`,`modifiedAt`,`htmlOptions`,`data`) VALUES
-	(@site,NULL,1,1,'Config File','config-file','system','Facebook configuration form.','All configurations saved successfully.',0,10,1,0,0,'2014-10-11 14:22:54','2014-10-11 14:22:54',NULL,NULL);
+	(@site,NULL,1,1,'Config File','config-file','system','File Manager configuration form.','All configurations saved successfully.',0,10,1,0,0,'2014-10-11 14:22:54','2014-10-11 14:22:54',NULL,NULL);
 
 SELECT @form := `id` FROM cmg_core_form WHERE slug = 'config-file';
 
