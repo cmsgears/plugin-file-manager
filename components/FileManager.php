@@ -32,7 +32,7 @@ class FileManager extends Component {
 	public $compressedExtensions 	= [ 'rar', 'zip' ];
 
 	public $typeMap					= [ 0 => 'Select File Type', self::FILE_TYPE_IMAGE => self::FILE_TYPE_IMAGE, self::FILE_TYPE_VIDEO => self::FILE_TYPE_VIDEO, self::FILE_TYPE_AUDIO => self::FILE_TYPE_AUDIO, self::FILE_TYPE_DOCUMENT => self::FILE_TYPE_DOCUMENT, self::FILE_TYPE_COMPRESSED => self::FILE_TYPE_COMPRESSED  ];
-	
+
 	// Either of these must be set to true. Generate Name generate a unique name using Yii Security Component whereas pretty names use the file name provided by user and replace space by hyphen(-).
 	public $generateName		= true;
 	// TODO - Check for existing file having same name
@@ -55,11 +55,11 @@ class FileManager extends Component {
 
             Yii::configure( $this, $config );
         }
-		
+
 		if( !$this->ignoreDbConfig ) {
 
 			$properties				= FileProperties::getInstance();
-	
+
 			// Use properties configured in DB on priority, else fallback to the one defined in this class.
 			$this->imageExtensions		= $properties->getImageExtensions( $this->imageExtensions );
 			$this->videoExtensions		= $properties->getVideoExtensions( $this->videoExtensions );
@@ -91,7 +91,7 @@ class FileManager extends Component {
 
 		return $typeMap;
 	}
-	
+
 	// File Uploading -------------------------------------------------------------------
 
 	public function handleFileUpload( $directory, $type ) {
@@ -104,9 +104,9 @@ class FileManager extends Component {
 		$allowedExtensions	= [];
 
 		switch( $type ) {
-			
+
 			case self::FILE_TYPE_IMAGE: {
-				
+
 				$allowedExtensions = $this->imageExtensions;
 
 				break;
@@ -124,15 +124,15 @@ class FileManager extends Component {
 				break;
 			}
 			case self::FILE_TYPE_DOCUMENT: {
-				
+
 				$allowedExtensions = $this->documentExtensions;
-				
+
 				break;
 			}
 			case self::FILE_TYPE_COMPRESSED: {
-				
+
 				$allowedExtensions = $this->compressedExtensions;
-				
+
 				break;
 			}
 		}
@@ -144,7 +144,7 @@ class FileManager extends Component {
 		if( $filename ) {
 
 			$extension 	= pathinfo( $filename, PATHINFO_EXTENSION );
-			
+
 			// check allowed extensions
 			if( in_array( strtolower( $extension ), $allowedExtensions ) ) {
 
@@ -163,7 +163,7 @@ class FileManager extends Component {
 			if( $filename ) {
 
 				$extension 	= $_POST[ 'fileExtension' ];
-				
+
 				// check allowed extensions
 				if( in_array( strtolower( $extension ), $allowedExtensions ) ) {
 
@@ -221,7 +221,7 @@ class FileManager extends Component {
 		return [ 'error' => 'File upload failed.' ];
 	}
 
-	private function saveTempFile( $file_contents, $directory, $filename, $extension ) {
+	public function saveTempFile( $file_contents, $directory, $filename, $extension ) {
 
 		// Check allowed file size
 		$sizeInMb = number_format( $file_contents / 1048576, 2 );
@@ -245,7 +245,7 @@ class FileManager extends Component {
 
 		if( $this->generateName ) {
 
-			$name	= md5( date( 'Y-m-d H:i:s:u' ) );
+			$name    = Yii::$app->security->generateRandomString();
 		}
 		else if( $this->prettyNames ) {
 
@@ -276,7 +276,7 @@ class FileManager extends Component {
 			}
 			else {
 
-				$result['tempUrl'] 		= $this->uploadUrl . $tempUrl . $filename;	
+				$result['tempUrl'] 		= $this->uploadUrl . $tempUrl . $filename;
 			}
 
 			return $result;
@@ -343,10 +343,10 @@ class FileManager extends Component {
 		$targetDir		= $dateDir . '/' . $imageDir . '/';
 		$imageUrl		= $targetDir . $imageName . '.' . $imageExt;
 		$imageThumbUrl	= $targetDir . $imageName . '-thumb.' . $imageExt;
-		
+
 		// Save Image and Thumb
 		$this->saveImageAndThumb( $sourceFile, $targetDir, $imageUrl, $imageThumbUrl, $width, $height, $twidth = null, $theight = null );
-		
+
 		// Update URL and Thumb
 		$file->url			= $imageUrl;
 
@@ -420,7 +420,7 @@ class FileManager extends Component {
 
         $contents =  ob_get_contents();
 
-        //Converting Image DPI to $dpi                
+        //Converting Image DPI to $dpi
         $contents = substr_replace( $contents, pack( "cnn", 1, $dpi, $dpi ), 13, 5 );
         ob_end_clean();
 
