@@ -9,6 +9,6 @@ Description - File Manager plugin for CMSGears provide default component to acce
 Highlighted Features
 =========================================
 1. The default Component i.e. FileManager can be used to accept files uploaded by both admin and frontend users. The implementation of this component can be further changed based on project needs.
-2. It also provide File Uploader Widget. The widget allows users to upload a file. It needs File Uploader JQuery Plugin from CMGTools library. 
+2. It also provide File Uploader Widget. The widget allows users to upload a file. It needs File Uploader JQuery Plugin from CMGTools JS library.
 
 Notes: The detailed description for each feature can be found at http://www.cmsgears.org.
