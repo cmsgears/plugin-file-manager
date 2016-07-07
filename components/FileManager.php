@@ -40,6 +40,13 @@ class FileManager extends Component {
 
 	public $maxSize				= 5; // In MB
 
+	public $maxResolution		= 10000; // Maximum pixels either horizontally or vertically.
+
+	// Image Medium Generation
+	public $generateImageMedium	= true;
+	public $mediumWidth			= 480;
+	public $mediumHeight		= 320;
+
 	// Image Thumb Generation
 	public $generateImageThumb	= true;
 	public $thumbWidth			= 120;
@@ -69,6 +76,9 @@ class FileManager extends Component {
 			$this->generateName			= $properties->isGenerateName( $this->generateName );
 			$this->prettyNames			= $properties->isPrettyName( $this->prettyNames );
 			$this->maxSize				= $properties->getMaxSize( $this->maxSize );
+			$this->generateImageMedium	= $properties->isGenerateMedium( $this->generateImageMedium );
+			$this->mediumWidth			= $properties->getMediumWidth( $this->mediumWidth );
+			$this->mediumHeight			= $properties->getMediumHeight( $this->mediumHeight );
 			$this->generateImageThumb	= $properties->isGenerateThumb( $this->generateImageThumb );
 			$this->thumbWidth			= $properties->getThumbWidth( $this->thumbWidth );
 			$this->thumbHeight			= $properties->getThumbHeight( $this->thumbHeight );
@@ -330,7 +340,7 @@ class FileManager extends Component {
 
 	// Save Image -------------
 
-	public function processImage( $file, $width = null, $height = null, $twidth = null, $theight = null ) {
+	public function processImage( $file, $width = null, $height = null, $mwidth = null, $mheight = null, $twidth = null, $theight = null ) {
 
 		$dateDir	= date( 'Y-m-d' );
 		$imageName	= $file->name;
@@ -342,13 +352,19 @@ class FileManager extends Component {
 		$sourceFile		= $imageDir . '/' . $imageName . '.' . $imageExt;
 		$targetDir		= $dateDir . '/' . $imageDir . '/';
 		$imageUrl		= $targetDir . $imageName . '.' . $imageExt;
+		$imageMediumUrl	= $targetDir . $imageName . '-medium.' . $imageExt;
 		$imageThumbUrl	= $targetDir . $imageName . '-thumb.' . $imageExt;
 
-		// Save Image and Thumb
-		$this->saveImageAndThumb( $sourceFile, $targetDir, $imageUrl, $imageThumbUrl, $width, $height, $twidth = null, $theight = null );
+		// Save Image
+		$this->saveImage( $sourceFile, $targetDir, $imageUrl, $imageMediumUrl, $imageThumbUrl, $width, $height, $mwidth = null, $mheight = null, $twidth = null, $theight = null );
 
 		// Update URL and Thumb
 		$file->url			= $imageUrl;
+
+		if( $this->generateImageMedium ) {
+
+			$file->medium	= $imageMediumUrl;
+		}
 
 		if( $this->generateImageThumb ) {
 
@@ -356,11 +372,12 @@ class FileManager extends Component {
 		}
 	}
 
-	public function saveImageAndThumb( $sourceFile, $targetDir, $filePath, $thumbPath, $width = null, $height = null, $twidth = null, $theight = null ) {
+	public function saveImage( $sourceFile, $targetDir, $filePath, $mediumPath, $thumbPath, $width = null, $height = null, $mwidth = null, $mheight = null, $twidth = null, $theight = null ) {
 
 		$sourceFile	= $this->uploadDir . "temp/" . $sourceFile;
 		$targetDir	= $this->uploadDir . $targetDir;
 		$filePath	= $this->uploadDir . $filePath;
+		$mediumPath	= $this->uploadDir . $mediumPath;
 		$thumbPath	= $this->uploadDir . $thumbPath;
 
 		// create required directories if not exist
@@ -375,9 +392,32 @@ class FileManager extends Component {
 		// Resize Image
 		if( isset( $width ) && isset( $height ) && intval( $width ) > 0 && intval( $height ) > 0 ) {
 
+			$width 	= $width > $this->maxResolution ? $this->maxResolution : $width;
+			$height = $height > $this->maxResolution ? $this->maxResolution : $height;
+
 			$resizeObj = new ImageResize( $filePath );
 			$resizeObj->resizeImage( $width, $height, 'exact' );
 			$resizeObj->saveImage( $filePath, 100 );
+		}
+
+		// Save Medium
+		if( $this->generateImageMedium && isset( $mediumPath ) ) {
+
+			$resizeObj = new ImageResize( $filePath );
+
+			if( isset( $mwidth ) && isset( $mheight ) && intval( $mwidth ) > 0 && intval( $mheight ) > 0 ) {
+
+				$mwidth 	= $mwidth > $this->maxResolution ? $this->maxResolution : $mwidth;
+				$mheight 	= $mheight > $this->maxResolution ? $this->maxResolution : $mheight;
+
+				$resizeObj->resizeImage( $twidth, $theight, 'crop' );
+			}
+			else {
+
+				$resizeObj->resizeImage( $this->mediumWidth, $this->mediumHeight, 'crop' );
+			}
+
+			$resizeObj->saveImage( $mediumPath, 100 );
 		}
 
 		// Save Thumb
@@ -386,6 +426,9 @@ class FileManager extends Component {
 			$resizeObj = new ImageResize( $filePath );
 
 			if( isset( $twidth ) && isset( $theight ) && intval( $twidth ) > 0 && intval( $theight ) > 0 ) {
+
+				$twidth 	= $twidth > $this->maxResolution ? $this->maxResolution : $twidth;
+				$theight 	= $theight > $this->maxResolution ? $this->maxResolution : $theight;
 
 				$resizeObj->resizeImage( $twidth, $theight, 'crop' );
 			}

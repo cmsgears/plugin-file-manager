@@ -12,7 +12,7 @@
 
 			$name	= $model->name;
 
-			if( isset( $name ) ) {
+			if( isset( $name ) && strlen( $name ) > 0 ) {
 
 				$url 	= $model->getFileUrl();
 ?>

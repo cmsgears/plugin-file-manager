@@ -1,10 +1,10 @@
 <?php
 	if( $postView ) {
-	    
+
         $btnShowChooser = "<div class='btn-show-chooser $btnChooserIcon' title='Update Video'></div>";
-        
+
         if( $disabled ) {
-            
+
             $btnShowChooser = "<div class='btn-show-chooser' title='Update Video'></div>";
         }
 
@@ -12,8 +12,8 @@
 
 			$name	= $model->name;
 
-			if( isset( $name ) ) {
-					
+			if( isset( $name ) && strlen( $name ) > 0 ) {
+
 				$url 	= $model->getFileUrl();
 ?>
 				<div class='postview'>

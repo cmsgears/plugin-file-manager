@@ -24,11 +24,13 @@ class m160622_061028_file_manager extends \yii\db\Migration {
 
 		$this->prefix		= 'cmg_';
 
-		$this->uploadsDir	= Yii::$app->cmgMigration->getUploadsDir();
-		$this->uploadsUrl	= Yii::$app->cmgMigration->getUploadsUrl();
+		$this->uploadsDir	= Yii::$app->migration->getUploadsDir();
+		$this->uploadsUrl	= Yii::$app->migration->getUploadsUrl();
 
 		$this->site		= Site::findBySlug( CoreGlobal::SITE_MAIN );
 		$this->master	= User::findByUsername( 'demomaster' );
+
+		Yii::$app->core->setSite( $this->site );
 	}
 
     public function up() {
@@ -56,7 +58,7 @@ class m160622_061028_file_manager extends \yii\db\Migration {
             'modifiedAt' => DateUtil::getDateTime()
         ]);
 
-		$config	= Form::findBySlug( 'config-file' );
+		$config	= Form::findBySlug( 'config-file', CoreGlobal::TYPE_SYSTEM );
 
 		$columns = [ 'formId', 'name', 'label', 'type', 'compress', 'validators', 'order', 'icon', 'htmlOptions' ];
 
@@ -84,28 +86,28 @@ class m160622_061028_file_manager extends \yii\db\Migration {
 
 	private function insertDefaultConfig() {
 
-		$columns = [ 'parentId', 'parentType', 'name', 'label', 'type', 'valueType', 'value' ];
+		$columns = [ 'modelId', 'name', 'label', 'type', 'valueType', 'value' ];
 
 		$attributes	= [
-			[ $this->site->id, CoreGlobal::TYPE_SITE, 'image_extensions', 'Image Extensions', 'file', 'text', 'png,jpg,jpeg,gif' ],
-			[ $this->site->id, CoreGlobal::TYPE_SITE, 'video_extensions', 'Video Extensions', 'file', 'text', 'mp4,flv,ogv,avi' ],
-			[ $this->site->id, CoreGlobal::TYPE_SITE, 'audio_extensions', 'Audio Extensions', 'file', 'text', 'mp3,m4a,wav' ],
-			[ $this->site->id, CoreGlobal::TYPE_SITE, 'document_extensions', 'Document Extensions', 'file', 'text', 'pdf,doc,docx,xls,xlsx,txt' ],
-			[ $this->site->id, CoreGlobal::TYPE_SITE, 'compressed_extensions', 'Compressed Extensions', 'file', 'text', 'rar,zip' ],
-			[ $this->site->id, CoreGlobal::TYPE_SITE, 'generate_name', 'Generate Name', 'file', 'flag', '1' ],
-			[ $this->site->id, CoreGlobal::TYPE_SITE, 'pretty_name', 'Pretty Name', 'file', 'flag', '0' ],
-			[ $this->site->id, CoreGlobal::TYPE_SITE, 'max_size', 'Max Size', 'file','text', '5' ],
-			[ $this->site->id, CoreGlobal::TYPE_SITE, 'generate_medium', 'Generate Medium', 'file', 'flag', '1' ],
-			[ $this->site->id, CoreGlobal::TYPE_SITE, 'generate_thumb', 'Generate Thumb', 'file', 'flag', '1' ],
-			[ $this->site->id, CoreGlobal::TYPE_SITE, 'medium_width', 'Medium Width', 'file', 'text', '480' ],
-			[ $this->site->id, CoreGlobal::TYPE_SITE, 'medium_height', 'Medium Height', 'file', 'text', '320' ],
-			[ $this->site->id, CoreGlobal::TYPE_SITE, 'thumb_width', 'Thumb Width', 'file', 'text', '120' ],
-			[ $this->site->id, CoreGlobal::TYPE_SITE, 'thumb_height', 'Thumb Height', 'file', 'text', '120' ],
-			[ $this->site->id, CoreGlobal::TYPE_SITE, 'uploads_directory', 'Uploads Directory', 'file', 'text', $this->uploadsDir ],
-			[ $this->site->id, CoreGlobal::TYPE_SITE, 'uploads_url', 'Uploads URL', 'file', 'text', $this->uploadsUrl ]
+			[ $this->site->id, 'image_extensions', 'Image Extensions', 'file', 'text', 'png,jpg,jpeg,gif' ],
+			[ $this->site->id, 'video_extensions', 'Video Extensions', 'file', 'text', 'mp4,flv,ogv,avi' ],
+			[ $this->site->id, 'audio_extensions', 'Audio Extensions', 'file', 'text', 'mp3,m4a,wav' ],
+			[ $this->site->id, 'document_extensions', 'Document Extensions', 'file', 'text', 'pdf,doc,docx,xls,xlsx,txt' ],
+			[ $this->site->id, 'compressed_extensions', 'Compressed Extensions', 'file', 'text', 'rar,zip' ],
+			[ $this->site->id, 'generate_name', 'Generate Name', 'file', 'flag', '1' ],
+			[ $this->site->id, 'pretty_name', 'Pretty Name', 'file', 'flag', '0' ],
+			[ $this->site->id, 'max_size', 'Max Size', 'file','text', '5' ],
+			[ $this->site->id, 'generate_medium', 'Generate Medium', 'file', 'flag', '1' ],
+			[ $this->site->id, 'generate_thumb', 'Generate Thumb', 'file', 'flag', '1' ],
+			[ $this->site->id, 'medium_width', 'Medium Width', 'file', 'text', '480' ],
+			[ $this->site->id, 'medium_height', 'Medium Height', 'file', 'text', '320' ],
+			[ $this->site->id, 'thumb_width', 'Thumb Width', 'file', 'text', '120' ],
+			[ $this->site->id, 'thumb_height', 'Thumb Height', 'file', 'text', '120' ],
+			[ $this->site->id, 'uploads_directory', 'Uploads Directory', 'file', 'text', $this->uploadsDir ],
+			[ $this->site->id, 'uploads_url', 'Uploads URL', 'file', 'text', $this->uploadsUrl ]
 		];
 
-		$this->batchInsert( $this->prefix . 'core_model_attribute', $columns, $attributes );
+		$this->batchInsert( $this->prefix . 'core_site_attribute', $columns, $attributes );
 	}
 
     public function down() {
