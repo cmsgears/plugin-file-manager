@@ -88,7 +88,7 @@ class m160622_061028_file_manager extends \yii\db\Migration {
 
 		$columns = [ 'modelId', 'name', 'label', 'type', 'valueType', 'value' ];
 
-		$attributes	= [
+		$metas	= [
 			[ $this->site->id, 'image_extensions', 'Image Extensions', 'file', 'text', 'png,jpg,jpeg,gif' ],
 			[ $this->site->id, 'video_extensions', 'Video Extensions', 'file', 'text', 'mp4,flv,ogv,avi' ],
 			[ $this->site->id, 'audio_extensions', 'Audio Extensions', 'file', 'text', 'mp3,m4a,wav' ],
@@ -107,7 +107,7 @@ class m160622_061028_file_manager extends \yii\db\Migration {
 			[ $this->site->id, 'uploads_url', 'Uploads URL', 'file', 'text', $this->uploadsUrl ]
 		];
 
-		$this->batchInsert( $this->prefix . 'core_site_attribute', $columns, $attributes );
+		$this->batchInsert( $this->prefix . 'core_site_meta', $columns, $metas );
 	}
 
     public function down() {
