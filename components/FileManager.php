@@ -16,362 +16,436 @@ use cmsgears\files\utilities\ImageResize;
  */
 class FileManager extends Component {
 
-	public $ignoreDbConfig			= false;
+    const FILE_TYPE_IMAGE			= 'image';
+    const FILE_TYPE_VIDEO			= 'video';
+    const FILE_TYPE_AUDIO			= 'audio';
+    const FILE_TYPE_DOCUMENT		= 'document';
+    const FILE_TYPE_COMPRESSED		= 'compressed';
 
-	// The extensions allowed by this file uploader.
-	public $imageExtensions 		= [ 'png', 'jpg', 'jpeg', 'gif' ];
-	public $videoExtensions 		= [ 'mp4', 'flv', 'ogv', 'avi' ];
-	public $docExtensions 			= [ 'pdf' ];
-	public $zipExtensions 			= [ 'rar', 'zip' ];
+    public $ignoreDbConfig			= false;
 
-	// Either of these must be set to true. Generate Name generate a unique name using Yii Security Component whereas pretty names use the file name provided by user and replace space by hyphen(-).
-	public $generateName		= true;
-	// TODO - Check for existing file having same name
-	public $prettyNames			= false;
+    // The extensions allowed by this file uploader.
+    public $imageExtensions 		= [ 'png', 'jpg', 'jpeg', 'gif' ];
+    public $videoExtensions 		= [ 'mp4', 'flv', 'ogv', 'avi' ];
+    public $audioExtensions 		= [ 'mp3', 'm4a', 'wav' ];
+    public $documentExtensions 		= [ 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt' ];
+    public $compressedExtensions 	= [ 'rar', 'zip' ];
 
-	public $maxSize				= 5; // In MB
+    public $typeMap					= [ 0 => 'Select File Type', self::FILE_TYPE_IMAGE => self::FILE_TYPE_IMAGE, self::FILE_TYPE_VIDEO => self::FILE_TYPE_VIDEO, self::FILE_TYPE_AUDIO => self::FILE_TYPE_AUDIO, self::FILE_TYPE_DOCUMENT => self::FILE_TYPE_DOCUMENT, self::FILE_TYPE_COMPRESSED => self::FILE_TYPE_COMPRESSED  ];
 
-	// Image Thumb Generation
-	public $generateImageThumb	= true;
-	public $thumbWidth			= 120;
-	public $thumbHeight			= 120;
+    // Either of these must be set to true. Generate Name generate a unique name using Yii Security Component whereas pretty names use the file name provided by user and replace space by hyphen(-).
+    public $generateName		= true;
+    // TODO - Check for existing file having same name
+    public $prettyNames			= false;
 
-	// These must be set to allow file manager to work.
-	public $uploadDir			= null;
-	public $uploadUrl			= null;
+    public $maxSize				= 5; // In MB
 
-	public function __construct( $config = [] ) {
+    public $maxResolution		= 10000; // Maximum pixels either horizontally or vertically.
+
+    // Image Medium Generation
+    public $generateImageMedium	= true;
+    public $mediumWidth			= 480;
+    public $mediumHeight		= 320;
+
+    // Image Thumb Generation
+    public $generateImageThumb	= true;
+    public $thumbWidth			= 120;
+    public $thumbHeight			= 120;
+
+    // These must be set to allow file manager to work.
+    public $uploadDir			= null;
+    public $uploadUrl			= null;
+
+    public function __construct( $config = [] ) {
 
         if( !empty( $config ) ) {
 
             Yii::configure( $this, $config );
         }
-		
-		if( !$this->ignoreDbConfig ) {
 
-			$properties				= FileProperties::getInstance();
-	
-			// Use properties configured in DB on priority, else fallback to the one defined in this class.
-			$this->imageExtensions		= $properties->getImageExtensions( $this->imageExtensions );
-			$this->videoExtensions		= $properties->getVideoExtensions( $this->videoExtensions );
-			$this->docExtensions		= $properties->getDocExtensions( $this->docExtensions );
-			$this->zipExtensions		= $properties->getZipExtensions( $this->zipExtensions );
-			$this->generateName			= $properties->isGenerateName( $this->generateName );
-			$this->prettyNames			= $properties->isPrettyName( $this->prettyNames );
-			$this->maxSize				= $properties->getMaxSize( $this->maxSize );
-			$this->generateImageThumb	= $properties->isGenerateThumb( $this->generateImageThumb );
-			$this->thumbWidth			= $properties->getThumbWidth( $this->thumbWidth );
-			$this->thumbHeight			= $properties->getThumbHeight( $this->thumbHeight );
-			$this->uploadDir			= Yii::getAlias( "@uploads" ) . "/";
-			$this->uploadDir			= $properties->getUploadDir( $this->uploadDir );
-			$this->uploadUrl			= $properties->getUploadUrl( $this->uploadUrl );
-		}
+        if( !$this->ignoreDbConfig ) {
+
+            $properties				= FileProperties::getInstance();
+
+            // Use properties configured in DB on priority, else fallback to the one defined in this class.
+            $this->imageExtensions		= $properties->getImageExtensions( $this->imageExtensions );
+            $this->videoExtensions		= $properties->getVideoExtensions( $this->videoExtensions );
+            $this->audioExtensions		= $properties->getAudioExtensions( $this->audioExtensions );
+            $this->documentExtensions	= $properties->getDocumentExtensions( $this->documentExtensions );
+            $this->compressedExtensions	= $properties->getCompressedExtensions( $this->compressedExtensions );
+            $this->generateName			= $properties->isGenerateName( $this->generateName );
+            $this->prettyNames			= $properties->isPrettyName( $this->prettyNames );
+            $this->maxSize				= $properties->getMaxSize( $this->maxSize );
+            $this->generateImageMedium	= $properties->isGenerateMedium( $this->generateImageMedium );
+            $this->mediumWidth			= $properties->getMediumWidth( $this->mediumWidth );
+            $this->mediumHeight			= $properties->getMediumHeight( $this->mediumHeight );
+            $this->generateImageThumb	= $properties->isGenerateThumb( $this->generateImageThumb );
+            $this->thumbWidth			= $properties->getThumbWidth( $this->thumbWidth );
+            $this->thumbHeight			= $properties->getThumbHeight( $this->thumbHeight );
+            $this->uploadDir			= Yii::getAlias( "@uploads" ) . "/";
+            $this->uploadDir			= $properties->getUploadDir( $this->uploadDir );
+            $this->uploadUrl			= $properties->getUploadUrl( $this->uploadUrl );
+        }
 
         $this->init();
-	}
+    }
 
-	// File Uploading -------------------------------------------------------------------
+    public function getTypeMap( $exclude = [] ) {
 
-	public function handleFileUpload( $directory, $type ) {
+        $typeMap = $this->typeMap;
 
-		return $this->processFileUpload( $directory, $type );
-	}
+        foreach ( $exclude as $type ) {
 
-	private function processFileUpload( $directory, $type ) {
+            unset( $typeMap[ $type ] );
+        }
 
-		$allowedExtensions	= [];
+        return $typeMap;
+    }
 
-		switch( $type ) {
-			
-			case 'image': {
-				
-				$allowedExtensions = $this->imageExtensions;
+    // File Uploading -------------------------------------------------------------------
 
-				break;
-			}
-			case 'video': {
+    public function handleFileUpload( $directory, $type ) {
 
-				$allowedExtensions = $this->videoExtensions;
+        return $this->processFileUpload( $directory, $type );
+    }
 
-				break;
-			}
-			case 'doc': {
+    private function processFileUpload( $directory, $type ) {
 
-				$allowedExtensions = $this->docExtensions;
+        $allowedExtensions	= [];
 
-				break;
-			}
-			case 'compressed': {
-				
-				$allowedExtensions = $this->zipExtensions;
-				
-				break;
-			}
-		}
+        switch( $type ) {
 
-		// Get the filename submitted by user
-		$filename = ( isset( $_SERVER['HTTP_X_FILENAME'] ) ? $_SERVER['HTTP_X_FILENAME'] : false );
+            case self::FILE_TYPE_IMAGE: {
 
-		// Modern Style using Xhr
-		if( $filename ) {
+                $allowedExtensions = $this->imageExtensions;
 
-			$extension 	= pathinfo( $filename, PATHINFO_EXTENSION );
-			
-			// check allowed extensions
-			if( in_array( strtolower( $extension ), $allowedExtensions ) ) {
+                break;
+            }
+            case self::FILE_TYPE_VIDEO: {
 
-				return $this->saveTempFile( file_get_contents( 'php://input' ), $directory, $filename, $extension );
-			}
-			else {
+                $allowedExtensions = $this->videoExtensions;
 
-				echo "Error: extension not allowed.";
-			}
-		}
-		// Modern Style using File Data
-		else if( isset( $_POST[ 'fileData' ] ) && $_POST[ 'fileData' ] ) {
+                break;
+            }
+            case self::FILE_TYPE_AUDIO: {
 
-	        $filename = $_POST[ 'fileName' ];
+                $allowedExtensions = $this->audioExtensions;
 
-			if( $filename ) {
+                break;
+            }
+            case self::FILE_TYPE_DOCUMENT: {
 
-				$extension 	= $_POST[ 'fileExtension' ];
-				
-				// check allowed extensions
-				if( in_array( strtolower( $extension ), $allowedExtensions ) ) {
+                $allowedExtensions = $this->documentExtensions;
 
-					// Decoding file data
-					$file 	= $_POST[ 'file' ];
-    				$file 	= str_replace( ' ', '+', $file );
-    				$file 	= base64_decode( $file );
+                break;
+            }
+            case self::FILE_TYPE_COMPRESSED: {
 
-					return $this->saveTempFile( $file, $directory, $filename, $extension );
-				}
-				else {
+                $allowedExtensions = $this->compressedExtensions;
 
-					echo "Error: extension not allowed.";
-				}
-			}
-		}
-		// Legacy System using file
-		else {
+                break;
+            }
+        }
 
-			if( isset( $_FILES['file'] ) ) {
+        // Get the filename submitted by user
+        $filename = ( isset( $_SERVER['HTTP_X_FILENAME'] ) ? $_SERVER['HTTP_X_FILENAME'] : false );
 
-			    if( $_FILES['file']['error'] > 0 ) {
+        // Modern Style using Xhr
+        if( $filename ) {
 
-			        echo 'Error: ' . $_FILES['file']['error'];
-			    }
-			    else {
+            $extension 	= pathinfo( $filename, PATHINFO_EXTENSION );
 
-			        $filename = $_FILES['file']['name'];
+            // check allowed extensions
+            if( in_array( strtolower( $extension ), $allowedExtensions ) ) {
 
-					if( $filename ) {
+                return $this->saveTempFile( file_get_contents( 'php://input' ), $directory, $filename, $extension );
+            }
+            else {
 
-						$extension 	= pathinfo( $filename, PATHINFO_EXTENSION );
+                return [ 'error' => 'The choosen file extension is not allowed.' ];
+            }
+        }
+        // Modern Style using File Data
+        else if( isset( $_POST[ 'fileData' ] ) && $_POST[ 'fileData' ] ) {
 
-						// check allowed extensions
-						if( in_array( strtolower( $extension ), $allowedExtensions ) ) {
-							
-							return $this->saveTempFile( file_get_contents( $_FILES['file']['tmp_name'] ), $directory, $filename, $extension );
-						}
-						else {
+            $filename = $_POST[ 'fileName' ];
 
-							echo "Error: extension not allowed.";
-						}
-					}
-			    }
-			}
-		}
+            if( $filename ) {
 
-		return false;
-	}
+                $extension 	= $_POST[ 'fileExtension' ];
 
-	private function saveTempFile( $file_contents, $directory, $filename, $extension ) {
+                // check allowed extensions
+                if( in_array( strtolower( $extension ), $allowedExtensions ) ) {
 
-		// Check allowed file size
-		$sizeInMb = number_format( $file_contents / 1048576, 2 );
+                    // Decoding file data
+                    $file 	= $_POST[ 'file' ];
+                    $file 	= str_replace( ' ', '+', $file );
+                    $file 	= base64_decode( $file );
 
-		if( $sizeInMb > $this->maxSize ) {
+                    return $this->saveTempFile( $file, $directory, $filename, $extension );
+                }
+                else {
 
-			echo "Error: Max size reached.";
-			
-			return false;			
-		}
+                    return [ 'error' => 'The choosen file extension is not allowed.' ];
+                }
+            }
+        }
+        // Legacy System using file
+        else {
 
-		// Create Directory if not exist
-		$tempUrl		= "temp/$directory/";
-		$uploadDir 		= $this->uploadDir . $tempUrl;
+            if( isset( $_FILES['file'] ) ) {
 
-		if( !file_exists( $uploadDir ) ) {
+                if( $_FILES['file']['error'] > 0 ) {
 
-			mkdir( $uploadDir , 0777, true );
-		}
+                    if( $_FILES['file']['error'] == UPLOAD_ERR_INI_SIZE || $_FILES['file']['error'] == UPLOAD_ERR_FORM_SIZE ) {
 
-		// Generate File Name
-		$name		= $filename;
+                        return [ 'error' => "You have exceeded the allowed file size limit of $this->maxSize MB." ];
+                    }
+                    else if( $_FILES['file']['error'] == UPLOAD_ERR_CANT_WRITE ) {
 
-		if( $this->generateName ) {
+                        return [ 'error' => "Please update admin to provide write permissions to save uploaded file." ];
+                    }
+                }
+                else {
 
-			$name	= md5( date( 'Y-m-d H:i:s:u' ) );
-		}
-		else if( $this->prettyNames ) {
+                    $filename = $_FILES['file']['name'];
 
-			$name	= str_replace( " ", "-", $filename );
-		}
+                    if( $filename ) {
 
-		$filename	= $name . "." . $extension;
+                        $extension 	= pathinfo( $filename, PATHINFO_EXTENSION );
 
-		// Save File
-		if( file_put_contents( $uploadDir . $filename, $file_contents ) ) {
+                        // check allowed extensions
+                        if( in_array( strtolower( $extension ), $allowedExtensions ) ) {
 
-			$result	= array();
+                            return $this->saveTempFile( file_get_contents( $_FILES['file']['tmp_name'] ), $directory, $filename, $extension );
+                        }
+                        else {
 
-			$result['name'] 		= $name;
-			$result['extension'] 	= $extension;
+                            return [ 'error' => 'The choosen file extension is not allowed.' ];
+                        }
+                    }
+                }
+            }
+        }
 
-			// Special processing for Avatar Uploader
-			if( strcmp( $directory, "avatar" ) == 0 ) {
+        return [ 'error' => 'File upload failed.' ];
+    }
 
-				// Generate Thumb
-				$thumbName	= $name . '-thumb' . "." . $extension;
-				$resizeObj 	= new ImageResize( $uploadDir . $filename );
+    public function saveTempFile( $file_contents, $directory, $filename, $extension ) {
 
-				$resizeObj->resizeImage( $this->thumbWidth, $this->thumbHeight, 'crop' );
-				$resizeObj->saveImage( $uploadDir . $thumbName, 100 );
+        // Check allowed file size
+        $sizeInMb = number_format( $file_contents / 1048576, 2 );
 
-				$result['tempUrl'] 		= $this->uploadUrl . $tempUrl . $thumbName;
-			}
-			else {
+        if( $sizeInMb > $this->maxSize ) {
 
-				$result['tempUrl'] 		= $this->uploadUrl . $tempUrl . $filename;	
-			}
+            return [ 'error' => "You have exceeded the allowed file size limit of $this->maxSize MB." ];
+        }
 
-			return $result;
-		}
-		else {
+        // Create Directory if not exist
+        $tempUrl		= "temp/$directory/";
+        $uploadDir 		= $this->uploadDir . $tempUrl;
 
-			echo "Error: File save failed or file with same name alrady exist.";	
-		}
+        if( !file_exists( $uploadDir ) ) {
 
-		return false;
-	}
+            mkdir( $uploadDir , 0777, true );
+        }
 
-	// File Processing ------------------------------------------------------------------
+        // Generate File Name
+        $name		= $filename;
 
-	public function processFile( $file ) {
+        if( $this->generateName ) {
 
-		$dateDir	= date( 'Y-m-d' );
-		$fileName	= $file->name;
-		$fileExt	= $file->extension;
-		$fileDir	= $file->directory;
+            $name    = Yii::$app->security->generateRandomString();
+        }
+        else if( $this->prettyNames ) {
 
-		$uploadUrl	= $this->uploadUrl;
+            $name	= str_replace( " ", "-", $filename );
+        }
 
-		$sourceFile		= $fileDir . '/' . $fileName . '.' . $fileExt;
-		$fileDir		= $dateDir . '/' . $fileDir . '/';
-		$fileUrl		= $fileDir . $fileName . '.' . $fileExt;
+        $filename	= $name . "." . $extension;
 
-		$this->saveFile( $sourceFile, $fileDir, $fileUrl );
+        // Save File
+        if( file_put_contents( $uploadDir . $filename, $file_contents ) ) {
 
-		// Save Image File
-		$file->directory	= $fileDir;
-		$file->createdAt	= $date;
-		$file->url			= $fileUrl;
-	}
+            $result	= array();
 
-	public function saveFile( $sourceFile, $targetDir, $filePath ) {
+            $result[ 'name' ] 		= $name;
+            $result[ 'extension' ] 	= $extension;
 
-		$sourceFile	= $this->uploadDir . "temp/" . $sourceFile;
-		$targetDir	= $this->uploadDir . $targetDir;
-		$filePath	= $this->uploadDir . $filePath;
+            // Special processing for Avatar Uploader
+            if( strcmp( $directory, 'avatar' ) == 0 ) {
 
-		// create required directories if not exist
-		if( !file_exists( $targetDir ) ) {
+                // Generate Thumb
+                $thumbName	= $name . '-thumb' . "." . $extension;
+                $resizeObj 	= new ImageResize( $uploadDir . $filename );
 
-			mkdir( $targetDir , 0777, true );
-		}
+                $resizeObj->resizeImage( $this->thumbWidth, $this->thumbHeight, 'crop' );
+                $resizeObj->saveImage( $uploadDir . $thumbName, 100 );
 
-		// Move file from temp to destined directory
-		rename( $sourceFile, $filePath );
-	}
+                $result[ 'tempUrl' ] 	= $this->uploadUrl . $tempUrl . $thumbName;
+            }
+            else {
 
-	// Image Processing -----------------------------------------------------------------
+                $result[ 'tempUrl' ] 	= $this->uploadUrl . $tempUrl . $filename;
+            }
 
-	// Save Image -------------
+            return $result;
+        }
+        else {
 
-	public function processImage( $file, $width = null, $height = null, $twidth = null, $theight = null ) {
+            return [ 'error' => "File save failed or file with same name alrady exist." ];
+        }
 
-		$dateDir	= date( 'Y-m-d' );
-		$imageName	= $file->name;
-		$imageExt	= $file->extension;
-		$imageDir	= $file->directory;
+        return [ 'error' => 'File upload failed.' ];
+    }
 
-		$uploadUrl	= $this->uploadUrl;
+    // File Processing ------------------------------------------------------------------
 
-		$sourceFile		= $imageDir . '/' . $imageName . '.' . $imageExt;
-		$targetDir		= $dateDir . '/' . $imageDir . '/';
-		$imageUrl		= $targetDir . $imageName . '.' . $imageExt;
-		$imageThumbUrl	= $targetDir . $imageName . '-thumb.' . $imageExt;
-		
-		// Save Image and Thumb
-		$this->saveImageAndThumb( $sourceFile, $targetDir, $imageUrl, $imageThumbUrl, $width, $height, $twidth = null, $theight = null );
-		
-		// Update URL and Thumb
-		$file->url			= $imageUrl;
+    public function processFile( $file ) {
 
-		if( $this->generateImageThumb ) {
+        $dateDir	= date( 'Y-m-d' );
+        $fileName	= $file->name;
+        $fileExt	= $file->extension;
+        $fileDir	= $file->directory;
 
-			$file->thumb	= $imageThumbUrl;
-		}
-	}
+        $uploadUrl	= $this->uploadUrl;
 
-	public function saveImageAndThumb( $sourceFile, $targetDir, $filePath, $thumbPath, $width = null, $height = null, $twidth = null, $theight = null ) {
+        $sourceFile		= $fileDir . '/' . $fileName . '.' . $fileExt;
+        $targetDir		= $dateDir . '/' . $fileDir . '/';
+        $fileUrl		= $targetDir . $fileName . '.' . $fileExt;
 
-		$sourceFile	= $this->uploadDir . "temp/" . $sourceFile;
-		$targetDir	= $this->uploadDir . $targetDir;
-		$filePath	= $this->uploadDir . $filePath;
-		$thumbPath	= $this->uploadDir . $thumbPath;
+        $this->saveFile( $sourceFile, $targetDir, $fileUrl );
 
-		// create required directories if not exist
-		if( !file_exists( $targetDir ) ) {
+        // Save Image File
+        $file->url			= $fileUrl;
+    }
 
-			mkdir( $targetDir , 0777, true );
-		}
+    public function saveFile( $sourceFile, $targetDir, $filePath ) {
 
-		// Move file from temp to destined directory
-		rename( $sourceFile, $filePath );
+        $sourceFile	= $this->uploadDir . "temp/" . $sourceFile;
+        $targetDir	= $this->uploadDir . $targetDir;
+        $filePath	= $this->uploadDir . $filePath;
 
-		// Resize Image
-		if( isset( $width ) && isset( $height ) && intval( $width ) > 0 && intval( $height ) > 0 ) {
+        // create required directories if not exist
+        if( !file_exists( $targetDir ) ) {
 
-			$resizeObj = new ImageResize( $filePath );
-			$resizeObj->resizeImage( $width, $height, 'exact' );
-			$resizeObj->saveImage( $filePath, 100 );
-		}
+            mkdir( $targetDir , 0755, true );
+        }
 
-		// Save Thumb
-		if( $this->generateImageThumb && isset( $thumbPath ) ) {
+        // Move file from temp to destined directory
+        rename( $sourceFile, $filePath );
+    }
 
-			$resizeObj = new ImageResize( $filePath );
+    // Image Processing -----------------------------------------------------------------
 
-			if( isset( $twidth ) && isset( $theight ) && intval( $twidth ) > 0 && intval( $theight ) > 0 ) {
+    // Save Image -------------
 
-				$resizeObj->resizeImage( $twidth, $theight, 'crop' );
-			}
-			else {
+    public function processImage( $file, $width = null, $height = null, $mwidth = null, $mheight = null, $twidth = null, $theight = null ) {
 
-				$resizeObj->resizeImage( $this->thumbWidth, $this->thumbHeight, 'crop' );
-			}
+        $dateDir	= date( 'Y-m-d' );
+        $imageName	= $file->name;
+        $imageExt	= $file->extension;
+        $imageDir	= $file->directory;
 
-			$resizeObj->saveImage( $thumbPath, 100 );
-		}
-	}
+        $uploadUrl	= $this->uploadUrl;
 
-	// Convert to target DPI --
+        $sourceFile		= $imageDir . '/' . $imageName . '.' . $imageExt;
+        $targetDir		= $dateDir . '/' . $imageDir . '/';
+        $imageUrl		= $targetDir . $imageName . '.' . $imageExt;
+        $imageMediumUrl	= $targetDir . $imageName . '-medium.' . $imageExt;
+        $imageThumbUrl	= $targetDir . $imageName . '-thumb.' . $imageExt;
 
-	private function convertToDPI( $jpgPath, $dpi ) {
+        // Save Image
+        $this->saveImage( $sourceFile, $targetDir, $imageUrl, $imageMediumUrl, $imageThumbUrl, $width, $height, $mwidth = null, $mheight = null, $twidth = null, $theight = null );
 
-       	$filename 	= $jpgPath;
+        // Update URL and Thumb
+        $file->url			= $imageUrl;
+
+        if( $this->generateImageMedium ) {
+
+            $file->medium	= $imageMediumUrl;
+        }
+
+        if( $this->generateImageThumb ) {
+
+            $file->thumb	= $imageThumbUrl;
+        }
+    }
+
+    public function saveImage( $sourceFile, $targetDir, $filePath, $mediumPath, $thumbPath, $width = null, $height = null, $mwidth = null, $mheight = null, $twidth = null, $theight = null ) {
+
+        $sourceFile	= $this->uploadDir . "temp/" . $sourceFile;
+        $targetDir	= $this->uploadDir . $targetDir;
+        $filePath	= $this->uploadDir . $filePath;
+        $mediumPath	= $this->uploadDir . $mediumPath;
+        $thumbPath	= $this->uploadDir . $thumbPath;
+
+        // create required directories if not exist
+        if( !file_exists( $targetDir ) ) {
+
+            mkdir( $targetDir , 0777, true );
+        }
+
+        // Move file from temp to destined directory
+        rename( $sourceFile, $filePath );
+
+        // Resize Image
+        if( isset( $width ) && isset( $height ) && intval( $width ) > 0 && intval( $height ) > 0 ) {
+
+            $width 	= $width > $this->maxResolution ? $this->maxResolution : $width;
+            $height = $height > $this->maxResolution ? $this->maxResolution : $height;
+
+            $resizeObj = new ImageResize( $filePath );
+            $resizeObj->resizeImage( $width, $height, 'exact' );
+            $resizeObj->saveImage( $filePath, 100 );
+        }
+
+        // Save Medium
+        if( $this->generateImageMedium && isset( $mediumPath ) ) {
+
+            $resizeObj = new ImageResize( $filePath );
+
+            if( isset( $mwidth ) && isset( $mheight ) && intval( $mwidth ) > 0 && intval( $mheight ) > 0 ) {
+
+                $mwidth 	= $mwidth > $this->maxResolution ? $this->maxResolution : $mwidth;
+                $mheight 	= $mheight > $this->maxResolution ? $this->maxResolution : $mheight;
+
+                $resizeObj->resizeImage( $twidth, $theight, 'crop' );
+            }
+            else {
+
+                $resizeObj->resizeImage( $this->mediumWidth, $this->mediumHeight, 'crop' );
+            }
+
+            $resizeObj->saveImage( $mediumPath, 100 );
+        }
+
+        // Save Thumb
+        if( $this->generateImageThumb && isset( $thumbPath ) ) {
+
+            $resizeObj = new ImageResize( $filePath );
+
+            if( isset( $twidth ) && isset( $theight ) && intval( $twidth ) > 0 && intval( $theight ) > 0 ) {
+
+                $twidth 	= $twidth > $this->maxResolution ? $this->maxResolution : $twidth;
+                $theight 	= $theight > $this->maxResolution ? $this->maxResolution : $theight;
+
+                $resizeObj->resizeImage( $twidth, $theight, 'crop' );
+            }
+            else {
+
+                $resizeObj->resizeImage( $this->thumbWidth, $this->thumbHeight, 'crop' );
+            }
+
+            $resizeObj->saveImage( $thumbPath, 100 );
+        }
+    }
+
+    // Convert to target DPI --
+
+    private function convertToDPI( $jpgPath, $dpi ) {
+
+        $filename 	= $jpgPath;
         $input 		= imagecreatefromjpeg( $filename );
 
         $width		= imagesx( $input );
@@ -389,12 +463,12 @@ class FileManager extends Component {
 
         $contents =  ob_get_contents();
 
-        //Converting Image DPI to $dpi                
+        //Converting Image DPI to $dpi
         $contents = substr_replace( $contents, pack( "cnn", 1, $dpi, $dpi ), 13, 5 );
         ob_end_clean();
 
-		file_put_contents( $filename, $contents );
-	}
+        file_put_contents( $filename, $contents );
+    }
 }
 
 ?>

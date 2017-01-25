@@ -1,6 +1,6 @@
 {
 	"name": "cmsgears/plugin-file-manager",
-	"description": "The file manager plugin for CMSGears. It can be used by the projects which require file uploader and browser.",
+	"description": "File Manager plugin for CMSGears provide default component to accept files uploaded by users. The File Uploader widget can be used to upload files.",
 	"homepage": "http://www.cmsgears.org",
 	"type": "package",
 	"keywords": [ "yii2", "cmsgears", "plugin", "file uploader" ],
