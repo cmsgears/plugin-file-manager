@@ -77,7 +77,7 @@ class m160622_061028_file_manager extends \yii\db\Migration {
             [ $config->id, 'medium_height', 'Medium Height', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{\"title\":\"Medium Height.\",\"placeholder\":\"Medium Height\"}' ],
             [ $config->id, 'thumb_width', 'Thumb Width', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{\"title\":\"Thumb Width.\",\"placeholder\":\"Thumb Width\"}' ],
             [ $config->id, 'thumb_height', 'Thumb Height', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{\"title\":\"Thumb Height.\",\"placeholder\":\"Thumb Height\"}' ],
-            [ $config->id, 'uploads_directory', 'Uploads Directory', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{\"title\":\"Uploads Directory.\",\"placeholder\":\"Uploads Directory\"}' ],
+            [ $config->id, 'uploads_directory', 'Uploads Directory', FormField::TYPE_TEXT, false, NULL, 0, NULL, '{\"title\":\"Uploads Directory.\",\"placeholder\":\"Uploads Directory\"}' ],
             [ $config->id, 'uploads_url', 'Uploads URL', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{\"title\":\"Uploads URL.\",\"placeholder\":\"Uploads URL\"}' ]
         ];
 
