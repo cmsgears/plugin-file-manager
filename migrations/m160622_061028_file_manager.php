@@ -11,24 +11,28 @@ use cmsgears\core\common\utilities\DateUtil;
 
 class m160622_061028_file_manager extends \yii\db\Migration {
 
-    public $prefix;
+	// Public Variables
+
+	// Private Variables
+
+	private $prefix;
+
+    private $site;
+    private $master;
 
     private $uploadsDir;
     private $uploadsUrl;
 
-    private $site;
-
-    private $master;
-
     public function init() {
 
-        $this->prefix		= 'cmg_';
+		// Table prefix
+		$this->prefix	= Yii::$app->migration->cmgPrefix;
+
+		$this->site		= Site::findBySlug( CoreGlobal::SITE_MAIN );
+		$this->master	= User::findByUsername( Yii::$app->migration->getSiteMaster() );
 
         $this->uploadsDir	= Yii::$app->migration->getUploadsDir();
         $this->uploadsUrl	= Yii::$app->migration->getUploadsUrl();
-
-        $this->site		= Site::findBySlug( CoreGlobal::SITE_MAIN );
-        $this->master	= User::findByUsername( 'demomaster' );
 
         Yii::$app->core->setSite( $this->site );
     }
