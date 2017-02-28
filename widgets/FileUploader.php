@@ -26,8 +26,8 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 
 	// view - post view
 	public $postView			= true;
-	public $btnChooserIcon		= "cmti cmti-edit";
-	public $postViewIcon		= "cmti cmti-5x cmti-file";
+	public $btnChooserIcon		= 'cmti cmti-edit';
+	public $postViewIcon		= 'cmti cmti-5x cmti-file';
 	public $postUploadMessage	= null;
 
 	// view - chooser
@@ -166,5 +166,3 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 		return $this->render( $postAction, [ 'attributesHtml' => $attributesHtml, 'infoHtml' => $infoHtml, 'postAction' => $this->postAction, 'postActionUrl' => $this->postActionUrl, 'postActionVisible' => $this->postActionVisible, 'postActionId' => $this-> postActionId, 'cmtController' => $this-> cmtController, 'cmtAction' => $this->cmtAction ] );
 	}
 }
-
-?>

@@ -27,5 +27,3 @@ class AvatarUploader extends ImageUploader {
 	public $cmtController		= 'default';
 	public $cmtAction			= 'avatar';
 }
-
-?>

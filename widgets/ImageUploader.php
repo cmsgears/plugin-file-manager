@@ -34,5 +34,3 @@ class ImageUploader extends FileUploader {
 				]);
 	}
 }
-
-?>
