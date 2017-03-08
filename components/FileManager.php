@@ -470,5 +470,3 @@ class FileManager extends Component {
         file_put_contents( $filename, $contents );
     }
 }
-
-?>

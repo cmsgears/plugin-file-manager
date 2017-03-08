@@ -55,9 +55,9 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 	public $postAction			= false;
 	public $postActionUrl		= null;
 	public $postActionVisible	= false;
-	public $postActionId		= 'file-uploader';
+	public $cmtApp				= 'main';
 	public $cmtController		= 'default';
-	public $cmtAction			= 'default';
+	public $cmtAction			= 'file';
 
 	// preview dimensions for drag/drop
 	public $previewWidth	= 120;
@@ -163,6 +163,6 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 
 	protected function renderPostAction( $postAction, $attributesHtml, $infoHtml ) {
 
-		return $this->render( $postAction, [ 'attributesHtml' => $attributesHtml, 'infoHtml' => $infoHtml, 'postAction' => $this->postAction, 'postActionUrl' => $this->postActionUrl, 'postActionVisible' => $this->postActionVisible, 'postActionId' => $this-> postActionId, 'cmtController' => $this-> cmtController, 'cmtAction' => $this->cmtAction ] );
+		return $this->render( $postAction, [ 'widget' => $this, 'attributesHtml' => $attributesHtml, 'infoHtml' => $infoHtml ] );
 	}
 }
