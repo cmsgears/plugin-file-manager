@@ -5,7 +5,8 @@
 
         if( $disabled ) {
 
-            $btnShowChooser = "<div class='btn-show-chooser' title='Update Image'></div>";
+            //$btnShowChooser = "<div class='btn-show-chooser' title='Update Image disable'></div>";
+            $btnShowChooser = "";
         }
 
 		if( isset( $model ) ) {
@@ -17,7 +18,7 @@
 				$url 	= $model->getFileUrl();
 ?>
 				<div class='postview'>
-					<?=$btnShowChooser?>
+					<?= $btnShowChooser ?>
 					<div class='wrap-file'><img src='<?= $url ?>' class='fluid' /></div>
 					<div class='message-upload'><?= $postUploadMessage ?></div>
 				</div>
@@ -26,7 +27,7 @@
 			else {
 ?>
 				<div class='postview'>
-					<?=$btnShowChooser?>
+					<?= $btnShowChooser ?>
 					<div class='wrap-file'><span class='<?= $postViewIcon ?>'></span></div>
 					<div class='message-upload'><?= $postUploadMessage ?></div>
 				</div>
@@ -36,7 +37,7 @@
 		else {
 ?>
 			<div class='postview'>
-				<?=$btnShowChooser?>
+				<?= $btnShowChooser ?>
 				<div class='wrap-file'><span class='<?= $postViewIcon ?>'></span></div>
 				<div class='message-upload'><?= $postUploadMessage ?></div>
 			</div>
