@@ -67,22 +67,23 @@ class m160622_061028_file_manager extends \yii\db\Migration {
         $columns = [ 'formId', 'name', 'label', 'type', 'compress', 'validators', 'order', 'icon', 'htmlOptions' ];
 
         $fields	= [
-            [ $config->id, 'image_extensions', 'Image Extensions', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{\"title\":\"Image Extensions.\",\"placeholder\":\"Image Extensions\"}' ],
-            [ $config->id, 'video_extensions', 'Video Extensions', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{\"title\":\"Video Extensions.\",\"placeholder\":\"Video Extensions\"}' ],
-            [ $config->id, 'audio_extensions', 'Audio Extensions', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{\"title\":\"Audio Extensions.\",\"placeholder\":\"Audio Extensions\"}' ],
-            [ $config->id, 'document_extensions', 'Document Extensions', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{\"title\":\"Document Extensions.\",\"placeholder\":\"Document Extensions\"}' ],
-            [ $config->id, 'compressed_extensions', 'Compressed Extensions', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{\"title\":\"Compressed Extensions.\",\"placeholder\":\"Compressed Extensions\"}' ],
-            [ $config->id, 'generate_name', 'Generate Name', FormField::TYPE_TOGGLE, false, 'required', 0, NULL, '{\"title\":\"Generate Name.\"}' ],
-            [ $config->id, 'pretty_name', 'Pretty Name', FormField::TYPE_TOGGLE, false, 'required', 0, NULL, '{\"title\":\"Pretty Name.\"}' ],
-            [ $config->id, 'max_size', 'Max Size', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{\"title\":\"Max Size.\",\"placeholder\":\"Max Size\"}' ],
-            [ $config->id, 'generate_medium', 'Generate Medium', FormField::TYPE_TOGGLE, false, 'required', 0, NULL, '{\"title\":\"Generate Medium Image.\"}' ],
-            [ $config->id, 'generate_thumb', 'Generate Thumb', FormField::TYPE_TOGGLE, false, 'required', 0, NULL, '{\"title\":\"Generate Thumb Image.\"}' ],
-            [ $config->id, 'medium_width', 'Medium Width', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{\"title\":\"Medium Width.\",\"placeholder\":\"Medium Width\"}' ],
-            [ $config->id, 'medium_height', 'Medium Height', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{\"title\":\"Medium Height.\",\"placeholder\":\"Medium Height\"}' ],
-            [ $config->id, 'thumb_width', 'Thumb Width', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{\"title\":\"Thumb Width.\",\"placeholder\":\"Thumb Width\"}' ],
-            [ $config->id, 'thumb_height', 'Thumb Height', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{\"title\":\"Thumb Height.\",\"placeholder\":\"Thumb Height\"}' ],
-            [ $config->id, 'uploads_directory', 'Uploads Directory', FormField::TYPE_TEXT, false, NULL, 0, NULL, '{\"title\":\"Uploads Directory.\",\"placeholder\":\"Uploads Directory\"}' ],
-            [ $config->id, 'uploads_url', 'Uploads URL', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{\"title\":\"Uploads URL.\",\"placeholder\":\"Uploads URL\"}' ]
+            [ $config->id, 'image_extensions', 'Image Extensions', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{"title":"Image Extensions","placeholder":"Image Extensions"}' ],
+            [ $config->id, 'video_extensions', 'Video Extensions', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{"title":"Video Extensions","placeholder":"Video Extensions"}' ],
+            [ $config->id, 'audio_extensions', 'Audio Extensions', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{"title":"Audio Extensions","placeholder":"Audio Extensions"}' ],
+            [ $config->id, 'document_extensions', 'Document Extensions', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{"title":"Document Extensions","placeholder":"Document Extensions"}' ],
+            [ $config->id, 'compressed_extensions', 'Compressed Extensions', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{"title":"Compressed Extensions","placeholder":"Compressed Extensions"}' ],
+        	[ $config->id, 'shared_extensions', 'Shared Extensions', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{"title":"Shared Extensions","placeholder":"Shared Extensions"}' ],
+            [ $config->id, 'generate_name', 'Generate Name', FormField::TYPE_TOGGLE, false, 'required', 0, NULL, '{"title":"Generate Name"}' ],
+            [ $config->id, 'pretty_name', 'Pretty Name', FormField::TYPE_TOGGLE, false, 'required', 0, NULL, '{"title":"Pretty Name"}' ],
+            [ $config->id, 'max_size', 'Max Size', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{"title":"Max Size","placeholder":"Max Size"}' ],
+            [ $config->id, 'generate_medium', 'Generate Medium', FormField::TYPE_TOGGLE, false, 'required', 0, NULL, '{"title":"Generate Medium Image"}' ],
+            [ $config->id, 'generate_thumb', 'Generate Thumb', FormField::TYPE_TOGGLE, false, 'required', 0, NULL, '{"title":"Generate Thumb Image"}' ],
+            [ $config->id, 'medium_width', 'Medium Width', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{"title":"Medium Width","placeholder":"Medium Width"}' ],
+            [ $config->id, 'medium_height', 'Medium Height', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{"title":"Medium Height","placeholder":"Medium Height"}' ],
+            [ $config->id, 'thumb_width', 'Thumb Width', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{"title":"Thumb Width","placeholder":"Thumb Width"}' ],
+            [ $config->id, 'thumb_height', 'Thumb Height', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{"title":"Thumb Height","placeholder":"Thumb Height"}' ],
+            [ $config->id, 'uploads_directory', 'Uploads Directory', FormField::TYPE_TEXT, false, NULL, 0, NULL, '{"title":"Uploads Directory","placeholder":"Uploads Directory"}' ],
+            [ $config->id, 'uploads_url', 'Uploads URL', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{"title":"Uploads URL","placeholder":"Uploads URL"}' ]
         ];
 
         $this->batchInsert( $this->prefix . 'core_form_field', $columns, $fields );
@@ -98,6 +99,7 @@ class m160622_061028_file_manager extends \yii\db\Migration {
             [ $this->site->id, 'audio_extensions', 'Audio Extensions', 'file', 'text', 'mp3,m4a,wav' ],
             [ $this->site->id, 'document_extensions', 'Document Extensions', 'file', 'text', 'pdf,doc,docx,xls,xlsx,txt' ],
             [ $this->site->id, 'compressed_extensions', 'Compressed Extensions', 'file', 'text', 'rar,zip' ],
+        	[ $this->site->id, 'shared_extensions', 'Shared Extensions', 'file', 'text', 'png,jpg,jpeg,gif,mp4,flv,ogv,avi,mp3,m4a,wav,pdf,doc,docx,xls,xlsx,txt,rar,zip' ],
             [ $this->site->id, 'generate_name', 'Generate Name', 'file', 'flag', '1' ],
             [ $this->site->id, 'pretty_name', 'Pretty Name', 'file', 'flag', '0' ],
             [ $this->site->id, 'max_size', 'Max Size', 'file','text', '5' ],

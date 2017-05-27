@@ -23,6 +23,8 @@ class FileProperties extends CmgProperties {
 
 	const PROP_EXTENSION_COMPRESSED = 'compressed_extensions';
 
+	const PROP_EXTENSION_SHARED 	= 'shared_extensions';
+
 	const PROP_NAME_GENERATE		= 'generate_name';
 
 	const PROP_NAME_PRETTY			= 'pretty_name';
@@ -120,6 +122,18 @@ class FileProperties extends CmgProperties {
 	public function getCompressedExtensions( $default = null ) {
 
 		$prop = $this->properties[ self::PROP_EXTENSION_COMPRESSED ];
+
+		if( isset( $prop ) && strlen( $prop ) > 0 ) {
+
+			return preg_split( "/,/", $prop );
+		}
+
+		return $default;
+	}
+
+	public function getSharedExtensions( $default = null ) {
+
+		$prop = $this->properties[ self::PROP_EXTENSION_SHARED ];
 
 		if( isset( $prop ) && strlen( $prop ) > 0 ) {
 

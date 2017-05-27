@@ -21,6 +21,7 @@ class FileManager extends Component {
     const FILE_TYPE_AUDIO			= 'audio';
     const FILE_TYPE_DOCUMENT		= 'document';
     const FILE_TYPE_COMPRESSED		= 'compressed';
+    const FILE_TYPE_SHARED			= 'shared';
 
     public $ignoreDbConfig			= false;
 
@@ -30,8 +31,9 @@ class FileManager extends Component {
     public $audioExtensions 		= [ 'mp3', 'm4a', 'wav' ];
     public $documentExtensions 		= [ 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt' ];
     public $compressedExtensions 	= [ 'rar', 'zip' ];
+    public $sharedExtensions 		= [ 'png', 'jpg', 'jpeg', 'gif', 'mp4', 'flv', 'ogv', 'avi', 'mp3', 'm4a', 'wav', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'rar', 'zip' ];
 
-    public $typeMap					= [ 0 => 'Select File Type', self::FILE_TYPE_IMAGE => self::FILE_TYPE_IMAGE, self::FILE_TYPE_VIDEO => self::FILE_TYPE_VIDEO, self::FILE_TYPE_AUDIO => self::FILE_TYPE_AUDIO, self::FILE_TYPE_DOCUMENT => self::FILE_TYPE_DOCUMENT, self::FILE_TYPE_COMPRESSED => self::FILE_TYPE_COMPRESSED  ];
+    public $typeMap					= [ 0 => 'Select File Type', self::FILE_TYPE_IMAGE => self::FILE_TYPE_IMAGE, self::FILE_TYPE_VIDEO => self::FILE_TYPE_VIDEO, self::FILE_TYPE_AUDIO => self::FILE_TYPE_AUDIO, self::FILE_TYPE_DOCUMENT => self::FILE_TYPE_DOCUMENT, self::FILE_TYPE_COMPRESSED => self::FILE_TYPE_COMPRESSED, self::FILE_TYPE_SHARED => self::FILE_TYPE_SHARED ];
 
     // Either of these must be set to true. Generate Name generate a unique name using Yii Security Component whereas pretty names use the file name provided by user and replace space by hyphen(-).
     public $generateName		= true;
@@ -73,6 +75,7 @@ class FileManager extends Component {
             $this->audioExtensions		= $properties->getAudioExtensions( $this->audioExtensions );
             $this->documentExtensions	= $properties->getDocumentExtensions( $this->documentExtensions );
             $this->compressedExtensions	= $properties->getCompressedExtensions( $this->compressedExtensions );
+            $this->sharedExtensions		= $properties->getSharedExtensions( $this->sharedExtensions );
             $this->generateName			= $properties->isGenerateName( $this->generateName );
             $this->prettyNames			= $properties->isPrettyName( $this->prettyNames );
             $this->maxSize				= $properties->getMaxSize( $this->maxSize );
@@ -82,7 +85,7 @@ class FileManager extends Component {
             $this->generateImageThumb	= $properties->isGenerateThumb( $this->generateImageThumb );
             $this->thumbWidth			= $properties->getThumbWidth( $this->thumbWidth );
             $this->thumbHeight			= $properties->getThumbHeight( $this->thumbHeight );
-            $this->uploadDir			= Yii::getAlias( "@uploads" ) . "/";
+            $this->uploadDir			= Yii::getAlias( "@uploads" );
             $this->uploadDir			= $properties->getUploadDir( $this->uploadDir );
             $this->uploadUrl			= $properties->getUploadUrl( $this->uploadUrl );
         }
@@ -144,6 +147,12 @@ class FileManager extends Component {
                 $allowedExtensions = $this->compressedExtensions;
 
                 break;
+            }
+            case self::FILE_TYPE_SHARED: {
+
+            	$allowedExtensions = $this->sharedExtensions;
+
+            	break;
             }
         }
 
@@ -242,8 +251,8 @@ class FileManager extends Component {
         }
 
         // Create Directory if not exist
-        $tempUrl		= "temp/$directory/";
-        $uploadDir 		= $this->uploadDir . $tempUrl;
+        $tempUrl		= "temp/$directory";
+        $uploadDir 		= "$this->uploadDir/$tempUrl";
 
         if( !file_exists( $uploadDir ) ) {
 
@@ -265,7 +274,7 @@ class FileManager extends Component {
         $filename	= $name . "." . $extension;
 
         // Save File
-        if( file_put_contents( $uploadDir . $filename, $file_contents ) ) {
+        if( file_put_contents( "$uploadDir/$filename", $file_contents ) ) {
 
             $result	= array();
 
@@ -277,16 +286,16 @@ class FileManager extends Component {
 
                 // Generate Thumb
                 $thumbName	= $name . '-thumb' . "." . $extension;
-                $resizeObj 	= new ImageResize( $uploadDir . $filename );
+                $resizeObj 	= new ImageResize( "$uploadDir/$filename" );
 
                 $resizeObj->resizeImage( $this->thumbWidth, $this->thumbHeight, 'crop' );
-                $resizeObj->saveImage( $uploadDir . $thumbName, 100 );
+                $resizeObj->saveImage( "$uploadDir/$thumbName", 100 );
 
-                $result[ 'tempUrl' ] 	= $this->uploadUrl . $tempUrl . $thumbName;
+                $result[ 'tempUrl' ] 	= "$this->uploadUrl/$tempUrl/$thumbName";
             }
             else {
 
-                $result[ 'tempUrl' ] 	= $this->uploadUrl . $tempUrl . $filename;
+                $result[ 'tempUrl' ] 	= "$this->uploadUrl/$tempUrl/$filename";
             }
 
             return $result;
@@ -308,23 +317,18 @@ class FileManager extends Component {
         $fileExt	= $file->extension;
         $fileDir	= $file->directory;
 
-        $uploadUrl	= $this->uploadUrl;
-
-        $sourceFile		= $fileDir . '/' . $fileName . '.' . $fileExt;
-        $targetDir		= $dateDir . '/' . $fileDir . '/';
-        $fileUrl		= $targetDir . $fileName . '.' . $fileExt;
+        $sourceFile		= "$fileDir/$fileName.$fileExt";
+        $targetDir		= "$dateDir/$fileDir";
+        $fileUrl		= "$targetDir/$fileName.$fileExt";
 
         $this->saveFile( $sourceFile, $targetDir, $fileUrl );
-
-        // Save Image File
-        $file->url			= $fileUrl;
     }
 
     public function saveFile( $sourceFile, $targetDir, $filePath ) {
 
-        $sourceFile	= $this->uploadDir . "temp/" . $sourceFile;
-        $targetDir	= $this->uploadDir . $targetDir;
-        $filePath	= $this->uploadDir . $filePath;
+        $sourceFile	= "$this->uploadDir/temp/$sourceFile";
+        $targetDir	= "$this->uploadDir/$targetDir";
+        $filePath	= "$this->uploadDir/$filePath";
 
         // create required directories if not exist
         if( !file_exists( $targetDir ) ) {
@@ -374,11 +378,11 @@ class FileManager extends Component {
 
     public function saveImage( $sourceFile, $targetDir, $filePath, $mediumPath, $thumbPath, $width = null, $height = null, $mwidth = null, $mheight = null, $twidth = null, $theight = null ) {
 
-        $sourceFile	= $this->uploadDir . "temp/" . $sourceFile;
-        $targetDir	= $this->uploadDir . $targetDir;
-        $filePath	= $this->uploadDir . $filePath;
-        $mediumPath	= $this->uploadDir . $mediumPath;
-        $thumbPath	= $this->uploadDir . $thumbPath;
+        $sourceFile	= "$this->uploadDir/temp/$sourceFile";
+        $targetDir	= "$this->uploadDir/$targetDir";
+        $filePath	= "$this->uploadDir/$filePath";
+        $mediumPath	= "$this->uploadDir/$mediumPath";
+        $thumbPath	= "$this->uploadDir/$thumbPath";
 
         // create required directories if not exist
         if( !file_exists( $targetDir ) ) {

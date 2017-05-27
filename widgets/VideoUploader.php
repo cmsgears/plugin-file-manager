@@ -23,5 +23,3 @@ class VideoUploader extends FileUploader {
 	// uploader components
 	public $postViewIcon	= 'cmti cmti-5x cmti-file-video';
 }
-
-?>
