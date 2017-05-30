@@ -318,10 +318,14 @@ class FileManager extends Component {
         $fileDir	= $file->directory;
 
         $sourceFile		= "$fileDir/$fileName.$fileExt";
-        $targetDir		= "$dateDir/$fileDir";
-        $fileUrl		= "$targetDir/$fileName.$fileExt";
+        $targetDir		= "$dateDir/$fileDir/";
+
+        $fileUrl		= $targetDir . "$fileName.$fileExt";
 
         $this->saveFile( $sourceFile, $targetDir, $fileUrl );
+
+        // Update URL and Thumb
+        $file->url		= $fileUrl;
     }
 
     public function saveFile( $sourceFile, $targetDir, $filePath ) {
@@ -353,11 +357,12 @@ class FileManager extends Component {
 
         $uploadUrl	= $this->uploadUrl;
 
-        $sourceFile		= $imageDir . '/' . $imageName . '.' . $imageExt;
-        $targetDir		= $dateDir . '/' . $imageDir . '/';
-        $imageUrl		= $targetDir . $imageName . '.' . $imageExt;
-        $imageMediumUrl	= $targetDir . $imageName . '-medium.' . $imageExt;
-        $imageThumbUrl	= $targetDir . $imageName . '-thumb.' . $imageExt;
+        $sourceFile		= "$imageDir/$imageName.$imageExt";
+        $targetDir		= "$dateDir/$imageDir/";
+
+        $imageUrl		= $targetDir . "$imageName.$imageExt";
+        $imageMediumUrl	= $targetDir . "$imageName-medium.$imageExt";
+        $imageThumbUrl	= $targetDir . "$imageName-thumb.$imageExt";
 
         // Save Image
         $this->saveImage( $sourceFile, $targetDir, $imageUrl, $imageMediumUrl, $imageThumbUrl, $width, $height, $mwidth = null, $mheight = null, $twidth = null, $theight = null );
