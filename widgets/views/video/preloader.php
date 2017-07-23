@@ -1,7 +1,5 @@
-<?php if( $preloader ) { ?>
-
-	<div class='preloader'>
-		<div class='preloader-bar'></div>
-	</div>
-
+<?php if( $widget->preloader ) { ?>
+<div class="file-preloader">
+	<div class="file-preloader-bar"></div>
+</div>
 <?php } ?>

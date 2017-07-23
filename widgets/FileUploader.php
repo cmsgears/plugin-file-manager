@@ -2,56 +2,89 @@
 namespace cmsgears\files\widgets;
 
 // Yii Imports
-use \Yii;
 use yii\helpers\Html;
+
+// CMG Imports
+use cmsgears\core\common\utilities\CodeGenUtil;
 
 abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 
 	// Variables ---------------------------------------------------
 
-	// Public Variables --------------------
+	// Globals -------------------------------
 
+	// Constants --------------
+
+	// Public -----------------
+
+	// Protected --------------
+
+	// Variables -----------------------------
+
+	// Public -----------------
+
+	public $wrap			= true;
+
+	// Widget - Template
 	public $template		= null;
 
-	// html options
-	public $options		 	= [];
+	// Widget - Html options
+	public $options		 	= [ 'class' => 'box box-file-uploader file-uploader' ];
 
-	// file model and model class for loading by controller
-	public $model			= null;
-	public $modelClass		= 'File';
+	// Widget - Options - Disable Upload
+    public $disabled        = false;
 
-	// file directory and type
+	// File - directory and type
 	public $directory		= null;
 	public $type			= null;
 
-	// view - post view
-	public $postView			= true;
-	public $btnChooserIcon		= 'cmti cmti-edit';
-	public $postViewIcon		= 'cmti cmti-5x cmti-file';
-	public $postUploadMessage	= null;
+	// File - model and model class for loading by controller
+	public $model			= null;
+	public $modelClass		= 'File';
 
-	// view - chooser
+	// Widget - Uploader
+	public $uploaderView		= 'uploader';
+	public $chooserIcon			= 'cmti cmti-edit';
+
+	// Widget - Container
+	public $container			= true;
+	public $containerView		= 'container';
+	public $fileIcon			= 'icon cmti cmti-5x cmti-file';
+	public $uploadMessage		= null;
+
+	// Widget - Dragger
+	public $dragger			= true;
+	public $draggerView		= 'dragger';
+
+	// Widget - Dragger - preview dimensions for drag/drop
+	public $previewWidth	= 120;
+	public $previewHeight	= 120;
+
+	// Widget - Chooser
 	public $chooser			= true;
+	public $chooserView		= 'chooser';
 
-    // Disable Upload
-    public $disabled        = false;
-
-	// view - preview
-	public $preview			= true;
-
-	// view - pre-loader
+	// Widget - Preloader
 	public $preloader		= true;
+	public $preloaderView	= 'preloader';
 
-	// view - attributes
-	public $hiddenInfo			= false; // This can be used in case we want to have fixed info fields. The info flag must be false in such cases.
-	public $hiddenInfoFields	= [];
+	// Widget - Info - Used to auto collect file info
+	public $info			= true;
+	public $infoView		= 'info';
+	public $additionalInfo	= false;
+	public $infoFields		= []; // Useful only if $additionalInfo is true
+	
+	// Widget - Fields - Used to collect file info from user
+	public $fields			= false;
+	public $fieldsView		= 'fields';
+	public $fileLabel		= false;
+	public $fileFields		= [ 'title', 'description', 'alt', 'link' ];
 
-	// view - info
-	public $info			= false;
-	public $infoLabel		= false;
-	public $infoFields		= [ 'title', 'description', 'alt', 'link' ];
+	// Widget - Form
+	public $form			= true;
+	public $formView		= 'form';
 
-	// view - post action
+	// Widget - Form Post action
 	public $postAction			= false;
 	public $postActionUrl		= null;
 	public $postActionVisible	= false;
@@ -59,110 +92,119 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 	public $cmtController		= 'default';
 	public $cmtAction			= 'file';
 
-	// preview dimensions for drag/drop
-	public $previewWidth	= 120;
-	public $previewHeight	= 120;
+	// Protected --------------
+
+	// Private ----------------
+
+	// Traits ------------------------------------------------------
 
 	// Constructor and Initialisation ------------------------------
 
-	// yii\base\Object
+	// Instance methods --------------------------------------------
 
-    public function init() {
+	// Yii interfaces ------------------------
 
-        parent::init();
-    }
+	// Yii parent classes --------------------
 
-	// Instance Methods --------------------------------------------
-
-	// yii\base\Widget
+	// yii\base\Widget --------
 
     public function run() {
 
-		$options				= $this->options;
-		$options['directory']	= $this->directory;
-		$options['type']		= $this->type;
+		$this->options[ 'directory' ]	= $this->directory;
+		$this->options[ 'type' ]		= $this->type;
 
-		$html 					= $this->renderWidget();
-
-		return Html::tag( 'div', $html, $options );
+		return $this->renderWidget();
     }
+
+	// CMG interfaces ------------------------
+
+	// CMG parent classes --------------------
 
 	// cmsgears\core\common\base\Widget
 
     public function renderWidget( $config = [] ) {
 
-		// postview - view displayed by default and after file is uploaded to server.
-		$postView		= $this->template . '/post-view';
+		$containerHtml	= $this->container ? $this->renderContainer( $config ) : null;
 
-		// chooser - it's used to display file chooser
-		$chooser		= $this->template . '/file-chooser';
+		$draggerHtml	= $this->dragger ? $this->renderDragger( $config ) : null;
 
-		// preview - It allows to preview the file if possible or we can also show other details like file name and size.
-		$preview		= $this->template . '/file-preview';
+		$chooserHtml	= $this->chooser ? $this->renderChooser( $config ) : null;
 
-		// preloader - It shows the overall progress of file being uploaded
-		$preloader		= $this->template . '/preloader';
+		$preloaderHtml	= $this->preloader ? $this->renderPreloader( $config ) : null;
 
-		// attributes - auto-filled by file uploader, after file is uploaded successfully
-		$attributes		= $this->template . '/file-attributes';
+		$infoHtml		= $this->info ? $this->renderInfo( $config ) : null;
 
-		// attributes - to be filled by user after file is uploaded successfully
-		$info			= $this->template . '/file-info';
+		$fieldsHtml		= $this->fields ? $this->renderFields( $config ) : null;
 
-		$postAction		= $this->template . '/post-action';
+		$formHtml		= $this->form ? $this->renderForm( $config, [ 'infoHtml' => $infoHtml, 'fieldsHtml' => $fieldsHtml ] ) : null;
 
-		$postViewHtml 	= $this->renderPostView( $postView );
+		$uploaderView	= CodeGenUtil::isAbsolutePath( $this->uploaderView ) ? $this->uploaderView : "$this->template/$this->uploaderView";
 
-		$chooserHtml	= $this->renderChooser( $chooser );
+		$widgetHtml 	= $this->render( $uploaderView, [
+								'widget' => $this,
+								'containerHtml' => $containerHtml, 'draggerHtml' => $draggerHtml, 'chooserHtml' => $chooserHtml,
+								'preloaderHtml' => $preloaderHtml, 'infoHtml' => $infoHtml, 'fieldsHtml' => $fieldsHtml,
+								'formHtml' => $formHtml
+							]);
 
-		$previewHtml	= $this->renderPreview( $preview );
+		if( $this->wrap ) {
 
-		$preloaderHtml	= $this->renderPreLoader( $preloader );
+			return Html::tag( $this->wrapper, $widgetHtml, $this->options );
+		}
 
-		$attributesHtml	= $this->renderAttributes( $attributes );
-
-		$infoHtml		= $this->renderInfo( $info );
-
-		$postActionHtml	= $this->renderPostAction( $postAction, $attributesHtml, $infoHtml );
-
-		return $postViewHtml . "<div class='wrap-chooser'>" . $chooserHtml . $previewHtml . $preloaderHtml . "</div>" . $postActionHtml;
+        return $widgetHtml;
     }
 
-	// FileUploader
+	// FileUploader --------------------------
 
-	protected function renderPostView( $postView ) {
+	public function renderContainer( $config = [] ) {
 
-		return $this->render( $postView, [ 'postView' => $this->postView, 'model' => $this->model, 'btnChooserIcon' => $this->btnChooserIcon, 'postViewIcon' => $this->postViewIcon, 'postUploadMessage' => $this->postUploadMessage, 'disabled' => $this->disabled ] );
+		$containerView		= CodeGenUtil::isAbsolutePath( $this->containerView ) ? $this->containerView : "$this->template/$this->containerView";
+
+        return $this->render( $containerView, [ 'widget' => $this ] );
 	}
 
-	protected function renderChooser( $chooser ) {
+	public function renderDragger( $config = [] ) {
 
-		return $this->render( $chooser, [ 'chooser' => $this->chooser, 'disabled' => $this->disabled ] );
+		$draggerView		= CodeGenUtil::isAbsolutePath( $this->draggerView ) ? $this->draggerView : "$this->template/$this->draggerView";
+
+        return $this->render( $draggerView, [ 'widget' => $this ] );
 	}
 
-	protected function renderPreview( $preview ) {
+	public function renderChooser( $config = [] ) {
 
-		return $this->render( $preview, [ 'preview' => $this->preview, 'previewWidth' => $this->previewWidth, 'previewHeight' => $this->previewHeight, 'disabled' => $this->disabled ] );
+		$chooserView		= CodeGenUtil::isAbsolutePath( $this->chooserView ) ? $this->chooserView : "$this->template/$this->chooserView";
+
+        return $this->render( $chooserView, [ 'widget' => $this ] );
 	}
 
-	protected function renderPreLoader( $preloader ) {
+	public function renderPreloader( $config = [] ) {
 
-		return $this->render( $preloader, [ 'preloader' => $this->preloader ] );
+		$preloaderView		= CodeGenUtil::isAbsolutePath( $this->preloaderView ) ? $this->preloaderView : "$this->template/$this->preloaderView";
+
+        return $this->render( $preloaderView, [ 'widget' => $this ] );
 	}
 
-	protected function renderAttributes( $attributes ) {
+	public function renderInfo( $config = [] ) {
 
-		return $this->render( $attributes, [ 'model' => $this->model, 'modelClass' => $this->modelClass, 'directory' => $this->directory, 'type' => $this->type,
-							'hiddenInfo' => $this->hiddenInfo, 'hiddenInfoFields' => $this->hiddenInfoFields ] );
+		$infoView		= CodeGenUtil::isAbsolutePath( $this->infoView ) ? $this->infoView : "$this->template/$this->infoView";
+
+        return $this->render( $infoView, [ 'widget' => $this ] );
 	}
 
-	protected function renderInfo( $info ) {
+	public function renderFields( $config = [] ) {
 
-		return $this->render( $info, [ 'info' => $this->info, 'infoLabel' => $this->infoLabel, 'infoFields' => $this->infoFields, 'model' => $this->model, 'modelClass' => $this->modelClass ] );
+		$fieldsView		= CodeGenUtil::isAbsolutePath( $this->fieldsView ) ? $this->fieldsView : "$this->template/$this->fieldsView";
+
+        return $this->render( $fieldsView, [ 'widget' => $this ] );
 	}
 
-	protected function renderPostAction( $postAction, $attributesHtml, $infoHtml ) {
+	public function renderForm( $config = [], $html = [] ) {
 
-		return $this->render( $postAction, [ 'widget' => $this, 'attributesHtml' => $attributesHtml, 'infoHtml' => $infoHtml ] );
+		$formView		= CodeGenUtil::isAbsolutePath( $this->formView ) ? $this->formView : "$this->template/$this->formView";
+
+        return $this->render( $formView, [
+			'widget' => $this, 'infoHtml' => $html[ 'infoHtml' ], 'fieldsHtml' => $html[ 'fieldsHtml' ]
+		]);
 	}
 }

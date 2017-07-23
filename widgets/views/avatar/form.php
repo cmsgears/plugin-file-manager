@@ -8,27 +8,26 @@ $cmtAction			= $widget->cmtAction;
 
 if( $postAction && isset( $postActionUrl ) ) {
 
-	$paClass = 'post-action';
+	$paClass = 'post-action hidden-easy';
 
 	if( $postActionVisible ) {
 
-		$paClass = 'post-action-v';
+		$paClass = 'post-action';
 	}
 ?>
-	<form></form>
-	<div class='<?= $paClass ?>'>
-		<form cmt-app="<?= $cmtApp ?>" cmt-controller="<?= $cmtController ?>" cmt-action="<?= $cmtAction ?>" action="<?= $postActionUrl ?>" method='post'>
+	<div class="<?= $paClass ?>">
+		<form class="form" cmt-app="<?= $cmtApp ?>" cmt-controller="<?= $cmtController ?>" cmt-action="<?= $cmtAction ?>" action="<?= $postActionUrl ?>">
 			<div class="max-area-cover spinner">
 				<div class="valign-center cmti cmti-2x cmti-spinner-1 spin"></div>
 			</div>
-			<?= $attributesHtml ?>
 			<?= $infoHtml ?>
+			<?= $fieldsHtml ?>
 			<div class="frm-actions align align-center">
 				<input class="element-medium" type="submit" value="Save" />
 			</div>
 		</form>
 	</div>
 <?php } else { ?>
-	<?= $attributesHtml ?>
 	<?= $infoHtml ?>
+	<?= $fieldsHtml ?>
 <?php } ?>
