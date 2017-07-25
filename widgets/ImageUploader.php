@@ -27,7 +27,7 @@ class ImageUploader extends FileUploader {
 	public $type			= 'image';
 
 	// File - model and model class for loading by controller
-	public $modelClass		= 'Avatar';
+	public $modelClass		= 'Banner';
 
 	// Widget - Container
 	public $fileIcon		= 'cmti cmti-5x cmti-image';

@@ -1,29 +1,31 @@
 <?php
-	if( isset( $model ) && isset( $model->name ) && strlen( $model->name ) > 0 ) {
+$model = $widget->model;
 
-		$name	= $model->name;
-		$url	= $model->getThumbUrl();
+if( isset( $model ) && isset( $model->name ) && strlen( $model->name ) > 0 ) {
+
+	$name	= $model->name;
+	$url	= $model->getFileUrl();
 ?>
-		<div class="card card-file">
-			<div class="card-data file-data">
-				<a href="<?= $url ?>" class="<?= $widget->fileIcon ?>" target="_blank"></a>
-			</div>
-			<div class="card-footer message-upload">
-				<?= $widget->uploadMessage ?>
-			</div>
+	<div class="card card-file">
+		<div class="card-data file-data">
+			<a href="<?= $url ?>" class="<?= $widget->fileIcon ?>" target="_blank"></a>
 		</div>
+		<div class="card-footer message-upload">
+			<?= $widget->uploadMessage ?>
+		</div>
+	</div>
 <?php
-	}
-	else {
+}
+else {
 ?>
-		<div class="card card-file">
-			<div class="card-data file-data">
-				<i class="<?= $widget->fileIcon ?>"></i>
-			</div>
-			<div class="card-footer message-upload">
-				<?= $widget->uploadMessage ?>
-			</div>
+	<div class="card card-file">
+		<div class="card-data file-data">
+			<i class="<?= $widget->fileIcon ?>"></i>
 		</div>
+		<div class="card-footer message-upload">
+			<?= $widget->uploadMessage ?>
+		</div>
+	</div>
 <?php
-	}
+}
 ?>

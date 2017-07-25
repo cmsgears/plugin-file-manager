@@ -73,9 +73,10 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 	public $infoView		= 'info';
 	public $additionalInfo	= false;
 	public $infoFields		= []; // Useful only if $additionalInfo is true
-	
+
 	// Widget - Fields - Used to collect file info from user
-	public $fields			= false;
+	public $fields			= true;
+	public $showFields		= false;
 	public $fieldsView		= 'fields';
 	public $fileLabel		= false;
 	public $fileFields		= [ 'title', 'description', 'alt', 'link' ];

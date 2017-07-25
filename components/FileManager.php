@@ -271,14 +271,15 @@ class FileManager extends Component {
             $name	= str_replace( " ", "-", $filename );
         }
 
-        $filename	= $name . "." . $extension;
+        $upname	= $name . "." . $extension;
 
         // Save File
-        if( file_put_contents( "$uploadDir/$filename", $file_contents ) ) {
+        if( file_put_contents( "$uploadDir/$upname", $file_contents ) ) {
 
             $result	= array();
 
             $result[ 'name' ] 		= $name;
+			$result[ 'title' ] 		= pathinfo( $filename, PATHINFO_FILENAME );
             $result[ 'extension' ] 	= $extension;
 
             // Special processing for Avatar Uploader
@@ -286,7 +287,7 @@ class FileManager extends Component {
 
                 // Generate Thumb
                 $thumbName	= $name . '-thumb' . "." . $extension;
-                $resizeObj 	= new ImageResize( "$uploadDir/$filename" );
+                $resizeObj 	= new ImageResize( "$uploadDir/$upname" );
 
                 $resizeObj->resizeImage( $this->thumbWidth, $this->thumbHeight, 'crop' );
                 $resizeObj->saveImage( "$uploadDir/$thumbName", 100 );
@@ -295,7 +296,7 @@ class FileManager extends Component {
             }
             else {
 
-                $result[ 'tempUrl' ] 	= "$this->uploadUrl/$tempUrl/$filename";
+                $result[ 'tempUrl' ] 	= "$this->uploadUrl/$tempUrl/$upname";
             }
 
             return $result;
