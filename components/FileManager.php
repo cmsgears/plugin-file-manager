@@ -58,6 +58,9 @@ class FileManager extends Component {
     public $uploadDir			= null;
     public $uploadUrl			= null;
 
+    public $tempUploadDir		= null;
+    public $tempUploadUrl		= null;
+
     public function __construct( $config = [] ) {
 
         if( !empty( $config ) ) {
@@ -254,6 +257,18 @@ class FileManager extends Component {
         $tempUrl		= "temp/$directory";
         $uploadDir 		= "$this->uploadDir/$tempUrl";
 
+	if( isset( $this->tempUploadDir )) {
+		
+		$uploadDir 	= "$this->tempUploadDir/$tempUrl";
+	}
+	
+	$uploadUrl 		= $this->uploadUrl;
+	
+	if( isset( $this->tempUploadUrl )) {
+		
+		$uploadUrl 	= $this->tempUploadUrl;
+	}
+
         if( !file_exists( $uploadDir ) ) {
 
             mkdir( $uploadDir , 0777, true );
@@ -292,11 +307,11 @@ class FileManager extends Component {
                 $resizeObj->resizeImage( $this->thumbWidth, $this->thumbHeight, 'crop' );
                 $resizeObj->saveImage( "$uploadDir/$thumbName", 100 );
 
-                $result[ 'tempUrl' ] 	= "$this->uploadUrl/$tempUrl/$thumbName";
+                $result[ 'tempUrl' ] 	= "$uploadUrl/$tempUrl/$thumbName";
             }
             else {
 
-                $result[ 'tempUrl' ] 	= "$this->uploadUrl/$tempUrl/$upname";
+                $result[ 'tempUrl' ] 	= "$uploadUrl/$tempUrl/$upname";
             }
 
             return $result;
@@ -384,7 +399,14 @@ class FileManager extends Component {
 
     public function saveImage( $sourceFile, $targetDir, $filePath, $mediumPath, $thumbPath, $width = null, $height = null, $mwidth = null, $mheight = null, $twidth = null, $theight = null ) {
 
-        $sourceFile	= "$this->uploadDir/temp/$sourceFile";
+	$uploadDir 		= $this->uploadDir;
+	
+	if( isset( $this->tempUploadDir )) {
+		
+		$uploadDir 	= $this->tempUploadDir;
+	}
+
+        $sourceFile	= "$uploadDir/temp/$sourceFile";
         $targetDir	= "$this->uploadDir/$targetDir";
         $filePath	= "$this->uploadDir/$filePath";
         $mediumPath	= "$this->uploadDir/$mediumPath";
