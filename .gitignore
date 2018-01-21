@@ -1,0 +1,22 @@
+\ No newline at end of file
++-/nbproject/private/
++\ No newline at end of file
+++# Ignore NetBeans IDE
+++nbproject/private/
+++build/
+++nbbuild/
+++dist/
+++nbdist/
+++.nb-gradle/
+++nbactions.xml
+++nb-configuration.xml
+++nbproject/project.properties
+++nbproject/project.xml
+++
+++# Eclipse IDE
+++.settings/
+++.classpath
+++.project
+++
+++# OS
+++.DS_Store

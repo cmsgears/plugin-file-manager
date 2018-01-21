@@ -4,7 +4,7 @@
 	"homepage": "http://www.cmsgears.org",
 	"type": "package",
 	"keywords": [ "yii2", "cmsgears", "plugin", "file uploader" ],
-	"license": "GPLv3",
+	"license": "GPL-3.0-or-later",
 	"support": {
         "source": "http://www.cmsgears.org/downloads/modules/forms",
 		"forum": "http://forum.cmsgears.org/",
@@ -18,7 +18,7 @@
 		}
 	},
     "require": {
-        "php": ">=5.4.0",
+        "php": ">=7.0.0",
         "cmsgears/module-core": "*"
     }
 }

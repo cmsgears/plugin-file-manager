@@ -1,7 +1,7 @@
 <?php
 namespace cmsgears\files\widgets;
 
-class VideoUploader extends FileUploader {
+class SharedUploader extends FileUploader {
 
 	// Variables ---------------------------------------------------
 
@@ -17,17 +17,11 @@ class VideoUploader extends FileUploader {
 
 	// Public -----------------
 
-	public $template		= 'video';
+	public $template		= 'document';
 
 	// File - directory and type
-	public $directory		= 'video';
-	public $type			= 'video';
-
-	// File - model and model class for loading by controller
-	public $modelClass		= 'Video';
-
-	// Widget - Container
-	public $fileIcon		= 'cmti cmti-5x cmti-file-video';
+	public $directory		= 'files';
+	public $type			= 'shared';
 
 	// Protected --------------
 
@@ -49,6 +43,6 @@ class VideoUploader extends FileUploader {
 
 	// CMG parent classes --------------------
 
-	// VideoUploader -------------------------
+	// SharedUploader ------------------------
 
 }
