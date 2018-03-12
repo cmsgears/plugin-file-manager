@@ -1,9 +1,22 @@
 <?php
+/**
+ * This file is part of CMSGears Framework. Please view License file distributed
+ * with the source code for license details.
+ *
+ * @link https://www.cmsgears.org/
+ * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
+ */
+
 namespace cmsgears\files\widgets;
 
 // CMG Imports
 use cmsgears\core\common\utilities\CodeGenUtil;
 
+/**
+ * ImageUploader widget is pre-configured to upload images.
+ *
+ * @since 1.0.0
+ */
 class ImageUploader extends FileUploader {
 
 	// Variables ---------------------------------------------------
@@ -35,6 +48,8 @@ class ImageUploader extends FileUploader {
 	// Image and Thumbnail Dimensions
 	public $width			= null;
 	public $height			= null;
+	public $mwidth			= null;
+	public $mheight			= null;
 	public $twidth			= null;
 	public $theight			= null;
 
@@ -62,11 +77,14 @@ class ImageUploader extends FileUploader {
 
 	public function renderInfo( $config = [] ) {
 
-		$infoView		= CodeGenUtil::isAbsolutePath( $this->infoView ) ? $this->infoView : "$this->template/$this->infoView";
+		$infoView = CodeGenUtil::isAbsolutePath( $this->infoView ) ? $this->infoView : "$this->template/$this->infoView";
 
         return $this->render( $infoView, [
 			'widget' => $this,
-			'width' => $this->width, 'height' => $this->height, 'twidth' => $this->twidth, 'theight' => $this->theight
-		]);
+			'width' => $this->width, 'height' => $this->height,
+			'mwidth' => $this->mwidth, 'mheight' => $this->mheight,
+			'twidth' => $this->twidth, 'theight' => $this->theight
+		] );
 	}
+
 }

@@ -1,13 +1,28 @@
 <?php
+/**
+ * This file is part of CMSGears Framework. Please view License file distributed
+ * with the source code for license details.
+ *
+ * @link https://www.cmsgears.org/
+ * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
+ */
+
 namespace cmsgears\files\widgets;
 
 // Yii Imports
 use yii\helpers\Html;
 
 // CMG Imports
+use cmsgears\core\common\base\Widget;
+
 use cmsgears\core\common\utilities\CodeGenUtil;
 
-abstract class FileUploader extends \cmsgears\core\common\base\Widget {
+/**
+ * FileUploader is the base widget to upload files.
+ *
+ * @since 1.0.0
+ */
+abstract class FileUploader extends Widget {
 
 	// Variables ---------------------------------------------------
 
@@ -23,34 +38,34 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 
 	// Public -----------------
 
-	public $wrap			= true;
+	public $wrap		= true;
 
 	// Widget - Template
-	public $template		= null;
+	public $template	= null;
 
 	// Widget - Html options
-	public $options		 	= [ 'class' => 'box box-file-uploader file-uploader' ];
+	public $options		= [ 'class' => 'box box-file-uploader file-uploader' ];
 
 	// Widget - Options - Disable Upload
-    public $disabled        = false;
+	public $disabled	= false;
 
 	// File - directory and type
-	public $directory		= null;
-	public $type			= null;
+	public $directory	= null;
+	public $type		= null;
 
 	// File - model and model class for loading by controller
-	public $model			= null;
-	public $modelClass		= 'File';
+	public $model		= null;
+	public $modelClass	= 'File';
 
 	// Widget - Uploader
-	public $uploaderView		= 'uploader';
-	public $chooserIcon			= 'cmti cmti-edit';
+	public $uploaderView	= 'uploader';
+	public $chooserIcon		= 'cmti cmti-edit';
 
 	// Widget - Container
-	public $container			= true;
-	public $containerView		= 'container';
-	public $fileIcon			= 'icon cmti cmti-5x cmti-file';
-	public $uploadMessage		= null;
+	public $container		= true;
+	public $containerView	= 'container';
+	public $fileIcon		= 'icon cmti cmti-5x cmti-file';
+	public $uploadMessage	= null;
 
 	// Widget - Dragger
 	public $dragger			= true;
@@ -61,8 +76,8 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 	public $previewHeight	= 120;
 
 	// Widget - Chooser
-	public $chooser			= true;
-	public $chooserView		= 'chooser';
+	public $chooser		= true;
+	public $chooserView	= 'chooser';
 
 	// Widget - Preloader
 	public $preloader		= true;
@@ -75,23 +90,25 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 	public $infoFields		= []; // Useful only if $additionalInfo is true
 
 	// Widget - Fields - Used to collect file info from user
-	public $fields			= true;
-	public $showFields		= false;
-	public $fieldsView		= 'fields';
-	public $fileLabel		= false;
-	public $fileFields		= [ 'title', 'description', 'alt', 'link' ];
+	public $fields		= true;
+	public $showFields	= false;
+	public $fieldsView	= 'fields';
+	public $fileLabel	= false;
+	public $fileFields	= [ 'title', 'description', 'alt', 'link' ];
 
 	// Widget - Form
-	public $form			= true;
-	public $formView		= 'form';
+	public $form		= true;
+	public $formView	= 'form';
 
 	// Widget - Form Post action
 	public $postAction			= false;
 	public $postActionUrl		= null;
 	public $postActionVisible	= false;
-	public $cmtApp				= 'main';
-	public $cmtController		= 'default';
-	public $cmtAction			= 'file';
+
+	// CMT - JS - Application configuration
+	public $cmtApp			= 'main';
+	public $cmtController	= 'default';
+	public $cmtAction		= 'file';
 
 	// Protected --------------
 
@@ -109,13 +126,13 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 
 	// yii\base\Widget --------
 
-    public function run() {
+	public function run() {
 
 		$this->options[ 'directory' ]	= $this->directory;
 		$this->options[ 'type' ]		= $this->type;
 
 		return $this->renderWidget();
-    }
+	}
 
 	// CMG interfaces ------------------------
 
@@ -123,7 +140,7 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 
 	// cmsgears\core\common\base\Widget
 
-    public function renderWidget( $config = [] ) {
+	public function renderWidget( $config = [] ) {
 
 		$containerHtml	= $this->container ? $this->renderContainer( $config ) : null;
 
@@ -141,71 +158,120 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 
 		$uploaderView	= CodeGenUtil::isAbsolutePath( $this->uploaderView ) ? $this->uploaderView : "$this->template/$this->uploaderView";
 
-		$widgetHtml 	= $this->render( $uploaderView, [
-								'widget' => $this,
-								'containerHtml' => $containerHtml, 'draggerHtml' => $draggerHtml, 'chooserHtml' => $chooserHtml,
-								'preloaderHtml' => $preloaderHtml, 'infoHtml' => $infoHtml, 'fieldsHtml' => $fieldsHtml,
-								'formHtml' => $formHtml
-							]);
+		$widgetHtml = $this->render( $uploaderView, [
+			'widget' => $this,
+			'containerHtml' => $containerHtml,
+			'draggerHtml' => $draggerHtml,
+			'chooserHtml' => $chooserHtml,
+			'preloaderHtml' => $preloaderHtml,
+			'infoHtml' => $infoHtml,
+			'fieldsHtml' => $fieldsHtml,
+			'formHtml' => $formHtml
+		] );
 
 		if( $this->wrap ) {
 
 			return Html::tag( $this->wrapper, $widgetHtml, $this->options );
 		}
 
-        return $widgetHtml;
-    }
+		return $widgetHtml;
+	}
 
 	// FileUploader --------------------------
 
+	/**
+	 * Generate and return the HTML of container.
+	 *
+	 * @param array $config
+	 * @return string
+	 */
 	public function renderContainer( $config = [] ) {
 
-		$containerView		= CodeGenUtil::isAbsolutePath( $this->containerView ) ? $this->containerView : "$this->template/$this->containerView";
+		$containerView = CodeGenUtil::isAbsolutePath( $this->containerView, true ) ? $this->containerView : "$this->template/$this->containerView";
 
-        return $this->render( $containerView, [ 'widget' => $this ] );
+		return $this->render( $containerView, [ 'widget' => $this ] );
 	}
 
+	/**
+	 * Generate and return the HTML of file dragger having drag area.
+	 *
+	 * @param array $config
+	 * @return string
+	 */
 	public function renderDragger( $config = [] ) {
 
-		$draggerView		= CodeGenUtil::isAbsolutePath( $this->draggerView ) ? $this->draggerView : "$this->template/$this->draggerView";
+		$draggerView = CodeGenUtil::isAbsolutePath( $this->draggerView, true ) ? $this->draggerView : "$this->template/$this->draggerView";
 
-        return $this->render( $draggerView, [ 'widget' => $this ] );
+		return $this->render( $draggerView, [ 'widget' => $this ] );
 	}
 
+	/**
+	 * Generate and return the HTML of file chooser element.
+	 *
+	 * @param array $config
+	 * @return string
+	 */
 	public function renderChooser( $config = [] ) {
 
-		$chooserView		= CodeGenUtil::isAbsolutePath( $this->chooserView ) ? $this->chooserView : "$this->template/$this->chooserView";
+		$chooserView = CodeGenUtil::isAbsolutePath( $this->chooserView, true ) ? $this->chooserView : "$this->template/$this->chooserView";
 
-        return $this->render( $chooserView, [ 'widget' => $this ] );
+		return $this->render( $chooserView, [ 'widget' => $this ] );
 	}
 
+	/**
+	 * Generate and return the HTML of pre-loader used to show upload progress.
+	 *
+	 * @param array $config
+	 * @return string
+	 */
 	public function renderPreloader( $config = [] ) {
 
-		$preloaderView		= CodeGenUtil::isAbsolutePath( $this->preloaderView ) ? $this->preloaderView : "$this->template/$this->preloaderView";
+		$preloaderView = CodeGenUtil::isAbsolutePath( $this->preloaderView, true ) ? $this->preloaderView : "$this->template/$this->preloaderView";
 
-        return $this->render( $preloaderView, [ 'widget' => $this ] );
+		return $this->render( $preloaderView, [ 'widget' => $this ] );
 	}
 
+	/**
+	 * Generate and return the HTML of info having fields required to store file.
+	 *
+	 * @param array $config
+	 * @return string
+	 */
 	public function renderInfo( $config = [] ) {
 
-		$infoView		= CodeGenUtil::isAbsolutePath( $this->infoView ) ? $this->infoView : "$this->template/$this->infoView";
+		$infoView = CodeGenUtil::isAbsolutePath( $this->infoView, true ) ? $this->infoView : "$this->template/$this->infoView";
 
-        return $this->render( $infoView, [ 'widget' => $this ] );
+		return $this->render( $infoView, [ 'widget' => $this ] );
 	}
 
+	/**
+	 * Generate and return the HTML of fields. These fields will submit additional data required for file.
+	 *
+	 * @param array $config
+	 * @return string
+	 */
 	public function renderFields( $config = [] ) {
 
-		$fieldsView		= CodeGenUtil::isAbsolutePath( $this->fieldsView ) ? $this->fieldsView : "$this->template/$this->fieldsView";
+		$fieldsView = CodeGenUtil::isAbsolutePath( $this->fieldsView, true ) ? $this->fieldsView : "$this->template/$this->fieldsView";
 
-        return $this->render( $fieldsView, [ 'widget' => $this ] );
+		return $this->render( $fieldsView, [ 'widget' => $this ] );
 	}
 
+	/**
+	 * Generate and return the HTML of form to submit the uploaded file.
+	 *
+	 * @param array $config
+	 * @return string
+	 */
 	public function renderForm( $config = [], $html = [] ) {
 
-		$formView		= CodeGenUtil::isAbsolutePath( $this->formView ) ? $this->formView : "$this->template/$this->formView";
+		$formView = CodeGenUtil::isAbsolutePath( $this->formView, true ) ? $this->formView : "$this->template/$this->formView";
 
-        return $this->render( $formView, [
-			'widget' => $this, 'infoHtml' => $html[ 'infoHtml' ], 'fieldsHtml' => $html[ 'fieldsHtml' ]
-		]);
+		return $this->render( $formView, [
+			'widget' => $this,
+			'infoHtml' => $html[ 'infoHtml' ],
+			'fieldsHtml' => $html[ 'fieldsHtml' ]
+		] );
 	}
+
 }

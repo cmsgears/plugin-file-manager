@@ -1,6 +1,19 @@
 <?php
+/**
+ * This file is part of CMSGears Framework. Please view License file distributed
+ * with the source code for license details.
+ *
+ * @link https://www.cmsgears.org/
+ * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
+ */
+
 namespace cmsgears\files\widgets;
 
+/**
+ * AvatarUploader widget is pre-configured to upload avatar.
+ *
+ * @since 1.0.0
+ */
 class AvatarUploader extends ImageUploader {
 
 	// Variables ---------------------------------------------------
@@ -26,12 +39,13 @@ class AvatarUploader extends ImageUploader {
 	public $modelClass		= 'Avatar';
 
 	// Widget - Container
-	public $fileIcon			= 'cmti cmti-5x cmti-user';
+	public $fileIcon		= 'cmti cmti-5x cmti-user';
 
-	public $postActionUrl		= 'user/avatar';
-	public $cmtApp				= 'user';
-	public $cmtController		= 'user';
-	public $cmtAction			= 'avatar';
+	public $postActionUrl	= 'user/avatar';
+
+	public $cmtApp			= 'user';
+	public $cmtController	= 'user';
+	public $cmtAction		= 'avatar';
 
 	// Protected --------------
 
@@ -46,8 +60,6 @@ class AvatarUploader extends ImageUploader {
 	// Yii interfaces ------------------------
 
 	// Yii parent classes --------------------
-
-	// yii\base\Widget --------
 
 	// CMG interfaces ------------------------
 
