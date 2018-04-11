@@ -69,10 +69,10 @@ class m160622_061028_file_manager extends Migration {
 			'name' => 'Config File', 'slug' => 'config-file',
 			'type' => CoreGlobal::TYPE_SYSTEM,
 			'description' => 'File configuration form.',
-			'successMessage' => 'All configurations saved successfully.',
+			'success' => 'All configurations saved successfully.',
 			'captcha' => false,
 			'visibility' => Form::VISIBILITY_PROTECTED,
-			'active' => true, 'userMail' => false, 'adminMail' => false,
+			'status' => Form::STATUS_ACTIVE, 'userMail' => false, 'adminMail' => false,
 			'createdAt' => DateUtil::getDateTime(),
 			'modifiedAt' => DateUtil::getDateTime()
 		] );
@@ -87,7 +87,6 @@ class m160622_061028_file_manager extends Migration {
 			[ $config->id, 'audio_extensions', 'Audio Extensions', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{"title":"Audio Extensions","placeholder":"Audio Extensions"}' ],
 			[ $config->id, 'document_extensions', 'Document Extensions', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{"title":"Document Extensions","placeholder":"Document Extensions"}' ],
 			[ $config->id, 'compressed_extensions', 'Compressed Extensions', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{"title":"Compressed Extensions","placeholder":"Compressed Extensions"}' ],
-			[ $config->id, 'shared_extensions', 'Shared Extensions', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{"title":"Shared Extensions","placeholder":"Shared Extensions"}' ],
 			[ $config->id, 'generate_name', 'Generate Name', FormField::TYPE_TOGGLE, false, 'required', 0, NULL, '{"title":"Generate Name"}' ],
 			[ $config->id, 'pretty_name', 'Pretty Name', FormField::TYPE_TOGGLE, false, 'required', 0, NULL, '{"title":"Pretty Name"}' ],
 			[ $config->id, 'max_size', 'Max Size', FormField::TYPE_TEXT, false, 'required', 0, NULL, '{"title":"Max Size","placeholder":"Max Size"}' ],
@@ -115,7 +114,6 @@ class m160622_061028_file_manager extends Migration {
 			[ $this->site->id, 'audio_extensions', 'Audio Extensions', 'file', 'text', 'mp3,m4a,wav' ],
 			[ $this->site->id, 'document_extensions', 'Document Extensions', 'file', 'text', 'pdf,doc,docx,xls,xlsx,txt' ],
 			[ $this->site->id, 'compressed_extensions', 'Compressed Extensions', 'file', 'text', 'rar,zip' ],
-			[ $this->site->id, 'shared_extensions', 'Shared Extensions', 'file', 'text', 'png,jpg,jpeg,gif,mp4,flv,ogv,avi,mp3,m4a,wav,pdf,doc,docx,xls,xlsx,txt,rar,zip' ],
 			[ $this->site->id, 'generate_name', 'Generate Name', 'file', 'flag', '1' ],
 			[ $this->site->id, 'pretty_name', 'Pretty Name', 'file', 'flag', '0' ],
 			[ $this->site->id, 'max_size', 'Max Size', 'file', 'text', '5' ],

@@ -32,7 +32,6 @@ class FileManager extends Component {
 	const FILE_TYPE_AUDIO		= 'audio';
 	const FILE_TYPE_DOCUMENT	= 'document';
 	const FILE_TYPE_COMPRESSED	= 'compressed';
-	const FILE_TYPE_SHARED		= 'shared';
 
 	public $ignoreDbConfig = false;
 
@@ -42,9 +41,8 @@ class FileManager extends Component {
 	public $audioExtensions		 = [ 'mp3', 'm4a', 'wav' ];
 	public $documentExtensions	 = [ 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt' ];
 	public $compressedExtensions = [ 'rar', 'zip' ];
-	public $sharedExtensions	 = [ 'png', 'jpg', 'jpeg', 'gif', 'mp4', 'flv', 'ogv', 'avi', 'mp3', 'm4a', 'wav', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'rar', 'zip' ];
 
-	public $typeMap = [ 0 => 'Select File Type', self::FILE_TYPE_IMAGE => self::FILE_TYPE_IMAGE, self::FILE_TYPE_VIDEO => self::FILE_TYPE_VIDEO, self::FILE_TYPE_AUDIO => self::FILE_TYPE_AUDIO, self::FILE_TYPE_DOCUMENT => self::FILE_TYPE_DOCUMENT, self::FILE_TYPE_COMPRESSED => self::FILE_TYPE_COMPRESSED, self::FILE_TYPE_SHARED => self::FILE_TYPE_SHARED ];
+	public $typeMap = [ 0 => 'Select File Type', self::FILE_TYPE_IMAGE => self::FILE_TYPE_IMAGE, self::FILE_TYPE_VIDEO => self::FILE_TYPE_VIDEO, self::FILE_TYPE_AUDIO => self::FILE_TYPE_AUDIO, self::FILE_TYPE_DOCUMENT => self::FILE_TYPE_DOCUMENT, self::FILE_TYPE_COMPRESSED => self::FILE_TYPE_COMPRESSED ];
 
 	// Either of these must be set to true. Generate Name generate a unique name using Yii Security Component whereas pretty names use the file name provided by user and replace space by hyphen(-).
 	public $generateName = true;
@@ -91,7 +89,6 @@ class FileManager extends Component {
 			$this->audioExtensions		 = $properties->getAudioExtensions( $this->audioExtensions );
 			$this->documentExtensions	 = $properties->getDocumentExtensions( $this->documentExtensions );
 			$this->compressedExtensions	 = $properties->getCompressedExtensions( $this->compressedExtensions );
-			$this->sharedExtensions		 = $properties->getSharedExtensions( $this->sharedExtensions );
 			$this->generateName			 = $properties->isGenerateName( $this->generateName );
 			$this->prettyNames			 = $properties->isPrettyName( $this->prettyNames );
 			$this->maxSize				 = $properties->getMaxSize( $this->maxSize );
@@ -131,48 +128,6 @@ class FileManager extends Component {
 
 	private function processFileUpload( $directory, $type ) {
 
-		$allowedExtensions = [];
-
-		switch( $type ) {
-
-			case self::FILE_TYPE_IMAGE: {
-
-				$allowedExtensions = $this->imageExtensions;
-
-				break;
-			}
-			case self::FILE_TYPE_VIDEO: {
-
-				$allowedExtensions = $this->videoExtensions;
-
-				break;
-			}
-			case self::FILE_TYPE_AUDIO: {
-
-				$allowedExtensions = $this->audioExtensions;
-
-				break;
-			}
-			case self::FILE_TYPE_DOCUMENT: {
-
-				$allowedExtensions = $this->documentExtensions;
-
-				break;
-			}
-			case self::FILE_TYPE_COMPRESSED: {
-
-				$allowedExtensions = $this->compressedExtensions;
-
-				break;
-			}
-			case self::FILE_TYPE_SHARED: {
-
-				$allowedExtensions = $this->sharedExtensions;
-
-				break;
-			}
-		}
-
 		// Get the filename submitted by user
 		$filename = ( isset( $_SERVER[ 'HTTP_X_FILENAME' ] ) ? $_SERVER[ 'HTTP_X_FILENAME' ] : false );
 
@@ -181,10 +136,18 @@ class FileManager extends Component {
 
 			$extension = pathinfo( $filename, PATHINFO_EXTENSION );
 
+			// Detect file type
+			if( empty( $type ) || $type == 'undefined' ) {
+
+				$type = $this->detectType( $extension );
+			}
+
+			$allowedExtensions = $this->getAllowedExtensions( $type );
+
 			// check allowed extensions
 			if( in_array( strtolower( $extension ), $allowedExtensions ) ) {
 
-				return $this->saveTempFile( file_get_contents( 'php://input' ), $directory, $filename, $extension );
+				return $this->saveTempFile( file_get_contents( 'php://input' ), $directory, $type, $filename, $extension );
 			}
 			else {
 
@@ -200,6 +163,14 @@ class FileManager extends Component {
 
 				$extension = $_POST[ 'fileExtension' ];
 
+				// Detect file type
+				if( empty( $type ) || $type == 'undefined' ) {
+
+					$type = $this->detectType( $extension );
+				}
+
+				$allowedExtensions = $this->getAllowedExtensions( $type );
+
 				// check allowed extensions
 				if( in_array( strtolower( $extension ), $allowedExtensions ) ) {
 
@@ -208,7 +179,7 @@ class FileManager extends Component {
 					$file	= str_replace( ' ', '+', $file );
 					$file	= base64_decode( $file );
 
-					return $this->saveTempFile( $file, $directory, $filename, $extension );
+					return $this->saveTempFile( $file, $directory, $type, $filename, $extension );
 				}
 				else {
 
@@ -240,10 +211,18 @@ class FileManager extends Component {
 
 						$extension = pathinfo( $filename, PATHINFO_EXTENSION );
 
+						// Detect file type
+						if( empty( $type ) || $type == 'undefined' ) {
+
+							$type = $this->detectType( $extension );
+						}
+
+						$allowedExtensions = $this->getAllowedExtensions( $type );
+
 						// check allowed extensions
 						if( in_array( strtolower( $extension ), $allowedExtensions ) ) {
 
-							return $this->saveTempFile( file_get_contents( $_FILES[ 'file' ][ 'tmp_name' ] ), $directory, $filename, $extension );
+							return $this->saveTempFile( file_get_contents( $_FILES[ 'file' ][ 'tmp_name' ] ), $directory, $type, $filename, $extension );
 						}
 						else {
 
@@ -257,7 +236,7 @@ class FileManager extends Component {
 		return [ 'error' => 'File upload failed.' ];
 	}
 
-	public function saveTempFile( $file_contents, $directory, $filename, $extension ) {
+	public function saveTempFile( $file_contents, $directory, $type, $filename, $extension ) {
 
 		// Check allowed file size
 		$sizeInMb = number_format( $file_contents / 1048576, 8 );
@@ -311,6 +290,7 @@ class FileManager extends Component {
 
 			$result[ 'name' ]		= $name;
 			$result[ 'title' ]		= pathinfo( $filename, PATHINFO_FILENAME );
+			$result[ 'type' ]		= $type;
 			$result[ 'extension' ]	= $extension;
 			$result[ 'size' ]		= $sizeInMb;
 
@@ -341,6 +321,75 @@ class FileManager extends Component {
 		return [ 'error' => 'File upload failed.' ];
 	}
 
+	private function detectType( $extension ) {
+
+		$type = null;
+
+		if( in_array( $extension, $this->imageExtensions ) ) {
+
+			$type = 'image';
+		}
+		else if( in_array( $extension, $this->videoExtensions ) ) {
+
+			$type = 'video';
+		}
+		else if( in_array( $extension, $this->audioExtensions ) ) {
+
+			$type = 'audio';
+		}
+		else if( in_array( $extension, $this->documentExtensions ) ) {
+
+			$type = 'document';
+		}
+		else if( in_array( $extension, $this->compressedExtensions ) ) {
+
+			$type = 'compressed';
+		}
+
+		return $type;
+	}
+
+	private function getAllowedExtensions( $type ) {
+
+		$allowedExtensions = [];
+
+		switch( $type ) {
+
+			case self::FILE_TYPE_IMAGE: {
+
+				$allowedExtensions = $this->imageExtensions;
+
+				break;
+			}
+			case self::FILE_TYPE_VIDEO: {
+
+				$allowedExtensions = $this->videoExtensions;
+
+				break;
+			}
+			case self::FILE_TYPE_AUDIO: {
+
+				$allowedExtensions = $this->audioExtensions;
+
+				break;
+			}
+			case self::FILE_TYPE_DOCUMENT: {
+
+				$allowedExtensions = $this->documentExtensions;
+
+				break;
+			}
+			case self::FILE_TYPE_COMPRESSED: {
+
+				$allowedExtensions = $this->compressedExtensions;
+
+				break;
+			}
+		}
+
+		return $allowedExtensions;
+	}
+
 	// File Processing ---------------------------------------------
 
 	public function processFile( $file ) {
@@ -350,13 +399,15 @@ class FileManager extends Component {
 		$fileExt	= $file->extension;
 		$fileDir	= $file->directory;
 
+		$uploadDir	= $this->uploadDir;
+
 		$sourceFile	= "$fileDir/$fileName.$fileExt";
 		$targetDir	= "$dateDir/$fileDir/";
 
 		$fileUrl = $targetDir . "$fileName.$fileExt";
 
 		// Update File Size in MB
-		$fileContent	= file_get_contents( $sourceFile );
+		$fileContent	= file_get_contents( "$uploadDir/temp/$sourceFile" );
 		$file->size		= number_format( $fileContent / 1048576, 8 );
 
 		$this->saveFile( $sourceFile, $targetDir, $fileUrl );
@@ -392,7 +443,7 @@ class FileManager extends Component {
 		$imageExt	= $file->extension;
 		$imageDir	= $file->directory;
 
-		$uploadUrl	= $this->uploadUrl;
+		$uploadDir	= $this->uploadDir;
 
 		$sourceFile	= "$imageDir/$imageName.$imageExt";
 		$targetDir	= "$dateDir/$imageDir/";
@@ -402,7 +453,7 @@ class FileManager extends Component {
 		$imageThumbUrl	= $targetDir . "$imageName-thumb.$imageExt";
 
 		// Update File Size in MB
-		$fileContent	= file_get_contents( $sourceFile );
+		$fileContent	= file_get_contents( "$uploadDir/temp/$sourceFile" );
 		$file->size		= number_format( $fileContent / 1048576, 8 );
 
 		// Save Image

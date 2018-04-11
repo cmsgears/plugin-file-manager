@@ -30,11 +30,11 @@ class SharedUploader extends FileUploader {
 
 	// Public -----------------
 
-	public $template		= 'document';
+	public $template		= 'shared';
 
 	// File - directory and type
 	public $directory		= 'files';
-	public $type			= 'shared';
+	public $type			= null; // Detected by File Manager
 
 	// Protected --------------
 
@@ -49,6 +49,8 @@ class SharedUploader extends FileUploader {
 	// Yii interfaces ------------------------
 
 	// Yii parent classes --------------------
+
+	// yii\base\Widget --------
 
 	// CMG interfaces ------------------------
 

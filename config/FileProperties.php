@@ -35,8 +35,6 @@ class FileProperties extends Properties {
 
 	const PROP_EXTENSION_COMPRESSED = 'compressed_extensions';
 
-	const PROP_EXTENSION_SHARED 	= 'shared_extensions';
-
 	const PROP_NAME_GENERATE		= 'generate_name';
 
 	const PROP_NAME_PRETTY			= 'pretty_name';
@@ -181,24 +179,6 @@ class FileProperties extends Properties {
 	public function getCompressedExtensions( $default = null ) {
 
 		$prop = $this->properties[ self::PROP_EXTENSION_COMPRESSED ];
-
-		if( isset( $prop ) && strlen( $prop ) > 0 ) {
-
-			return preg_split( "/,/", $prop );
-		}
-
-		return $default;
-	}
-
-	/**
-	 * Returns the extensions allowed for all types i.e. images, videos, music, audio, document and compressed files.
-	 *
-	 * @param type $default
-	 * @return string
-	 */
-	public function getSharedExtensions( $default = null ) {
-
-		$prop = $this->properties[ self::PROP_EXTENSION_SHARED ];
 
 		if( isset( $prop ) && strlen( $prop ) > 0 ) {
 
