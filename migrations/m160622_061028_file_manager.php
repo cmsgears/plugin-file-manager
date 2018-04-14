@@ -106,26 +106,26 @@ class m160622_061028_file_manager extends Migration {
 
 	private function insertDefaultConfig() {
 
-		$columns = [ 'modelId', 'name', 'label', 'type', 'valueType', 'value' ];
+		$columns = [ 'modelId', 'name', 'label', 'type', 'active', 'valueType', 'value', 'data' ];
 
 		$metas = [
-			[ $this->site->id, 'image_extensions', 'Image Extensions', 'file', 'text', 'png,jpg,jpeg,gif' ],
-			[ $this->site->id, 'video_extensions', 'Video Extensions', 'file', 'text', 'mp4,flv,ogv,avi' ],
-			[ $this->site->id, 'audio_extensions', 'Audio Extensions', 'file', 'text', 'mp3,m4a,wav' ],
-			[ $this->site->id, 'document_extensions', 'Document Extensions', 'file', 'text', 'pdf,doc,docx,xls,xlsx,txt' ],
-			[ $this->site->id, 'compressed_extensions', 'Compressed Extensions', 'file', 'text', 'rar,zip' ],
-			[ $this->site->id, 'generate_name', 'Generate Name', 'file', 'flag', '1' ],
-			[ $this->site->id, 'pretty_name', 'Pretty Name', 'file', 'flag', '0' ],
-			[ $this->site->id, 'max_size', 'Max Size', 'file', 'text', '5' ],
-			[ $this->site->id, 'max_resolution', 'Max Resolution', 'file', 'text', '10000' ],
-			[ $this->site->id, 'generate_medium', 'Generate Medium', 'file', 'flag', '1' ],
-			[ $this->site->id, 'generate_thumb', 'Generate Thumb', 'file', 'flag', '1' ],
-			[ $this->site->id, 'medium_width', 'Medium Width', 'file', 'text', '480' ],
-			[ $this->site->id, 'medium_height', 'Medium Height', 'file', 'text', '320' ],
-			[ $this->site->id, 'thumb_width', 'Thumb Width', 'file', 'text', '120' ],
-			[ $this->site->id, 'thumb_height', 'Thumb Height', 'file', 'text', '120' ],
-			[ $this->site->id, 'uploads_directory', 'Uploads Directory', 'file', 'text', $this->uploadsDir ],
-			[ $this->site->id, 'uploads_url', 'Uploads URL', 'file', 'text', $this->uploadsUrl ]
+			[ $this->site->id, 'image_extensions', 'Image Extensions', 'file', 1, 'text', 'png,jpg,jpeg,gif', NULL ],
+			[ $this->site->id, 'video_extensions', 'Video Extensions', 'file', 1, 'text', 'mp4,flv,ogv,avi', NULL ],
+			[ $this->site->id, 'audio_extensions', 'Audio Extensions', 'file', 1, 'text', 'mp3,m4a,wav', NULL ],
+			[ $this->site->id, 'document_extensions', 'Document Extensions', 'file', 1, 'text', 'pdf,doc,docx,xls,xlsx,txt', NULL ],
+			[ $this->site->id, 'compressed_extensions', 'Compressed Extensions', 'file', 1, 'text', 'rar,zip', NULL ],
+			[ $this->site->id, 'generate_name', 'Generate Name', 'file', 1, 'flag', '1', NULL ],
+			[ $this->site->id, 'pretty_name', 'Pretty Name', 'file', 1, 'flag', '0', NULL ],
+			[ $this->site->id, 'max_size', 'Max Size', 'file', 1, 'text', '5', NULL ],
+			[ $this->site->id, 'max_resolution', 'Max Resolution', 'file', 1, 'text', '10000', NULL ],
+			[ $this->site->id, 'generate_medium', 'Generate Medium', 'file', 1, 'flag', '1', NULL ],
+			[ $this->site->id, 'generate_thumb', 'Generate Thumb', 'file', 1, 'flag', '1', NULL ],
+			[ $this->site->id, 'medium_width', 'Medium Width', 'file', 1, 'text', '480', NULL ],
+			[ $this->site->id, 'medium_height', 'Medium Height', 'file', 1, 'text', '320', NULL ],
+			[ $this->site->id, 'thumb_width', 'Thumb Width', 'file', 1, 'text', '120', NULL ],
+			[ $this->site->id, 'thumb_height', 'Thumb Height', 'file', 1, 'text', '120', NULL ],
+			[ $this->site->id, 'uploads_directory', 'Uploads Directory', 'file', 1, 'text', $this->uploadsDir, NULL ],
+			[ $this->site->id, 'uploads_url', 'Uploads URL', 'file', 1, 'text', $this->uploadsUrl, NULL ]
 		];
 
 		$this->batchInsert( $this->prefix . 'core_site_meta', $columns, $metas );
