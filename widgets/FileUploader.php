@@ -105,6 +105,11 @@ abstract class FileUploader extends Widget {
 	public $postActionUrl		= null;
 	public $postActionVisible	= false;
 
+	// Widget - Remove Action
+	public $removeAction		= false;
+	public $removeActionUrl		= null;
+	public $removeActionVisible	= false;
+
 	// CMT - JS - Application configuration
 	public $cmtApp			= 'main';
 	public $cmtController	= 'default';

@@ -4,8 +4,8 @@
 </span>
 <?php } ?>
 
-<div class="box-content-wrap">
-	<div class="box-content">
+<div class="box-content">
+	<div class="box-content-data">
 		<div class="file-wrap">
 			<?= $containerHtml ?>
 		</div>
