@@ -1,7 +1,19 @@
+<?php
+$model = $widget->model;
+?>
 <?php if( !$widget->disabled ) { ?>
-<span class="btn-icon btn-chooser" title="Update Image">
-	<i class="<?= $widget->chooserIcon ?>"></i>
-</span>
+<div class="uploader-actions">
+	<span class="uploader-action btn-icon btn-chooser" title="Update Image">
+		<i class="<?= $widget->chooserIcon ?>"></i>
+	</span>
+	<?php if( $widget->clearAction && $widget->clearActionVisible ) { ?>
+		<span class="<?= empty( $model ) ? 'file-clear hidden-easy' : 'file-clear' ?>" cmt-app="<?= $widget->cmtApp ?>" cmt-controller="<?= $widget->cmtController ?>" cmt-action="<?= $widget->cmtClearAction ?>" action="<?= $widget->clearActionUrl ?>">
+			<span class="uploader-action btn-icon btn-clear cmt-click" title="Clear Image">
+				<i class="<?= $widget->clearIcon ?>"></i>
+			</span>
+		</span>
+	<?php } ?>
+</div>
 <?php } ?>
 
 <div class="box-content">

@@ -60,6 +60,7 @@ abstract class FileUploader extends Widget {
 	// Widget - Uploader
 	public $uploaderView	= 'uploader';
 	public $chooserIcon		= 'cmti cmti-edit';
+	public $clearIcon		= 'cmti cmti-close-c';
 
 	// Widget - Container
 	public $container		= true;
@@ -105,15 +106,16 @@ abstract class FileUploader extends Widget {
 	public $postActionUrl		= null;
 	public $postActionVisible	= false;
 
-	// Widget - Remove Action
-	public $removeAction		= false;
-	public $removeActionUrl		= null;
-	public $removeActionVisible	= false;
+	// Widget - Clear Action
+	public $clearAction			= false;
+	public $clearActionUrl		= null;
+	public $clearActionVisible	= true;
 
 	// CMT - JS - Application configuration
 	public $cmtApp			= 'main';
 	public $cmtController	= 'default';
 	public $cmtAction		= 'file';
+	public $cmtClearAction	= 'clearFile';
 
 	// Protected --------------
 
