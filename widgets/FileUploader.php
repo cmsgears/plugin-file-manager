@@ -96,6 +96,7 @@ abstract class FileUploader extends Widget {
 	public $fieldsView	= 'fields';
 	public $fileLabel	= false;
 	public $fileFields	= [ 'title', 'description', 'alt', 'link' ];
+	public $showEmbedLink = false;
 
 	// Widget - Form
 	public $form		= true;
