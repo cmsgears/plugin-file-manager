@@ -113,10 +113,10 @@ abstract class FileUploader extends Widget {
 	public $clearActionVisible	= true;
 
 	// CMT - JS - Application configuration
-	public $cmtApp			= 'main';
-	public $cmtController	= 'default';
-	public $cmtAction		= 'file';
-	public $cmtClearAction	= 'clearFile';
+	public $cmtApp			= 'core';
+	public $cmtController	= 'file';
+	public $cmtAction		= 'assign';
+	public $cmtClearAction	= 'clear';
 
 	// Protected --------------
 

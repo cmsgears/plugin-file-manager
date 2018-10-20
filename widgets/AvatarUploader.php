@@ -43,10 +43,6 @@ class AvatarUploader extends ImageUploader {
 
 	public $postActionUrl	= 'user/avatar';
 
-	public $cmtApp			= 'user';
-	public $cmtController	= 'user';
-	public $cmtAction		= 'avatar';
-
 	// Protected --------------
 
 	// Private ----------------
