@@ -12,6 +12,7 @@ namespace cmsgears\files\components;
 // Yii Imports
 use Yii;
 use yii\base\Component;
+use yii\helpers\Inflector;
 
 // CMG Imports
 use cmsgears\files\config\FileProperties;
@@ -268,7 +269,7 @@ class FileManager extends Component {
 		}
 
 		// Generate File Name
-		$name = $filename;
+		$name = pathinfo( $filename, PATHINFO_FILENAME );
 
 		if( $this->generateName ) {
 
@@ -277,11 +278,44 @@ class FileManager extends Component {
 		// TODO: Check for existing name and add index at the end to distinguish from existing file
 		else if( $this->prettyNames ) {
 
-			$name = str_replace( " ", "-", $filename );
-			$name = strtolower( $name );
+			$name = Inflector::slug( $name );
 		}
 
-		$upname = $name . "." . $extension;
+		$upname		= $name . "." . $extension;
+		$filePath	= "$uploadDir/$upname";
+
+		// Name generation is disabled and pretty name required
+		if( !$this->generateName && $this->prettyNames ) {
+
+			$dateDir = date( 'Y-m-d' );
+
+			$exist	= true;
+			$count	= 1;
+			$limit	= 25; // Max 25 files with same name in a folder
+
+			while( $exist ) {
+
+				if( file_exists( "$this->uploadDir/$dateDir/$directory/$upname" ) ) {
+
+					if( $count > $limit ) {
+
+						return [ 'error' => 'File upload failed. Please upload a file with different name.' ];
+					}
+
+					$upname		= "$name-$count." . $extension;
+					$filePath	= "$uploadDir/$upname";
+
+					$count++;
+				}
+				else {
+
+					$exist	= false;
+					$name	= $count > 1 ? "$name-" . ( $count - 1) : $name;
+
+					break;
+				}
+			}
+		}
 
 		// Save File
 		if( file_put_contents( "$uploadDir/$upname", $file_contents ) ) {
@@ -404,16 +438,16 @@ class FileManager extends Component {
 		$sourceFile	= "$fileDir/$fileName.$fileExt";
 		$targetDir	= "$dateDir/$fileDir/";
 
-		$fileUrl = $targetDir . "$fileName.$fileExt";
+		$filePath = $targetDir . "$fileName.$fileExt";
 
 		// Update File Size in MB
 		$fileContent	= file_get_contents( "$uploadDir/temp/$sourceFile" );
 		$file->size		= number_format( $fileContent / 1048576, 8 );
 
-		$this->saveFile( $sourceFile, $targetDir, $fileUrl );
+		$this->saveFile( $sourceFile, $targetDir, $filePath );
 
 		// Update URL and Thumb
-		$file->url = $fileUrl;
+		$file->url = $filePath;
 	}
 
 	public function saveFile( $sourceFile, $targetDir, $filePath ) {
