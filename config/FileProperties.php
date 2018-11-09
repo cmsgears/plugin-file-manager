@@ -55,6 +55,8 @@ class FileProperties extends Properties {
 
 	const PROP_THUMB_HEIGHT			= 'thumb_height';
 
+	const PROP_UPLOAD				= 'uploads';
+
 	const PROP_UPLOAD_DIR			= 'uploads_directory';
 
 	const PROP_UPLOAD_URL			= 'uploads_url';
@@ -361,6 +363,24 @@ class FileProperties extends Properties {
 	public function getThumbHeight( $default = null ) {
 
 		$prop = $this->properties[ self::PROP_THUMB_HEIGHT ];
+
+		if( isset( $prop ) && strlen( $prop ) > 0 ) {
+
+			return $prop;
+		}
+
+		return $default;
+	}
+
+	/**
+	 * Checks whether file upload is allowed.
+	 *
+	 * @param type $default
+	 * @return boolean
+	 */
+	public function isUpload( $default = null ) {
+
+		$prop = $this->properties[ self::PROP_UPLOAD ];
 
 		if( isset( $prop ) && strlen( $prop ) > 0 ) {
 

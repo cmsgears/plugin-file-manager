@@ -97,6 +97,7 @@ class m160622_061028_file_manager extends Migration {
 			[ $config->id, 'medium_height', 'Medium Height', FormField::TYPE_TEXT, false, true, true, 'required', 0, NULL, '{"title":"Medium Height","placeholder":"Medium Height"}' ],
 			[ $config->id, 'thumb_width', 'Thumb Width', FormField::TYPE_TEXT, false, true, true, 'required', 0, NULL, '{"title":"Thumb Width","placeholder":"Thumb Width"}' ],
 			[ $config->id, 'thumb_height', 'Thumb Height', FormField::TYPE_TEXT, false, true, true, 'required', 0, NULL, '{"title":"Thumb Height","placeholder":"Thumb Height"}' ],
+			[ $config->id, 'uploads', 'Uploads', FormField::TYPE_TOGGLE, false, true, true, 'required', 0, NULL, '{"title":"Checks whether file upload is allowed."}' ],
 			[ $config->id, 'uploads_directory', 'Uploads Directory', FormField::TYPE_TEXT, false, true, true, NULL, 0, NULL, '{"title":"Uploads Directory","placeholder":"Uploads Directory"}' ],
 			[ $config->id, 'uploads_url', 'Uploads URL', FormField::TYPE_TEXT, false, true, true, 'required', 0, NULL, '{"title":"Uploads URL","placeholder":"Uploads URL"}' ]
 		];
@@ -124,6 +125,7 @@ class m160622_061028_file_manager extends Migration {
 			[ $this->site->id, 'medium_height', 'Medium Height', 'file', 1, 'text', '320', NULL ],
 			[ $this->site->id, 'thumb_width', 'Thumb Width', 'file', 1, 'text', '120', NULL ],
 			[ $this->site->id, 'thumb_height', 'Thumb Height', 'file', 1, 'text', '120', NULL ],
+			[ $this->site->id, 'uploads', 'Uploads', 'file', 1, 'text', '1', NULL ],
 			[ $this->site->id, 'uploads_directory', 'Uploads Directory', 'file', 1, 'text', $this->uploadsDir, NULL ],
 			[ $this->site->id, 'uploads_url', 'Uploads URL', 'file', 1, 'text', $this->uploadsUrl, NULL ]
 		];

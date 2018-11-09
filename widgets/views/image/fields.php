@@ -22,6 +22,11 @@ if( isset( $model ) ) {
 			<input class="desc" type="text" name="<?= $modelClass ?>[description]" placeholder="Description" value="<?= $model->description ?>" />
 		<?php } ?>
 
+		<?php if( in_array( 'caption', $fileFields ) ) { ?>
+			<?php if( $fileLabel ) { ?> <label>Alternate Text</label> <?php } ?>
+			<input class="caption" type="text" name="<?= $modelClass ?>[caption]" placeholder="Caption" value="<?= $model->caption ?>" />
+		<?php } ?>
+
 		<?php if( in_array( 'alt', $fileFields ) ) { ?>
 			<?php if( $fileLabel ) { ?> <label>Alternate Text</label> <?php } ?>
 			<input class="alt" type="text" name="<?= $modelClass ?>[altText]" placeholder="Alternate Text" value="<?= $model->altText ?>" />
@@ -61,6 +66,11 @@ else {
 		<?php if( in_array( 'description', $fileFields ) ) { ?>
 			<?php if( $fileLabel ) { ?> <label>Description</label> <?php } ?>
 			<input class="desc" type="text" name="<?= $modelClass ?>[description]" placeholder="Description" />
+		<?php } ?>
+
+		<?php if( in_array( 'caption', $fileFields ) ) { ?>
+			<?php if( $fileLabel ) { ?> <label>Description</label> <?php } ?>
+			<input class="caption" type="text" name="<?= $modelClass ?>[caption]" placeholder="Caption" />
 		<?php } ?>
 
 		<?php if( in_array( 'alt', $fileFields ) ) { ?>

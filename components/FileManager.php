@@ -65,6 +65,7 @@ class FileManager extends Component {
 	public $thumbHeight			 = 120;
 
 	// These must be set to allow file manager to work.
+	public $uploads		 = true;
 	public $uploadDir	 = null;
 	public $uploadUrl	 = null;
 
@@ -100,6 +101,7 @@ class FileManager extends Component {
 			$this->generateImageThumb	 = $properties->isGenerateThumb( $this->generateImageThumb );
 			$this->thumbWidth			 = $properties->getThumbWidth( $this->thumbWidth );
 			$this->thumbHeight			 = $properties->getThumbHeight( $this->thumbHeight );
+			$this->uploads				 = $properties->isUpload( $this->uploads );
 			$this->uploadDir			 = Yii::getAlias( "@uploads" );
 			$this->uploadDir			 = $properties->getUploadDir( $this->uploadDir );
 			$this->uploadUrl			 = $properties->getUploadUrl( $this->uploadUrl );
@@ -131,6 +133,12 @@ class FileManager extends Component {
 
 		// Get the filename submitted by user
 		$filename = ( isset( $_SERVER[ 'HTTP_X_FILENAME' ] ) ? $_SERVER[ 'HTTP_X_FILENAME' ] : false );
+
+		// Reject File
+		if( !$this->uploads ) {
+
+			return [ 'error' => 'File upload is disabled by the site admin.' ];
+		}
 
 		// Modern Style using Xhr
 		if( $filename ) {
