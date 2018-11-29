@@ -33,6 +33,7 @@ class FileManager extends Component {
 	const FILE_TYPE_AUDIO		= 'audio';
 	const FILE_TYPE_DOCUMENT	= 'document';
 	const FILE_TYPE_COMPRESSED	= 'compressed';
+	const FILE_TYPE_MIXED		= 'mixed';
 
 	public $ignoreDbConfig = false;
 
@@ -42,6 +43,7 @@ class FileManager extends Component {
 	public $audioExtensions		 = [ 'mp3', 'm4a', 'wav' ];
 	public $documentExtensions	 = [ 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt' ];
 	public $compressedExtensions = [ 'rar', 'zip' ];
+	public $mixedExtensions		= [ 'png', 'jpg', 'jpeg', 'gif', 'mp4', 'flv', 'ogv', 'avi', 'mp3', 'm4a', 'wav', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'rar', 'zip' ];
 
 	public $typeMap = [ 0 => 'Select File Type', self::FILE_TYPE_IMAGE => self::FILE_TYPE_IMAGE, self::FILE_TYPE_VIDEO => self::FILE_TYPE_VIDEO, self::FILE_TYPE_AUDIO => self::FILE_TYPE_AUDIO, self::FILE_TYPE_DOCUMENT => self::FILE_TYPE_DOCUMENT, self::FILE_TYPE_COMPRESSED => self::FILE_TYPE_COMPRESSED ];
 
@@ -424,6 +426,12 @@ class FileManager extends Component {
 			case self::FILE_TYPE_COMPRESSED: {
 
 				$allowedExtensions = $this->compressedExtensions;
+
+				break;
+			}
+			case self::FILE_TYPE_MIXED: {
+
+				$allowedExtensions = $this->mixedExtensions;
 
 				break;
 			}
