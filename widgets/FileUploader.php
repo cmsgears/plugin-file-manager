@@ -44,7 +44,7 @@ abstract class FileUploader extends Widget {
 	public $template	= null;
 
 	// Widget - Html options
-	public $options		= [ 'class' => 'box box-file-uploader file-uploader' ];
+	public $options		= [ 'class' => 'box box-file-uploader cmt-file-uploader file-uploader' ];
 
 	// Widget - Options - Disable Upload
 	public $disabled	= false;
