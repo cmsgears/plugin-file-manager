@@ -24,7 +24,7 @@ use cmsgears\core\common\utilities\DateUtil;
  *
  * @since 1.0.0
  */
-class m160622_061028_file_manager extends Migration {
+class m160701_061028_file_manager extends Migration {
 
 	// Public Variables
 
@@ -135,7 +135,7 @@ class m160622_061028_file_manager extends Migration {
 
 	public function down() {
 
-		echo "m160622_061028_file_manager will be deleted with m160621_014408_core.\n";
+		echo "m160701_061028_file_manager will be deleted with m160621_014408_core.\n";
 
 		return true;
 	}
