@@ -250,7 +250,7 @@ class FileManager extends Component {
 	public function saveTempFile( $file_contents, $directory, $type, $filename, $extension ) {
 
 		// Check allowed file size
-		$sizeInMb = number_format( strlen( $file_contents / 1048576 ), 8 );
+		$sizeInMb = number_format( strlen( $file_contents ) / 1048576, 8 );
 
 		if( $sizeInMb > $this->maxSize ) {
 
@@ -458,7 +458,7 @@ class FileManager extends Component {
 
 		// Update File Size in MB
 		$fileContent	= file_get_contents( "$uploadDir/temp/$sourceFile" );
-		$file->size		= number_format( strlen( $fileContent / 1048576 ), 8 );
+		$file->size		= number_format( strlen( $fileContent ) / 1048576, 8 );
 
 		$this->saveFile( $sourceFile, $targetDir, $filePath );
 
@@ -504,7 +504,7 @@ class FileManager extends Component {
 
 		// Update File Size in MB
 		$fileContent	= file_get_contents( "$uploadDir/temp/$sourceFile" );
-		$file->size		= number_format( strlen( $fileContent / 1048576 ), 8 );
+		$file->size		= number_format( strlen( $fileContent ) / 1048576, 8 );
 
 		// Save Image
 		$this->saveImage( $sourceFile, $targetDir, $imageUrl, $imageMediumUrl, $imageThumbUrl, $width, $height, $mwidth	 = null, $mheight = null, $twidth	 = null, $theight = null );
