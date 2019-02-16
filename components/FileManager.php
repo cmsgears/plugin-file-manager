@@ -13,6 +13,7 @@ namespace cmsgears\files\components;
 use Yii;
 use yii\base\Component;
 use yii\helpers\Inflector;
+use yii\helpers\FileHelper;
 
 // CMG Imports
 use cmsgears\files\config\FileProperties;
@@ -122,6 +123,11 @@ class FileManager extends Component {
 		}
 
 		return $typeMap;
+	}
+
+	public function getUploadDir() {
+
+		return FileHelper::normalizePath( $this->uploadDir );
 	}
 
 	// File Uploading ----------------------------------------------
