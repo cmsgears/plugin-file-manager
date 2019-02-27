@@ -3,12 +3,12 @@ $model = $widget->model;
 ?>
 <?php if( !$widget->disabled ) { ?>
 <div class="uploader-actions">
-	<span class="uploader-action btn-icon btn-chooser" title="Update Video">
+	<span class="uploader-action btn-icon btn-chooser" title="Update File">
 		<i class="<?= $widget->chooserIcon ?>"></i>
 	</span>
 	<?php if( $widget->clearAction && $widget->clearActionVisible ) { ?>
 		<span class="<?= empty( $model ) || empty( $model->id ) ? 'file-clear hidden-easy' : 'file-clear' ?>" cmt-app="<?= $widget->cmtApp ?>" cmt-controller="<?= $widget->cmtController ?>" cmt-action="<?= $widget->cmtClearAction ?>" action="<?= $widget->clearActionUrl ?>">
-			<span class="uploader-action btn-icon btn-clear cmt-click" title="Clear Video">
+			<span class="uploader-action btn-icon btn-clear cmt-click" title="Clear File">
 				<i class="<?= $widget->clearIcon ?>"></i>
 			</span>
 		</span>

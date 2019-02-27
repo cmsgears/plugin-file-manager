@@ -10,11 +10,11 @@
 namespace cmsgears\files\widgets;
 
 /**
- * AvatarUploader widget is pre-configured to upload avatar.
+ * CompressedUploader widget is pre-configured to upload compressed files.
  *
  * @since 1.0.0
  */
-class AvatarUploader extends ImageUploader {
+class CompressedUploader extends FileUploader {
 
 	// Variables ---------------------------------------------------
 
@@ -30,18 +30,13 @@ class AvatarUploader extends ImageUploader {
 
 	// Public -----------------
 
-	public $template		= 'avatar';
+	public $template = 'document';
 
 	// File - directory and type
-	public $directory		= 'avatar';
+	public $directory	= 'document';
+	public $type		= 'compressed';
 
-	// File - model and model class for loading by controller
-	public $modelClass		= 'Avatar';
-
-	// Widget - Container
-	public $fileIcon		= 'cmti cmti-5x cmti-user';
-
-	public $postActionUrl	= 'user/avatar';
+	public $fileIcon = 'icon cmti cmti-5x cmti-file-archive';
 
 	// Protected --------------
 
@@ -61,6 +56,6 @@ class AvatarUploader extends ImageUploader {
 
 	// CMG parent classes --------------------
 
-	// AvatarUploader ------------------------
+	// DocumentUploader ----------------------
 
 }

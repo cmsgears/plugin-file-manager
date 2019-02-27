@@ -23,7 +23,7 @@ if( $postAction && isset( $postActionUrl ) ) {
 			<?= $infoHtml ?>
 			<?= $fieldsHtml ?>
 			<div class="frm-actions align align-center">
-				<input class="element-medium" type="submit" value="Save" />
+				<input class="frm-element-medium" type="submit" value="Save" />
 			</div>
 		</form>
 	</div>
