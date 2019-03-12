@@ -16,6 +16,7 @@ use yii\helpers\Inflector;
 use yii\helpers\FileHelper;
 
 // CMG Imports
+use cmsgears\core\common\config\CoreProperties;
 use cmsgears\files\config\FileProperties;
 
 use cmsgears\files\utilities\ImageResizeUtil;
@@ -68,9 +69,13 @@ class FileManager extends Component {
 	public $thumbHeight			 = 120;
 
 	// These must be set to allow file manager to work.
-	public $uploads		 = true;
-	public $uploadDir	 = null;
-	public $uploadUrl	 = null;
+	public $uploads = true;
+
+	// Magic Dir
+	public $_uploadDir = null;
+
+	// Magic Url
+	public $_uploadUrl = null;
 
 	public $tempUploadDir	 = null;
 	public $tempUploadUrl	 = null;
@@ -105,9 +110,10 @@ class FileManager extends Component {
 			$this->thumbWidth			 = $properties->getThumbWidth( $this->thumbWidth );
 			$this->thumbHeight			 = $properties->getThumbHeight( $this->thumbHeight );
 			$this->uploads				 = $properties->isUpload( $this->uploads );
-			$this->uploadDir			 = Yii::getAlias( "@uploads" );
-			$this->uploadDir			 = $properties->getUploadDir( $this->uploadDir );
-			$this->uploadUrl			 = $properties->getUploadUrl( $this->uploadUrl );
+
+			$this->_uploadDir	= Yii::getAlias( "@uploads" );
+			$this->_uploadDir	= $properties->getUploadDir( $this->_uploadDir );
+			$this->_uploadUrl	= $properties->getUploadUrl( $this->_uploadUrl );
 		}
 
 		$this->init();
@@ -127,7 +133,22 @@ class FileManager extends Component {
 
 	public function getUploadDir() {
 
-		return FileHelper::normalizePath( $this->uploadDir );
+		return FileHelper::normalizePath( $this->_uploadDir );
+	}
+
+	public function getUploadUrl() {
+
+		if( YII_ENV_PROD ) {
+
+			$resource = CoreProperties::getInstance()->getResourceUrl();
+
+			$core	= parse_url( $resource );
+			$file	= parse_url( $this->_uploadUrl );
+
+			return $core[ 'scheme' ] . "://" . $core[ 'host' ] . $file[ 'path' ];
+		}
+
+		return $this->_uploadUrl;
 	}
 
 	// File Uploading ----------------------------------------------
