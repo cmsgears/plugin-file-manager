@@ -153,12 +153,12 @@ class FileManager extends Component {
 
 	// File Uploading ----------------------------------------------
 
-	public function handleFileUpload( $directory, $type ) {
+	public function handleFileUpload( $directory, $type, $gen ) {
 
-		return $this->processFileUpload( $directory, $type );
+		return $this->processFileUpload( $directory, $type, $gen );
 	}
 
-	private function processFileUpload( $directory, $type ) {
+	private function processFileUpload( $directory, $type, $gen ) {
 
 		// Get the filename submitted by user
 		$filename = ( isset( $_SERVER[ 'HTTP_X_FILENAME' ] ) ? $_SERVER[ 'HTTP_X_FILENAME' ] : false );
@@ -185,7 +185,7 @@ class FileManager extends Component {
 			// check allowed extensions
 			if( in_array( strtolower( $extension ), $allowedExtensions ) ) {
 
-				return $this->saveTempFile( file_get_contents( 'php://input' ), $directory, $type, $filename, $extension );
+				return $this->saveTempFile( file_get_contents( 'php://input' ), $directory, $type, $filename, $extension, $gen );
 			}
 			else {
 
@@ -217,7 +217,7 @@ class FileManager extends Component {
 					$file	= str_replace( ' ', '+', $file );
 					$file	= base64_decode( $file );
 
-					return $this->saveTempFile( $file, $directory, $type, $filename, $extension );
+					return $this->saveTempFile( $file, $directory, $type, $filename, $extension, $gen );
 				}
 				else {
 
@@ -260,7 +260,7 @@ class FileManager extends Component {
 						// check allowed extensions
 						if( in_array( strtolower( $extension ), $allowedExtensions ) ) {
 
-							return $this->saveTempFile( file_get_contents( $_FILES[ 'file' ][ 'tmp_name' ] ), $directory, $type, $filename, $extension );
+							return $this->saveTempFile( file_get_contents( $_FILES[ 'file' ][ 'tmp_name' ] ), $directory, $type, $filename, $extension, $gen );
 						}
 						else {
 
@@ -274,7 +274,7 @@ class FileManager extends Component {
 		return [ 'error' => 'File upload failed.' ];
 	}
 
-	public function saveTempFile( $file_contents, $directory, $type, $filename, $extension ) {
+	public function saveTempFile( $file_contents, $directory, $type, $filename, $extension, $gen ) {
 
 		// Check allowed file size
 		$sizeInMb = number_format( strlen( $file_contents ) / 1048576, 8 );
@@ -308,7 +308,7 @@ class FileManager extends Component {
 		// Generate File Name
 		$name = pathinfo( $filename, PATHINFO_FILENAME );
 
-		if( $this->generateName ) {
+		if( $gen || $this->generateName ) {
 
 			$name = Yii::$app->security->generateRandomString();
 		}

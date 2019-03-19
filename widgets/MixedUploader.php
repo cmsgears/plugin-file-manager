@@ -30,11 +30,11 @@ class MixedUploader extends FileUploader {
 
 	// Public -----------------
 
-	public $template		= 'mixed';
+	public $template = 'mixed';
 
 	// File - directory and type
-	public $directory		= 'mixed';
-	public $type			= 'mixed';
+	public $directory	= 'mixed';
+	public $type		= 'mixed';
 
 	// Protected --------------
 

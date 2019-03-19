@@ -38,20 +38,21 @@ abstract class FileUploader extends Widget {
 
 	// Public -----------------
 
-	public $wrap		= true;
+	public $wrap = true;
 
 	// Widget - Template
-	public $template	= null;
+	public $template = null;
 
 	// Widget - Html options
-	public $options		= [ 'class' => 'box box-file-uploader cmt-file-uploader file-uploader' ];
+	public $options = [ 'class' => 'box box-file-uploader cmt-file-uploader file-uploader' ];
 
 	// Widget - Options - Disable Upload
-	public $disabled	= false;
+	public $disabled = false;
 
 	// File - directory and type
 	public $directory	= null;
 	public $type		= null;
+	public $gen			= false; // Generate filename
 
 	// File - model and model class for loading by controller
 	public $model		= null;
@@ -136,8 +137,11 @@ abstract class FileUploader extends Widget {
 
 	public function run() {
 
-		$this->options[ 'directory' ]	= $this->directory;
-		$this->options[ 'type' ]		= $this->type;
+		$this->options[ 'directory' ] = $this->directory;
+
+		$this->options[ 'type' ] = $this->type;
+
+		$this->options[ 'gen' ] = $this->gen ? '1' : '0';
 
 		return $this->renderWidget();
 	}
