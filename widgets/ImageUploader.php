@@ -33,25 +33,27 @@ class ImageUploader extends FileUploader {
 
 	// Public -----------------
 
-	public $template		= 'image';
+	public $template	= 'image';
 
 	// File - directory and type
-	public $directory		= 'banner';
-	public $type			= 'image';
+	public $directory	= 'banner';
+	public $type		= 'image';
 
 	// File - model and model class for loading by controller
-	public $modelClass		= 'Banner';
+	public $modelClass	= 'Banner';
 
 	// Widget - Container
-	public $fileIcon		= 'cmti cmti-5x cmti-image';
+	public $fileIcon	= 'cmti cmti-5x cmti-image';
 
 	// Image and Thumbnail Dimensions
-	public $width			= null;
-	public $height			= null;
-	public $mwidth			= null;
-	public $mheight			= null;
-	public $twidth			= null;
-	public $theight			= null;
+	public $width	= null;
+	public $height	= null;
+	public $mwidth	= null;
+	public $mheight	= null;
+	public $swidth	= null;
+	public $sheight	= null;
+	public $twidth	= null;
+	public $theight	= null;
 
 	// Protected --------------
 
@@ -83,6 +85,7 @@ class ImageUploader extends FileUploader {
 			'widget' => $this,
 			'width' => $this->width, 'height' => $this->height,
 			'mwidth' => $this->mwidth, 'mheight' => $this->mheight,
+			'swidth' => $this->swidth, 'sheight' => $this->sheight,
 			'twidth' => $this->twidth, 'theight' => $this->theight
 		] );
 	}

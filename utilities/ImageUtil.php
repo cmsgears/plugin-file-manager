@@ -11,14 +11,20 @@ namespace cmsgears\files\utilities;
 
 /**
  * The image resize utility provide several useful methods to resize an image.
- * 
+ *
  * @since 1.0.0
  */
-class ImageResizeUtil {
+class ImageUtil {
 
-	// Public Variables
+	// Variables ---------------------------------------------------
 
-	// Private Variables
+	// Globals ----------------
+
+	// Public -----------------
+
+	// Protected --------------
+
+	// Private ----------------
 
 	private $image;
 
@@ -27,26 +33,53 @@ class ImageResizeUtil {
 
 	private $imageResized;
 
+	// Traits ------------------------------------------------------
+
 	// Constructor and Initialisation ------------------------------
 
 	function __construct( $fileName ) {
 
-		// *** Open up the file
 		$this->image = $this->openImage( $fileName );
 
-		// *** Get width and height
 		$this->width	= imagesx( $this->image );
 		$this->height	= imagesy( $this->image );
 	}
 
-	// Check Image -------------------------------------------------
+	// Instance methods --------------------------------------------
 
+	// Yii interfaces ------------------------
+
+	// Yii parent classes --------------------
+
+	// CMG interfaces ------------------------
+
+	// CMG parent classes --------------------
+
+	// ImageUtil -----------------------------
+
+	public function getWidth() {
+
+		return $this->width;
+	}
+
+	public function getHeight() {
+
+		return $this->height;
+	}
+
+	/**
+	 * Open the image using the image library shipped with PHP.
+	 *
+	 * @param string $file
+	 * @return resource an image resource identifier on success, <b>FALSE</b> on errors.
+	 */
 	private function openImage( $file ) {
 
 		$extension = strtolower( strrchr( $file, '.' ) );
 
 		switch( $extension ) {
 
+			// JPEG
 			case '.jpg':
 			case '.jpeg': {
 
@@ -54,18 +87,21 @@ class ImageResizeUtil {
 
 				break;
 			}
+			// GIF
 			case '.gif': {
 
 				$img = @imagecreatefromgif( $file );
 
 				break;
 			}
+			// PNG
 			case '.png': {
 
 				$img = @imagecreatefrompng( $file );
 
 				break;
 			}
+			// None
 			default: {
 
 				$img = false;
@@ -79,10 +115,10 @@ class ImageResizeUtil {
 
 	// Resize Image ------------------------------------------------
 
-	public function resizeImage( $newWidth, $newHeight, $option = "auto" ) {
+	public function resizeImage( $newWidth, $newHeight, $option = 'auto' ) {
 
 		// Get optimal width and height - based on $option
-		$optionArray	= $this->getDimensions( $newWidth, $newHeight, $option );
+		$optionArray = $this->getDimensions( $newWidth, $newHeight, $option );
 
 		$optimalWidth	= $optionArray[ 'optimalWidth' ];
 		$optimalHeight	= $optionArray[ 'optimalHeight' ];
@@ -239,7 +275,13 @@ class ImageResizeUtil {
 
 	// Save Image --------------------------------------------------
 
-	public function saveImage( $savePath, $imageQuality = "100" ) {
+	/**
+	 * Save the image with given quality.
+	 *
+	 * @param string $savePath
+	 * @param integer $imageQuality
+	 */
+	public function saveImage( $savePath, $imageQuality = 100 ) {
 
 		// Get extension
 		$extension	 = strrchr( $savePath, '.' );
@@ -269,7 +311,7 @@ class ImageResizeUtil {
 			case '.png': {
 
 				// Scale quality from 0-100 to 0-9
-				$scaleQuality = round( ($imageQuality / 100) * 9 );
+				$scaleQuality = round( ( $imageQuality / 100 ) * 9 );
 
 				// Invert quality setting as 0 is best, not 9
 				$invertScaleQuality = 9 - $scaleQuality;
@@ -288,6 +330,18 @@ class ImageResizeUtil {
 		}
 
 		imagedestroy( $this->imageResized );
+	}
+
+	// Image Filters
+
+	public function applyGaussionBlurFilter() {
+
+		$this->imageResized = $this->image;
+
+		for( $i = 0; $i <= 25; $i++ ) {
+
+			imagefilter( $this->imageResized, IMG_FILTER_GAUSSIAN_BLUR );
+		}
 	}
 
 }

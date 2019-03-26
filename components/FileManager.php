@@ -19,7 +19,7 @@ use yii\helpers\FileHelper;
 use cmsgears\core\common\config\CoreProperties;
 use cmsgears\files\config\FileProperties;
 
-use cmsgears\files\utilities\ImageResizeUtil;
+use cmsgears\files\utilities\ImageUtil;
 
 /**
  * The file manager accepts single file at a time uploaded by either XHR or file data
@@ -49,6 +49,9 @@ class FileManager extends Component {
 
 	public $typeMap = [ 0 => 'Select File Type', self::FILE_TYPE_IMAGE => self::FILE_TYPE_IMAGE, self::FILE_TYPE_VIDEO => self::FILE_TYPE_VIDEO, self::FILE_TYPE_AUDIO => self::FILE_TYPE_AUDIO, self::FILE_TYPE_DOCUMENT => self::FILE_TYPE_DOCUMENT, self::FILE_TYPE_COMPRESSED => self::FILE_TYPE_COMPRESSED ];
 
+	// The quality of image in percentage
+	public $imageQuality = 80;
+
 	// Either of these must be set to true. Generate Name generate a unique name using Yii Security Component whereas pretty names use the file name provided by user and replace space by hyphen(-).
 	public $generateName = true;
 
@@ -58,15 +61,26 @@ class FileManager extends Component {
 	public $maxSize			 = 5; // In MB
 	public $maxResolution	 = 10000; // Maximum pixels either horizontally or vertically.
 
-	// Image Medium Generation
-	public $generateImageMedium	 = true;
-	public $mediumWidth			 = 480;
-	public $mediumHeight		 = 320;
+	// Image Medium Generation - 75% by default
+	public $generateImageMedium	= true;
+	public $mediumPercent		= 75;
+	public $mediumWidth			= 0;
+	public $mediumHeight		= 0;
+
+	// Image Small Generation - 50% by default
+	public $generateImageSmall	= true;
+	public $smallPercent		= 50;
+	public $smallWidth			= 0;
+	public $smallHeight			= 0;
 
 	// Image Thumb Generation
 	public $generateImageThumb	 = true;
 	public $thumbWidth			 = 120;
 	public $thumbHeight			 = 120;
+
+	// Image Placeholder Generation
+	public $generateImagePl = true;
+	public $plQuality		= 25; // Quality in percent
 
 	// These must be set to allow file manager to work.
 	public $uploads = true;
@@ -94,22 +108,27 @@ class FileManager extends Component {
 			$properties = FileProperties::getInstance();
 
 			// Use properties configured in DB on priority, else fallback to the one defined in this class.
-			$this->imageExtensions		 = $properties->getImageExtensions( $this->imageExtensions );
-			$this->videoExtensions		 = $properties->getVideoExtensions( $this->videoExtensions );
-			$this->audioExtensions		 = $properties->getAudioExtensions( $this->audioExtensions );
-			$this->documentExtensions	 = $properties->getDocumentExtensions( $this->documentExtensions );
-			$this->compressedExtensions	 = $properties->getCompressedExtensions( $this->compressedExtensions );
-			$this->generateName			 = $properties->isGenerateName( $this->generateName );
-			$this->prettyNames			 = $properties->isPrettyName( $this->prettyNames );
-			$this->maxSize				 = $properties->getMaxSize( $this->maxSize );
-			$this->maxResolution		 = $properties->getMaxResolution( $this->maxResolution );
-			$this->generateImageMedium	 = $properties->isGenerateMedium( $this->generateImageMedium );
-			$this->mediumWidth			 = $properties->getMediumWidth( $this->mediumWidth );
-			$this->mediumHeight			 = $properties->getMediumHeight( $this->mediumHeight );
-			$this->generateImageThumb	 = $properties->isGenerateThumb( $this->generateImageThumb );
-			$this->thumbWidth			 = $properties->getThumbWidth( $this->thumbWidth );
-			$this->thumbHeight			 = $properties->getThumbHeight( $this->thumbHeight );
-			$this->uploads				 = $properties->isUpload( $this->uploads );
+			$this->imageExtensions		= $properties->getImageExtensions( $this->imageExtensions );
+			$this->videoExtensions		= $properties->getVideoExtensions( $this->videoExtensions );
+			$this->audioExtensions		= $properties->getAudioExtensions( $this->audioExtensions );
+			$this->documentExtensions	= $properties->getDocumentExtensions( $this->documentExtensions );
+			$this->compressedExtensions	= $properties->getCompressedExtensions( $this->compressedExtensions );
+			$this->imageQuality			= $properties->getImageQuality( $this->imageQuality );
+			$this->generateName			= $properties->isGenerateName( $this->generateName );
+			$this->prettyNames			= $properties->isPrettyName( $this->prettyNames );
+			$this->maxSize				= $properties->getMaxSize( $this->maxSize );
+			$this->maxResolution		= $properties->getMaxResolution( $this->maxResolution );
+			$this->generateImageMedium	= $properties->isGenerateMedium( $this->generateImageMedium );
+			$this->mediumWidth			= $properties->getMediumWidth( $this->mediumWidth );
+			$this->mediumHeight			= $properties->getMediumHeight( $this->mediumHeight );
+			$this->generateImageSmall	= $properties->isGenerateSmall( $this->generateImageSmall );
+			$this->smallWidth			= $properties->getMediumWidth( $this->smallWidth );
+			$this->smallHeight			= $properties->getMediumHeight( $this->smallHeight );
+			$this->generateImageThumb	= $properties->isGenerateThumb( $this->generateImageThumb );
+			$this->generateImagePl		= $properties->isGeneratePlaceholder( $this->generateImagePl );
+			$this->thumbWidth			= $properties->getThumbWidth( $this->thumbWidth );
+			$this->thumbHeight			= $properties->getThumbHeight( $this->thumbHeight );
+			$this->uploads				= $properties->isUpload( $this->uploads );
 
 			$this->_uploadDir	= Yii::getAlias( "@uploads" );
 			$this->_uploadDir	= $properties->getUploadDir( $this->_uploadDir );
@@ -370,7 +389,7 @@ class FileManager extends Component {
 
 				// Generate Thumb
 				$thumbName	= $name . '-thumb' . "." . $extension;
-				$resizeObj	= new ImageResizeUtil( "$uploadDir/$upname" );
+				$resizeObj	= new ImageUtil( "$uploadDir/$upname" );
 
 				$resizeObj->resizeImage( $this->thumbWidth, $this->thumbHeight, 'crop' );
 				$resizeObj->saveImage( "$uploadDir/$thumbName", 100 );
@@ -513,7 +532,16 @@ class FileManager extends Component {
 
 	// Save Image -------------
 
-	public function processImage( $file, $width = null, $height = null, $mwidth = null, $mheight = null, $twidth = null, $theight = null ) {
+	public function processImage( $file, $config = [] ) {
+
+		$config[ 'width' ]		= !empty( $config[ 'width' ] ) ? intval( $config[ 'width' ] ) : 0;
+		$config[ 'height' ]		= !empty( $config[ 'height' ] ) ? intval( $config[ 'height' ] ) : 0;
+		$config[ 'mwidth' ]		= !empty( $config[ 'mwidth' ] ) ? intval( $config[ 'mwidth' ] ) : 0;
+		$config[ 'mheight' ]	= !empty( $config[ 'mheight' ] ) ? intval( $config[ 'mheight' ] ) : 0;
+		$config[ 'swidth' ]		= !empty( $config[ 'swidth' ] ) ? intval( $config[ 'swidth' ] ) : 0;
+		$config[ 'sheight' ]	= !empty( $config[ 'sheight' ] ) ? intval( $config[ 'sheight' ] ) : 0;
+		$config[ 'twidth' ]		= !empty( $config[ 'twidth' ] ) ? intval( $config[ 'twidth' ] ) : 0;
+		$config[ 'theight' ]	= !empty( $config[ 'theight' ] ) ? intval( $config[ 'theight' ] ) : 0;
 
 		$dateDir	= date( 'Y-m-d' );
 		$imageName	= $file->name;
@@ -527,14 +555,16 @@ class FileManager extends Component {
 
 		$imageUrl		= $targetDir . "$imageName.$imageExt";
 		$imageMediumUrl	= $targetDir . "$imageName-medium.$imageExt";
+		$imageSmallUrl	= $targetDir . "$imageName-small.$imageExt";
 		$imageThumbUrl	= $targetDir . "$imageName-thumb.$imageExt";
+		$imagePlUrl		= $targetDir . "$imageName-pl.$imageExt";
 
 		// Update File Size in MB
 		$fileContent	= file_get_contents( "$uploadDir/temp/$sourceFile" );
 		$file->size		= number_format( strlen( $fileContent ) / 1048576, 8 );
 
 		// Save Image
-		$this->saveImage( $sourceFile, $targetDir, $imageUrl, $imageMediumUrl, $imageThumbUrl, $width, $height, $mwidth	 = null, $mheight = null, $twidth	 = null, $theight = null );
+		$this->saveImage( $sourceFile, $targetDir, $imageUrl, $imageMediumUrl, $imageSmallUrl, $imageThumbUrl, $imagePlUrl, $config );
 
 		// Update URL and Thumb
 		$file->url = $imageUrl;
@@ -544,13 +574,23 @@ class FileManager extends Component {
 			$file->medium = $imageMediumUrl;
 		}
 
+		if( $this->generateImageSmall ) {
+
+			$file->small = $imageSmallUrl;
+		}
+
 		if( $this->generateImageThumb ) {
 
 			$file->thumb = $imageThumbUrl;
 		}
+
+		if( $this->generateImagePl ) {
+
+			$file->placeholder = $imagePlUrl;
+		}
 	}
 
-	public function saveImage( $sourceFile, $targetDir, $filePath, $mediumPath, $thumbPath, $width = null, $height = null, $mwidth = null, $mheight = null, $twidth = null, $theight = null ) {
+	public function saveImage( $sourceFile, $targetDir, $filePath, $mediumPath, $smallPath, $thumbPath, $plPath, $config = [] ) {
 
 		$uploadDir = $this->uploadDir;
 
@@ -563,7 +603,9 @@ class FileManager extends Component {
 		$targetDir	= "$this->uploadDir/$targetDir";
 		$filePath	= "$this->uploadDir/$filePath";
 		$mediumPath	= "$this->uploadDir/$mediumPath";
+		$smallPath	= "$this->uploadDir/$smallPath";
 		$thumbPath	= "$this->uploadDir/$thumbPath";
+		$plPath		= "$this->uploadDir/$plPath";
 
 		// create required directories if not exist
 		if( !file_exists( $targetDir ) ) {
@@ -574,56 +616,125 @@ class FileManager extends Component {
 		// Move file from temp to destined directory
 		rename( $sourceFile, $filePath );
 
-		// Resize Image
-		if( isset( $width ) && isset( $height ) && intval( $width ) > 0 && intval( $height ) > 0 ) {
+		// Original width & height
+		list( $width, $height ) = getimagesize( $filePath );
+
+		$iwidth	 = $config[ 'width' ];
+		$iheight = $config[ 'height' ];
+
+		// Resize Image - Exact
+		if( $iwidth > 1 && $iheight > 1 ) {
 
 			// TODO: Add options to use max resolution for total resolution
-			$width	 = $width > $this->maxResolution ? $this->maxResolution : $width;
-			$height	 = $height > $this->maxResolution ? $this->maxResolution : $height;
+			// TODO: Maintain actual ratio of width and height
+			$width	 = $iwidth > $this->maxResolution ? $this->maxResolution : $iwidth;
+			$height	 = $iheight > $this->maxResolution ? $this->maxResolution : $iheight;
 
-			$resizeObj = new ImageResizeUtil( $filePath );
+			$resizeObj = new ImageUtil( $filePath );
+
 			$resizeObj->resizeImage( $width, $height, 'exact' );
-			$resizeObj->saveImage( $filePath, 100 );
+			$resizeObj->saveImage( $filePath, $this->imageQuality );
 		}
 
 		// Save Medium
 		if( $this->generateImageMedium && isset( $mediumPath ) ) {
 
-			$resizeObj = new ImageResizeUtil( $filePath );
+			$resizeObj = new ImageUtil( $filePath );
 
-			if( isset( $mwidth ) && isset( $mheight ) && intval( $mwidth ) > 0 && intval( $mheight ) > 0 ) {
+			$mwidth	 = $config[ 'mwidth' ];
+			$mheight = $config[ 'mheight' ];
+
+			// Resize Image - Exact
+			if( $mwidth > 1 && $mheight > 1 ) {
 
 				$mwidth	 = $mwidth > $this->maxResolution ? $this->maxResolution : $mwidth;
 				$mheight = $mheight > $this->maxResolution ? $this->maxResolution : $mheight;
 
-				$resizeObj->resizeImage( $twidth, $theight, 'crop' );
+				$resizeObj->resizeImage( $mwidth, $mheight, 'exact' );
 			}
-			else {
+			// Resize Image - Ratio - Crop
+			else if( $this->mediumWidth > 0 && $this->mediumHeight > 0 ) {
 
 				$resizeObj->resizeImage( $this->mediumWidth, $this->mediumHeight, 'crop' );
 			}
+			// Resize Image - Percent
+			else {
 
-			$resizeObj->saveImage( $mediumPath, 100 );
+				$mwidth	 = $width > 0 ? ( $width * $this->mediumPercent ) / 100 : $width;
+				$mheight = $height > 0 ? ( $height * $this->mediumPercent ) / 100 : $height;
+
+				$resizeObj->resizeImage( $mwidth, $mheight, 'exact' );
+			}
+
+			$resizeObj->saveImage( $mediumPath, $this->imageQuality );
+		}
+
+		// Save Small
+		if( $this->generateImageSmall && isset( $smallPath ) ) {
+
+			$resizeObj = new ImageUtil( $filePath );
+
+			$swidth	 = $config[ 'swidth' ];
+			$sheight = $config[ 'sheight' ];
+
+			// Resize Image - Exact
+			if( $swidth > 1 && $sheight > 1 ) {
+
+				$swidth	 = $swidth > $this->maxResolution ? $this->maxResolution : $swidth;
+				$sheight = $sheight > $this->maxResolution ? $this->maxResolution : $sheight;
+
+				$resizeObj->resizeImage( $swidth, $sheight, 'exact' );
+			}
+			// Resize Image - Ratio - Crop
+			else if( $this->smallWidth > 0 && $this->smallHeight > 0 ) {
+
+				$resizeObj->resizeImage( $this->smallWidth, $this->smallHeight, 'crop' );
+			}
+			// Resize Image - Percent
+			else {
+
+				$swidth	 = $width > 0 ? ( $width * $this->smallPercent ) / 100 : $width;
+				$sheight = $height > 0 ? ( $height * $this->smallPercent ) / 100 : $height;
+
+				$resizeObj->resizeImage( $swidth, $sheight, 'exact' );
+			}
+
+			$resizeObj->saveImage( $smallPath, $this->imageQuality );
 		}
 
 		// Save Thumb
 		if( $this->generateImageThumb && isset( $thumbPath ) ) {
 
-			$resizeObj = new ImageResizeUtil( $filePath );
+			$resizeObj = new ImageUtil( $filePath );
 
-			if( isset( $twidth ) && isset( $theight ) && intval( $twidth ) > 0 && intval( $theight ) > 0 ) {
+			$twidth	 = $config[ 'twidth' ];
+			$theight = $config[ 'theight' ];
+
+			// Resize Image - Exact
+			if( $twidth > 1 && $theight > 1 ) {
 
 				$twidth	 = $twidth > $this->maxResolution ? $this->maxResolution : $twidth;
 				$theight = $theight > $this->maxResolution ? $this->maxResolution : $theight;
 
 				$resizeObj->resizeImage( $twidth, $theight, 'crop' );
 			}
-			else {
+			// Resize Image - Ratio - Crop
+			else if( $this->thumbWidth > 0 && $this->thumbHeight > 0 ) {
 
 				$resizeObj->resizeImage( $this->thumbWidth, $this->thumbHeight, 'crop' );
 			}
 
-			$resizeObj->saveImage( $thumbPath, 100 );
+			$resizeObj->saveImage( $thumbPath, $this->imageQuality );
+		}
+
+		// Save Placeholder
+		if( $this->generateImagePl && isset( $plPath ) ) {
+
+			$imgObj = new ImageUtil( $filePath );
+
+			$imgObj->applyGaussionBlurFilter();
+
+			$imgObj->saveImage( $plPath, $this->plQuality );
 		}
 	}
 

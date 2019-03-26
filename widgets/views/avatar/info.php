@@ -13,6 +13,10 @@ if( isset( $model ) ) {
 		<input type="hidden" name="<?= $modelClass ?>[changed]" class="change" value="<?= $model->changed ?>" />
 		<input type="hidden" name="<?= $modelClass ?>[width]" value="<?= $width ?>" />
 		<input type="hidden" name="<?= $modelClass ?>[height]" value="<?= $height ?>" />
+		<input type="hidden" name="<?= $modelClass ?>[mwidth]" value="<?= $mwidth ?>" />
+		<input type="hidden" name="<?= $modelClass ?>[mheight]" value="<?= $mheight ?>" />
+		<input type="hidden" name="<?= $modelClass ?>[swidth]" value="<?= $swidth ?>" />
+		<input type="hidden" name="<?= $modelClass ?>[sheight]" value="<?= $sheight ?>" />
 		<input type="hidden" name="<?= $modelClass ?>[twidth]" value="<?= $twidth ?>" />
 		<input type="hidden" name="<?= $modelClass ?>[theight]" value="<?= $theight ?>" />
 	</div>
@@ -29,6 +33,10 @@ else {
 		<input type="hidden" name="<?= $modelClass ?>[changed]" class="change" />
 		<input type="hidden" name="<?= $modelClass ?>[width]" value="<?= $width ?>" />
 		<input type="hidden" name="<?= $modelClass ?>[height]" value="<?= $height ?>" />
+		<input type="hidden" name="<?= $modelClass ?>[mwidth]" value="<?= $mwidth ?>" />
+		<input type="hidden" name="<?= $modelClass ?>[mheight]" value="<?= $mheight ?>" />
+		<input type="hidden" name="<?= $modelClass ?>[swidth]" value="<?= $swidth ?>" />
+		<input type="hidden" name="<?= $modelClass ?>[sheight]" value="<?= $sheight ?>" />
 		<input type="hidden" name="<?= $modelClass ?>[twidth]" value="<?= $twidth ?>" />
 		<input type="hidden" name="<?= $modelClass ?>[theight]" value="<?= $theight ?>" />
 	</div>
