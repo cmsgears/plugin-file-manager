@@ -80,7 +80,7 @@ class FileManager extends Component {
 
 	// Image Placeholder Generation
 	public $generateImagePl = true;
-	public $plQuality		= 25; // Quality in percent
+	public $plQuality		= 30; // Quality in percent
 
 	// These must be set to allow file manager to work.
 	public $uploads = true;
@@ -130,7 +130,7 @@ class FileManager extends Component {
 			$this->thumbHeight			= $properties->getThumbHeight( $this->thumbHeight );
 			$this->uploads				= $properties->isUpload( $this->uploads );
 
-			$this->_uploadDir	= Yii::getAlias( "@uploads" );
+			$this->_uploadDir	= Yii::getAlias( '@uploads' );
 			$this->_uploadDir	= $properties->getUploadDir( $this->_uploadDir );
 			$this->_uploadUrl	= $properties->getUploadUrl( $this->_uploadUrl );
 		}
@@ -157,7 +157,7 @@ class FileManager extends Component {
 
 	public function getUploadUrl() {
 
-		if( YII_ENV_PROD ) {
+		if( YII_ENV_PROD && in_array( Yii::$app->id, Yii::$app->core->getCdnApps() ) ) {
 
 			$resource = CoreProperties::getInstance()->getResourceUrl();
 
@@ -558,13 +558,14 @@ class FileManager extends Component {
 		$imageSmallUrl	= $targetDir . "$imageName-small.$imageExt";
 		$imageThumbUrl	= $targetDir . "$imageName-thumb.$imageExt";
 		$imagePlUrl		= $targetDir . "$imageName-pl.$imageExt";
+		$imagePlsUrl	= $targetDir . "$imageName-small-pl.$imageExt";
 
 		// Update File Size in MB
 		$fileContent	= file_get_contents( "$uploadDir/temp/$sourceFile" );
 		$file->size		= number_format( strlen( $fileContent ) / 1048576, 8 );
 
 		// Save Image
-		$this->saveImage( $sourceFile, $targetDir, $imageUrl, $imageMediumUrl, $imageSmallUrl, $imageThumbUrl, $imagePlUrl, $config );
+		$this->saveImage( $sourceFile, $targetDir, $imageUrl, $imageMediumUrl, $imageSmallUrl, $imageThumbUrl, $imagePlUrl, $imagePlsUrl, $config );
 
 		// Update URL and Thumb
 		$file->url = $imageUrl;
@@ -587,10 +588,12 @@ class FileManager extends Component {
 		if( $this->generateImagePl ) {
 
 			$file->placeholder = $imagePlUrl;
+
+			$file->smallPlaceholder = $imagePlsUrl;
 		}
 	}
 
-	public function saveImage( $sourceFile, $targetDir, $filePath, $mediumPath, $smallPath, $thumbPath, $plPath, $config = [] ) {
+	public function saveImage( $sourceFile, $targetDir, $filePath, $mediumPath, $smallPath, $thumbPath, $plPath, $plsPath, $config = [] ) {
 
 		$uploadDir = $this->uploadDir;
 
@@ -606,6 +609,7 @@ class FileManager extends Component {
 		$smallPath	= "$this->uploadDir/$smallPath";
 		$thumbPath	= "$this->uploadDir/$thumbPath";
 		$plPath		= "$this->uploadDir/$plPath";
+		$plsPath	= "$this->uploadDir/$plsPath";
 
 		// create required directories if not exist
 		if( !file_exists( $targetDir ) ) {
@@ -735,6 +739,12 @@ class FileManager extends Component {
 			$imgObj->applyGaussionBlurFilter();
 
 			$imgObj->saveImage( $plPath, $this->plQuality );
+
+			$imgObj = new ImageUtil( $smallPath );
+
+			$imgObj->applyGaussionBlurFilter();
+
+			$imgObj->saveImage( $plsPath, $this->plQuality );
 		}
 	}
 
