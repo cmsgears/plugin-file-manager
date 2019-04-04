@@ -338,7 +338,7 @@ class ImageUtil {
 
 		$this->imageResized = $this->image;
 
-		for( $i = 0; $i <= 25; $i++ ) {
+		for( $i = 0; $i <= 15; $i++ ) {
 
 			imagefilter( $this->imageResized, IMG_FILTER_GAUSSIAN_BLUR );
 		}
