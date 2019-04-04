@@ -94,6 +94,9 @@ class FileManager extends Component {
 	public $tempUploadDir	 = null;
 	public $tempUploadUrl	 = null;
 
+	// Blur iterations
+	public $blurRange = 5;
+
 	// Constructor and Initialisation ------------------------------
 
 	public function __construct( $config = [] ) {
@@ -736,13 +739,13 @@ class FileManager extends Component {
 
 			$imgObj = new ImageUtil( $filePath );
 
-			$imgObj->applyGaussionBlurFilter();
+			$imgObj->applyGaussionBlurFilter( $this->blurRange );
 
 			$imgObj->saveImage( $plPath, $this->plQuality );
 
 			$imgObj = new ImageUtil( $smallPath );
 
-			$imgObj->applyGaussionBlurFilter();
+			$imgObj->applyGaussionBlurFilter( $this->blurRange );
 
 			$imgObj->saveImage( $plsPath, $this->plQuality );
 		}

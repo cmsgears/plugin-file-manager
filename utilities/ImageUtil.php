@@ -334,11 +334,11 @@ class ImageUtil {
 
 	// Image Filters
 
-	public function applyGaussionBlurFilter() {
+	public function applyGaussionBlurFilter( $blurRange = 5 ) {
 
 		$this->imageResized = $this->image;
 
-		for( $i = 0; $i <= 15; $i++ ) {
+		for( $i = 0; $i <= $blurRange; $i++ ) {
 
 			imagefilter( $this->imageResized, IMG_FILTER_GAUSSIAN_BLUR );
 		}
