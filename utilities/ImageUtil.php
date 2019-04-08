@@ -27,11 +27,12 @@ class ImageUtil {
 	// Private ----------------
 
 	private $image;
+	private $extension;
 
 	private $width;
 	private $height;
 
-	private $imageResized;
+	private $tempImage;
 
 	// Traits ------------------------------------------------------
 
@@ -75,9 +76,9 @@ class ImageUtil {
 	 */
 	private function openImage( $file ) {
 
-		$extension = strtolower( strrchr( $file, '.' ) );
+		$this->extension = strtolower( strrchr( $file, '.' ) );
 
-		switch( $extension ) {
+		switch( $this->extension ) {
 
 			// JPEG
 			case '.jpg':
@@ -124,9 +125,11 @@ class ImageUtil {
 		$optimalHeight	= $optionArray[ 'optimalHeight' ];
 
 		// Resample - create image canvas of x, y size
-		$this->imageResized = imagecreatetruecolor( $optimalWidth, $optimalHeight );
+		$this->tempImage = imagecreatetruecolor( $optimalWidth, $optimalHeight );
 
-		imagecopyresampled( $this->imageResized, $this->image, 0, 0, 0, 0, $optimalWidth, $optimalHeight, $this->width, $this->height );
+		$this->parseAlpha( $optimalWidth, $optimalHeight );
+
+		imagecopyresampled( $this->tempImage, $this->image, 0, 0, 0, 0, $optimalWidth, $optimalHeight, $this->width, $this->height );
 
 		// If option is 'crop', then crop too
 		if( $option == 'crop' ) {
@@ -263,14 +266,29 @@ class ImageUtil {
 		$cropStartX	 = ( $optimalWidth / 2) - ( $newWidth / 2 );
 		$cropStartY	 = ( $optimalHeight / 2) - ( $newHeight / 2 );
 
-		$crop = $this->imageResized;
+		$crop = $this->tempImage;
 
-		//imagedestroy($this->imageResized);
+		//imagedestroy($this->tempImage);
 
 		// Now crop from center to exact requested size
-		$this->imageResized = imagecreatetruecolor( $newWidth, $newHeight );
+		$this->tempImage = imagecreatetruecolor( $newWidth, $newWidth );
 
-		imagecopyresampled( $this->imageResized, $crop, 0, 0, $cropStartX, $cropStartY, $newWidth, $newHeight, $newWidth, $newHeight );
+		$this->parseAlpha( $newWidth, $newWidth );
+
+		imagecopyresampled( $this->tempImage, $crop, 0, 0, $cropStartX, $cropStartY, $newWidth, $newHeight, $newWidth, $newHeight );
+	}
+
+	private function parseAlpha( $width, $height ) {
+
+		if( $this->extension == '.png' ) {
+
+			imagealphablending( $this->tempImage, false );
+			imagesavealpha( $this->tempImage, true );
+
+			$transparent = imagecolorallocatealpha( $this->tempImage, 255, 255, 255, 127 );
+
+			imagefilledrectangle( $this->tempImage, 0, 0, $width, $height, $transparent );
+		}
 	}
 
 	// Save Image --------------------------------------------------
@@ -294,7 +312,7 @@ class ImageUtil {
 
 				if( imagetypes() & IMG_JPG ) {
 
-					$input = imagejpeg( $this->imageResized, $savePath, $imageQuality );
+					$input = imagejpeg( $this->tempImage, $savePath, $imageQuality );
 				}
 
 				break;
@@ -303,7 +321,7 @@ class ImageUtil {
 
 				if( imagetypes() & IMG_GIF ) {
 
-					imagegif( $this->imageResized, $savePath );
+					imagegif( $this->tempImage, $savePath );
 				}
 
 				break;
@@ -318,7 +336,7 @@ class ImageUtil {
 
 				if( imagetypes() & IMG_PNG ) {
 
-					imagepng( $this->imageResized, $savePath, $invertScaleQuality );
+					imagepng( $this->tempImage, $savePath, $invertScaleQuality );
 				}
 
 				break;
@@ -329,18 +347,16 @@ class ImageUtil {
 			}
 		}
 
-		imagedestroy( $this->imageResized );
+		imagedestroy( $this->tempImage );
 	}
 
 	// Image Filters
 
 	public function applyGaussionBlurFilter( $blurRange = 5 ) {
 
-		$this->imageResized = $this->image;
-
 		for( $i = 0; $i <= $blurRange; $i++ ) {
 
-			imagefilter( $this->imageResized, IMG_FILTER_GAUSSIAN_BLUR );
+			imagefilter( $this->tempImage, IMG_FILTER_GAUSSIAN_BLUR );
 		}
 	}
 

@@ -626,6 +626,9 @@ class FileManager extends Component {
 		// Original width & height
 		list( $width, $height ) = getimagesize( $filePath );
 
+		$swidth		= $width;
+		$sheight	= $height;
+
 		$iwidth	 = $config[ 'width' ];
 		$iheight = $config[ 'height' ];
 
@@ -739,12 +742,14 @@ class FileManager extends Component {
 
 			$imgObj = new ImageUtil( $filePath );
 
+			$imgObj->resizeImage( $width, $height, 'exact' );
 			$imgObj->applyGaussionBlurFilter( $this->blurRange );
 
 			$imgObj->saveImage( $plPath, $this->plQuality );
 
-			$imgObj = new ImageUtil( $smallPath );
+			$imgObj = new ImageUtil( $filePath );
 
+			$imgObj->resizeImage( $swidth, $sheight, 'exact' );
 			$imgObj->applyGaussionBlurFilter( $this->blurRange );
 
 			$imgObj->saveImage( $plsPath, $this->plQuality );
