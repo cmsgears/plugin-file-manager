@@ -568,7 +568,7 @@ class FileManager extends Component {
 		$file->size		= number_format( strlen( $fileContent ) / 1048576, 8 );
 
 		// Save Image
-		$this->saveImage( $sourceFile, $targetDir, $imageUrl, $imageMediumUrl, $imageSmallUrl, $imageThumbUrl, $imagePlUrl, $imagePlsUrl, $config );
+		$this->saveImage( $file, $sourceFile, $targetDir, $imageUrl, $imageMediumUrl, $imageSmallUrl, $imageThumbUrl, $imagePlUrl, $imagePlsUrl, $config );
 
 		// Update URL and Thumb
 		$file->url = $imageUrl;
@@ -596,7 +596,7 @@ class FileManager extends Component {
 		}
 	}
 
-	public function saveImage( $sourceFile, $targetDir, $filePath, $mediumPath, $smallPath, $thumbPath, $plPath, $plsPath, $config = [] ) {
+	public function saveImage( $file, $sourceFile, $targetDir, $filePath, $mediumPath, $smallPath, $thumbPath, $plPath, $plsPath, $config = [] ) {
 
 		$uploadDir = $this->uploadDir;
 
@@ -626,8 +626,13 @@ class FileManager extends Component {
 		// Original width & height
 		list( $width, $height ) = getimagesize( $filePath );
 
+		$mwidth		= $width;
+		$mheight	= $height;
 		$swidth		= $width;
 		$sheight	= $height;
+
+		$srcset	= [ $width ];
+		$sizes	= "(max-width: " . $width . "px) 100vw, " . $width . "px";
 
 		$iwidth	 = $config[ 'width' ];
 		$iheight = $config[ 'height' ];
@@ -644,6 +649,9 @@ class FileManager extends Component {
 
 			$resizeObj->resizeImage( $width, $height, 'exact' );
 			$resizeObj->saveImage( $filePath, $this->imageQuality );
+
+			$srcset	= [ $width ];
+			$sizes	= "(max-width: " . $width . "px) 100vw, " . $width . "px";
 		}
 
 		// Save Medium
@@ -677,6 +685,8 @@ class FileManager extends Component {
 			}
 
 			$resizeObj->saveImage( $mediumPath, $this->imageQuality );
+
+			$srcset[] = $mwidth;
 		}
 
 		// Save Small
@@ -710,6 +720,8 @@ class FileManager extends Component {
 			}
 
 			$resizeObj->saveImage( $smallPath, $this->imageQuality );
+
+			$srcset[] = $swidth;
 		}
 
 		// Save Thumb
@@ -754,6 +766,9 @@ class FileManager extends Component {
 
 			$imgObj->saveImage( $plsPath, $this->plQuality );
 		}
+
+		$file->srcset	= join( ',', $srcset );
+		$file->sizes	= $sizes;
 	}
 
 	// Convert to target DPI --
