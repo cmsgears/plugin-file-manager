@@ -63,13 +63,13 @@ class FileManager extends Component {
 
 	// Image Medium Generation - 75% by default
 	public $generateImageMedium	= true;
-	public $mediumPercent		= 75;
+	public $mediumPercent		= 60;
 	public $mediumWidth			= 0;
 	public $mediumHeight		= 0;
 
 	// Image Small Generation - 50% by default
 	public $generateImageSmall	= true;
-	public $smallPercent		= 50;
+	public $smallPercent		= 30;
 	public $smallWidth			= 0;
 	public $smallHeight			= 0;
 
