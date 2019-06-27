@@ -13,8 +13,6 @@ namespace cmsgears\files\widgets;
 use yii\helpers\Html;
 
 // CMG Imports
-use cmsgears\core\common\base\Widget;
-
 use cmsgears\core\common\utilities\CodeGenUtil;
 
 /**
@@ -22,7 +20,7 @@ use cmsgears\core\common\utilities\CodeGenUtil;
  *
  * @since 1.0.0
  */
-abstract class FileUploader extends Widget {
+abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 
 	// Variables ---------------------------------------------------
 
