@@ -13,7 +13,7 @@ namespace cmsgears\files\widgets;
 use yii\helpers\Html;
 
 // CMG Imports
-use cmsgears\core\common\utilities\CodeGenUtil;
+use cmsgears\core\common\utilities\UrlUtil;
 
 /**
  * FileUploader is the base widget to upload files.
@@ -166,7 +166,7 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 
 		$formHtml		= $this->form ? $this->renderForm( $config, [ 'infoHtml' => $infoHtml, 'fieldsHtml' => $fieldsHtml ] ) : null;
 
-		$uploaderView	= CodeGenUtil::isAbsolutePath( $this->uploaderView ) ? $this->uploaderView : "$this->template/$this->uploaderView";
+		$uploaderView	= UrlUtil::isAbsolutePath( $this->uploaderView ) ? $this->uploaderView : "$this->template/$this->uploaderView";
 
 		$widgetHtml = $this->render( $uploaderView, [
 			'widget' => $this,
@@ -197,7 +197,7 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 	 */
 	public function renderContainer( $config = [] ) {
 
-		$containerView = CodeGenUtil::isAbsolutePath( $this->containerView, true ) ? $this->containerView : "$this->template/$this->containerView";
+		$containerView = UrlUtil::isAbsolutePath( $this->containerView, true ) ? $this->containerView : "$this->template/$this->containerView";
 
 		return $this->render( $containerView, [ 'widget' => $this ] );
 	}
@@ -210,7 +210,7 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 	 */
 	public function renderDragger( $config = [] ) {
 
-		$draggerView = CodeGenUtil::isAbsolutePath( $this->draggerView, true ) ? $this->draggerView : "$this->template/$this->draggerView";
+		$draggerView = UrlUtil::isAbsolutePath( $this->draggerView, true ) ? $this->draggerView : "$this->template/$this->draggerView";
 
 		return $this->render( $draggerView, [ 'widget' => $this ] );
 	}
@@ -223,7 +223,7 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 	 */
 	public function renderChooser( $config = [] ) {
 
-		$chooserView = CodeGenUtil::isAbsolutePath( $this->chooserView, true ) ? $this->chooserView : "$this->template/$this->chooserView";
+		$chooserView = UrlUtil::isAbsolutePath( $this->chooserView, true ) ? $this->chooserView : "$this->template/$this->chooserView";
 
 		return $this->render( $chooserView, [ 'widget' => $this ] );
 	}
@@ -236,7 +236,7 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 	 */
 	public function renderPreloader( $config = [] ) {
 
-		$preloaderView = CodeGenUtil::isAbsolutePath( $this->preloaderView, true ) ? $this->preloaderView : "$this->template/$this->preloaderView";
+		$preloaderView = UrlUtil::isAbsolutePath( $this->preloaderView, true ) ? $this->preloaderView : "$this->template/$this->preloaderView";
 
 		return $this->render( $preloaderView, [ 'widget' => $this ] );
 	}
@@ -249,7 +249,7 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 	 */
 	public function renderInfo( $config = [] ) {
 
-		$infoView = CodeGenUtil::isAbsolutePath( $this->infoView, true ) ? $this->infoView : "$this->template/$this->infoView";
+		$infoView = UrlUtil::isAbsolutePath( $this->infoView, true ) ? $this->infoView : "$this->template/$this->infoView";
 
 		return $this->render( $infoView, [ 'widget' => $this ] );
 	}
@@ -262,7 +262,7 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 	 */
 	public function renderFields( $config = [] ) {
 
-		$fieldsView = CodeGenUtil::isAbsolutePath( $this->fieldsView, true ) ? $this->fieldsView : "$this->template/$this->fieldsView";
+		$fieldsView = UrlUtil::isAbsolutePath( $this->fieldsView, true ) ? $this->fieldsView : "$this->template/$this->fieldsView";
 
 		return $this->render( $fieldsView, [ 'widget' => $this ] );
 	}
@@ -275,7 +275,7 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 	 */
 	public function renderForm( $config = [], $html = [] ) {
 
-		$formView = CodeGenUtil::isAbsolutePath( $this->formView, true ) ? $this->formView : "$this->template/$this->formView";
+		$formView = UrlUtil::isAbsolutePath( $this->formView, true ) ? $this->formView : "$this->template/$this->formView";
 
 		return $this->render( $formView, [
 			'widget' => $this,

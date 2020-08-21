@@ -10,7 +10,7 @@
 namespace cmsgears\files\widgets;
 
 // CMG Imports
-use cmsgears\core\common\utilities\CodeGenUtil;
+use cmsgears\core\common\utilities\UrlUtil;
 
 /**
  * ImageUploader widget is pre-configured to upload images.
@@ -79,7 +79,7 @@ class ImageUploader extends FileUploader {
 
 	public function renderInfo( $config = [] ) {
 
-		$infoView = CodeGenUtil::isAbsolutePath( $this->infoView ) ? $this->infoView : "$this->template/$this->infoView";
+		$infoView = UrlUtil::isAbsolutePath( $this->infoView ) ? $this->infoView : "$this->template/$this->infoView";
 
         return $this->render( $infoView, [
 			'widget' => $this,
