@@ -43,7 +43,7 @@ class ImageUploader extends FileUploader {
 	public $modelClass	= 'Banner';
 
 	// Widget - Container
-	public $fileIcon	= 'cmti cmti-5x cmti-image';
+	public $fileIcon	= 'cmti cmti-5x cmti-file-image';
 
 	// Image and Thumbnail Dimensions
 	public $width	= null;

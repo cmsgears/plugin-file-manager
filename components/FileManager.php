@@ -43,9 +43,16 @@ class FileManager extends Component {
 	public $imageExtensions		 = [ 'png', 'jpg', 'jpeg', 'gif' ];
 	public $videoExtensions		 = [ 'mp4', 'flv', 'ogv', 'avi' ];
 	public $audioExtensions		 = [ 'mp3', 'm4a', 'wav' ];
-	public $documentExtensions	 = [ 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt' ];
+	public $documentExtensions	 = [ 'txt', 'pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'odt', 'odp', 'ods' ];
 	public $compressedExtensions = [ 'rar', 'zip' ];
-	public $mixedExtensions		= [ 'png', 'jpg', 'jpeg', 'gif', 'mp4', 'flv', 'ogv', 'avi', 'mp3', 'm4a', 'wav', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'rar', 'zip' ];
+
+	public $mixedExtensions = [
+		'png', 'jpg', 'jpeg', 'gif',
+		'mp4', 'flv', 'ogv', 'avi',
+		'mp3', 'm4a', 'wav',
+		'txt', 'pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'odt', 'odp', 'ods',
+		'rar', 'zip'
+	];
 
 	public $typeMap = [ 0 => 'Select File Type', self::FILE_TYPE_IMAGE => self::FILE_TYPE_IMAGE, self::FILE_TYPE_VIDEO => self::FILE_TYPE_VIDEO, self::FILE_TYPE_AUDIO => self::FILE_TYPE_AUDIO, self::FILE_TYPE_DOCUMENT => self::FILE_TYPE_DOCUMENT, self::FILE_TYPE_COMPRESSED => self::FILE_TYPE_COMPRESSED ];
 
