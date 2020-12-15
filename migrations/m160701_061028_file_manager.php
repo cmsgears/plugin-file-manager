@@ -118,7 +118,7 @@ class m160701_061028_file_manager extends Migration {
 			[ $this->site->id, 'image_extensions', 'Image Extensions', 'file', 1, 'text', 'png,jpg,jpeg,gif', NULL ],
 			[ $this->site->id, 'video_extensions', 'Video Extensions', 'file', 1, 'text', 'mp4,flv,ogv,avi', NULL ],
 			[ $this->site->id, 'audio_extensions', 'Audio Extensions', 'file', 1, 'text', 'mp3,m4a,wav', NULL ],
-			[ $this->site->id, 'document_extensions', 'Document Extensions', 'file', 1, 'text', 'pdf,doc,docx,xls,xlsx,txt', NULL ],
+			[ $this->site->id, 'document_extensions', 'Document Extensions', 'file', 1, 'text', 'txt,pdf,doc,docx,ppt,pptx,xls,xlsx,odt,odp,ods', NULL ],
 			[ $this->site->id, 'compressed_extensions', 'Compressed Extensions', 'file', 1, 'text', 'rar,zip', NULL ],
 			[ $this->site->id, 'image_quality', 'Image Quality', 'file', 1, 'text', '75', NULL ],
 			[ $this->site->id, 'generate_name', 'Generate Name', 'file', 1, 'flag', '1', NULL ],
