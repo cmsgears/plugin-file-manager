@@ -30,16 +30,16 @@ class CaptureUploader extends ImageUploader {
 
 	// Public -----------------
 
-	public $template		= 'capture';
+	public $template = 'capture';
 
 	// File - directory and type
-	public $directory		= 'capture';
+	public $directory = 'capture';
 
 	// File - model and model class for loading by controller
-	public $modelClass		= 'Capture';
+	public $modelClass = 'Capture';
 
 	// Widget - Container
-	public $fileIcon		= 'cmti cmti-5x cmti-camera';
+	public $fileIcon = 'cmti cmti-5x cmti-camera';
 
 	public $parentId;
 

@@ -33,17 +33,17 @@ class ImageUploader extends FileUploader {
 
 	// Public -----------------
 
-	public $template	= 'image';
+	public $template = 'image';
 
 	// File - directory and type
 	public $directory	= 'banner';
 	public $type		= 'image';
 
 	// File - model and model class for loading by controller
-	public $modelClass	= 'Banner';
+	public $modelClass = 'Banner';
 
 	// Widget - Container
-	public $fileIcon	= 'cmti cmti-5x cmti-file-image';
+	public $fileIcon = 'cmti cmti-5x cmti-file-image';
 
 	// Image and Thumbnail Dimensions
 	public $width	= null;

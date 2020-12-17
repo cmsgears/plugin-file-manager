@@ -30,11 +30,11 @@ class DocumentUploader extends FileUploader {
 
 	// Public -----------------
 
-	public $template		= 'document';
+	public $template = 'document';
 
 	// File - directory and type
-	public $directory		= 'document';
-	public $type			= 'document';
+	public $directory	= 'document';
+	public $type		= 'document';
 
 	// Protected --------------
 

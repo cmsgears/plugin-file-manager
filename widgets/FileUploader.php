@@ -42,7 +42,7 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 	public $template = null;
 
 	// Widget - Html options
-	public $options = [ 'class' => 'box box-file-uploader cmt-file-uploader file-uploader' ];
+	public $options = [ 'class' => 'cmt-file-uploader box box-file-uploader file-uploader' ];
 
 	// Widget - Options - Disable Upload
 	public $disabled = false;
@@ -111,6 +111,9 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 	public $clearActionUrl		= null;
 	public $clearActionVisible	= true;
 
+	// Upload URL
+	public $fileUploadUrl = 'apix/file/file-handler';
+
 	// CMT - JS - Application configuration
 	public $cmtApp			= 'core';
 	public $cmtController	= 'file';
@@ -134,6 +137,8 @@ abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 	// yii\base\Widget --------
 
 	public function run() {
+
+		$this->options[ 'uploader' ] = $this->fileUploadUrl;
 
 		$this->options[ 'directory' ] = $this->directory;
 
