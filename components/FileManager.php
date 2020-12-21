@@ -361,6 +361,32 @@ class FileManager extends Component {
 
 			while( $exist ) {
 
+				if( file_exists( "$uploadDir/$upname" ) ) {
+
+					if( $count > $limit ) {
+
+						return [ 'error' => 'File upload failed. Please upload a file with different name.' ];
+					}
+
+					$upname		= "$name-$count." . $extension;
+					$filePath	= "$uploadDir/$upname";
+
+					$count++;
+				}
+				else {
+
+					$exist	= false;
+					$name	= $count > 1 ? "$name-" . ( $count - 1) : $name;
+
+					break;
+				}
+			}
+
+			$exist	= true;
+			$count	= 1;
+
+			while( $exist ) {
+
 				if( file_exists( "$this->uploadDir/$dateDir/$directory/$upname" ) ) {
 
 					if( $count > $limit ) {
