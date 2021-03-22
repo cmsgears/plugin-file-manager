@@ -30,11 +30,11 @@ class SharedUploader extends FileUploader {
 
 	// Public -----------------
 
-	public $template		= 'shared';
+	public $template = 'shared';
 
 	// File - directory and type
-	public $directory		= 'files';
-	public $type			= null; // Detected by File Manager
+	public $directory	= 'files';
+	public $type		= null; // Detected by File Manager
 
 	// Protected --------------
 

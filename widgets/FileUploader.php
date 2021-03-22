@@ -13,16 +13,14 @@ namespace cmsgears\files\widgets;
 use yii\helpers\Html;
 
 // CMG Imports
-use cmsgears\core\common\base\Widget;
-
-use cmsgears\core\common\utilities\CodeGenUtil;
+use cmsgears\core\common\utilities\UrlUtil;
 
 /**
  * FileUploader is the base widget to upload files.
  *
  * @since 1.0.0
  */
-abstract class FileUploader extends Widget {
+abstract class FileUploader extends \cmsgears\core\common\base\Widget {
 
 	// Variables ---------------------------------------------------
 
@@ -38,20 +36,21 @@ abstract class FileUploader extends Widget {
 
 	// Public -----------------
 
-	public $wrap		= true;
+	public $wrap = true;
 
 	// Widget - Template
-	public $template	= null;
+	public $template = null;
 
 	// Widget - Html options
-	public $options		= [ 'class' => 'box box-file-uploader cmt-file-uploader file-uploader' ];
+	public $options = [ 'class' => 'cmt-file-uploader box box-file-uploader file-uploader' ];
 
 	// Widget - Options - Disable Upload
-	public $disabled	= false;
+	public $disabled = false;
 
 	// File - directory and type
 	public $directory	= null;
 	public $type		= null;
+	public $gen			= false; // Generate filename
 
 	// File - model and model class for loading by controller
 	public $model		= null;
@@ -112,6 +111,9 @@ abstract class FileUploader extends Widget {
 	public $clearActionUrl		= null;
 	public $clearActionVisible	= true;
 
+	// Upload URL
+	public $fileUploadUrl = 'apix/file/file-handler';
+
 	// CMT - JS - Application configuration
 	public $cmtApp			= 'core';
 	public $cmtController	= 'file';
@@ -136,8 +138,13 @@ abstract class FileUploader extends Widget {
 
 	public function run() {
 
-		$this->options[ 'directory' ]	= $this->directory;
-		$this->options[ 'type' ]		= $this->type;
+		$this->options[ 'uploader' ] = $this->fileUploadUrl;
+
+		$this->options[ 'directory' ] = $this->directory;
+
+		$this->options[ 'type' ] = $this->type;
+
+		$this->options[ 'gen' ] = $this->gen ? '1' : '0';
 
 		return $this->renderWidget();
 	}
@@ -164,7 +171,7 @@ abstract class FileUploader extends Widget {
 
 		$formHtml		= $this->form ? $this->renderForm( $config, [ 'infoHtml' => $infoHtml, 'fieldsHtml' => $fieldsHtml ] ) : null;
 
-		$uploaderView	= CodeGenUtil::isAbsolutePath( $this->uploaderView ) ? $this->uploaderView : "$this->template/$this->uploaderView";
+		$uploaderView	= UrlUtil::isAbsolutePath( $this->uploaderView ) ? $this->uploaderView : "$this->template/$this->uploaderView";
 
 		$widgetHtml = $this->render( $uploaderView, [
 			'widget' => $this,
@@ -195,7 +202,7 @@ abstract class FileUploader extends Widget {
 	 */
 	public function renderContainer( $config = [] ) {
 
-		$containerView = CodeGenUtil::isAbsolutePath( $this->containerView, true ) ? $this->containerView : "$this->template/$this->containerView";
+		$containerView = UrlUtil::isAbsolutePath( $this->containerView, true ) ? $this->containerView : "$this->template/$this->containerView";
 
 		return $this->render( $containerView, [ 'widget' => $this ] );
 	}
@@ -208,7 +215,7 @@ abstract class FileUploader extends Widget {
 	 */
 	public function renderDragger( $config = [] ) {
 
-		$draggerView = CodeGenUtil::isAbsolutePath( $this->draggerView, true ) ? $this->draggerView : "$this->template/$this->draggerView";
+		$draggerView = UrlUtil::isAbsolutePath( $this->draggerView, true ) ? $this->draggerView : "$this->template/$this->draggerView";
 
 		return $this->render( $draggerView, [ 'widget' => $this ] );
 	}
@@ -221,7 +228,7 @@ abstract class FileUploader extends Widget {
 	 */
 	public function renderChooser( $config = [] ) {
 
-		$chooserView = CodeGenUtil::isAbsolutePath( $this->chooserView, true ) ? $this->chooserView : "$this->template/$this->chooserView";
+		$chooserView = UrlUtil::isAbsolutePath( $this->chooserView, true ) ? $this->chooserView : "$this->template/$this->chooserView";
 
 		return $this->render( $chooserView, [ 'widget' => $this ] );
 	}
@@ -234,7 +241,7 @@ abstract class FileUploader extends Widget {
 	 */
 	public function renderPreloader( $config = [] ) {
 
-		$preloaderView = CodeGenUtil::isAbsolutePath( $this->preloaderView, true ) ? $this->preloaderView : "$this->template/$this->preloaderView";
+		$preloaderView = UrlUtil::isAbsolutePath( $this->preloaderView, true ) ? $this->preloaderView : "$this->template/$this->preloaderView";
 
 		return $this->render( $preloaderView, [ 'widget' => $this ] );
 	}
@@ -247,7 +254,7 @@ abstract class FileUploader extends Widget {
 	 */
 	public function renderInfo( $config = [] ) {
 
-		$infoView = CodeGenUtil::isAbsolutePath( $this->infoView, true ) ? $this->infoView : "$this->template/$this->infoView";
+		$infoView = UrlUtil::isAbsolutePath( $this->infoView, true ) ? $this->infoView : "$this->template/$this->infoView";
 
 		return $this->render( $infoView, [ 'widget' => $this ] );
 	}
@@ -260,7 +267,7 @@ abstract class FileUploader extends Widget {
 	 */
 	public function renderFields( $config = [] ) {
 
-		$fieldsView = CodeGenUtil::isAbsolutePath( $this->fieldsView, true ) ? $this->fieldsView : "$this->template/$this->fieldsView";
+		$fieldsView = UrlUtil::isAbsolutePath( $this->fieldsView, true ) ? $this->fieldsView : "$this->template/$this->fieldsView";
 
 		return $this->render( $fieldsView, [ 'widget' => $this ] );
 	}
@@ -273,7 +280,7 @@ abstract class FileUploader extends Widget {
 	 */
 	public function renderForm( $config = [], $html = [] ) {
 
-		$formView = CodeGenUtil::isAbsolutePath( $this->formView, true ) ? $this->formView : "$this->template/$this->formView";
+		$formView = UrlUtil::isAbsolutePath( $this->formView, true ) ? $this->formView : "$this->template/$this->formView";
 
 		return $this->render( $formView, [
 			'widget' => $this,

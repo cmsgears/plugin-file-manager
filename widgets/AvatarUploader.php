@@ -30,18 +30,18 @@ class AvatarUploader extends ImageUploader {
 
 	// Public -----------------
 
-	public $template		= 'avatar';
+	public $template = 'avatar';
 
 	// File - directory and type
-	public $directory		= 'avatar';
+	public $directory = 'avatar';
 
 	// File - model and model class for loading by controller
-	public $modelClass		= 'Avatar';
+	public $modelClass = 'Avatar';
 
 	// Widget - Container
-	public $fileIcon		= 'cmti cmti-5x cmti-user';
+	public $fileIcon = 'cmti cmti-5x cmti-user';
 
-	public $postActionUrl	= 'user/avatar';
+	public $postActionUrl = 'user/avatar';
 
 	// Protected --------------
 

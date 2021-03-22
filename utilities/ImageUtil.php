@@ -11,42 +11,76 @@ namespace cmsgears\files\utilities;
 
 /**
  * The image resize utility provide several useful methods to resize an image.
- * 
+ *
  * @since 1.0.0
  */
-class ImageResizeUtil {
+class ImageUtil {
 
-	// Public Variables
+	// Variables ---------------------------------------------------
 
-	// Private Variables
+	// Globals ----------------
+
+	// Public -----------------
+
+	// Protected --------------
+
+	// Private ----------------
 
 	private $image;
+	private $extension;
 
 	private $width;
 	private $height;
 
-	private $imageResized;
+	private $tempImage;
+
+	// Traits ------------------------------------------------------
 
 	// Constructor and Initialisation ------------------------------
 
 	function __construct( $fileName ) {
 
-		// *** Open up the file
 		$this->image = $this->openImage( $fileName );
 
-		// *** Get width and height
 		$this->width	= imagesx( $this->image );
 		$this->height	= imagesy( $this->image );
 	}
 
-	// Check Image -------------------------------------------------
+	// Instance methods --------------------------------------------
 
+	// Yii interfaces ------------------------
+
+	// Yii parent classes --------------------
+
+	// CMG interfaces ------------------------
+
+	// CMG parent classes --------------------
+
+	// ImageUtil -----------------------------
+
+	public function getWidth() {
+
+		return $this->width;
+	}
+
+	public function getHeight() {
+
+		return $this->height;
+	}
+
+	/**
+	 * Open the image using the image library shipped with PHP.
+	 *
+	 * @param string $file
+	 * @return resource an image resource identifier on success, <b>FALSE</b> on errors.
+	 */
 	private function openImage( $file ) {
 
-		$extension = strtolower( strrchr( $file, '.' ) );
+		$this->extension = strtolower( strrchr( $file, '.' ) );
 
-		switch( $extension ) {
+		switch( $this->extension ) {
 
+			// JPEG
 			case '.jpg':
 			case '.jpeg': {
 
@@ -54,18 +88,21 @@ class ImageResizeUtil {
 
 				break;
 			}
+			// GIF
 			case '.gif': {
 
 				$img = @imagecreatefromgif( $file );
 
 				break;
 			}
+			// PNG
 			case '.png': {
 
 				$img = @imagecreatefrompng( $file );
 
 				break;
 			}
+			// None
 			default: {
 
 				$img = false;
@@ -79,18 +116,20 @@ class ImageResizeUtil {
 
 	// Resize Image ------------------------------------------------
 
-	public function resizeImage( $newWidth, $newHeight, $option = "auto" ) {
+	public function resizeImage( $newWidth, $newHeight, $option = 'auto' ) {
 
 		// Get optimal width and height - based on $option
-		$optionArray	= $this->getDimensions( $newWidth, $newHeight, $option );
+		$optionArray = $this->getDimensions( $newWidth, $newHeight, $option );
 
 		$optimalWidth	= $optionArray[ 'optimalWidth' ];
 		$optimalHeight	= $optionArray[ 'optimalHeight' ];
 
 		// Resample - create image canvas of x, y size
-		$this->imageResized = imagecreatetruecolor( $optimalWidth, $optimalHeight );
+		$this->tempImage = imagecreatetruecolor( $optimalWidth, $optimalHeight );
 
-		imagecopyresampled( $this->imageResized, $this->image, 0, 0, 0, 0, $optimalWidth, $optimalHeight, $this->width, $this->height );
+		$this->parseAlpha( $optimalWidth, $optimalHeight );
+
+		imagecopyresampled( $this->tempImage, $this->image, 0, 0, 0, 0, $optimalWidth, $optimalHeight, $this->width, $this->height );
 
 		// If option is 'crop', then crop too
 		if( $option == 'crop' ) {
@@ -227,19 +266,40 @@ class ImageResizeUtil {
 		$cropStartX	 = ( $optimalWidth / 2) - ( $newWidth / 2 );
 		$cropStartY	 = ( $optimalHeight / 2) - ( $newHeight / 2 );
 
-		$crop = $this->imageResized;
+		$crop = $this->tempImage;
 
-		//imagedestroy($this->imageResized);
+		//imagedestroy($this->tempImage);
 
 		// Now crop from center to exact requested size
-		$this->imageResized = imagecreatetruecolor( $newWidth, $newHeight );
+		$this->tempImage = imagecreatetruecolor( $newWidth, $newWidth );
 
-		imagecopyresampled( $this->imageResized, $crop, 0, 0, $cropStartX, $cropStartY, $newWidth, $newHeight, $newWidth, $newHeight );
+		$this->parseAlpha( $newWidth, $newWidth );
+
+		imagecopyresampled( $this->tempImage, $crop, 0, 0, $cropStartX, $cropStartY, $newWidth, $newHeight, $newWidth, $newHeight );
+	}
+
+	private function parseAlpha( $width, $height ) {
+
+		if( $this->extension == '.png' ) {
+
+			imagealphablending( $this->tempImage, false );
+			imagesavealpha( $this->tempImage, true );
+
+			$transparent = imagecolorallocatealpha( $this->tempImage, 255, 255, 255, 127 );
+
+			imagefilledrectangle( $this->tempImage, 0, 0, $width, $height, $transparent );
+		}
 	}
 
 	// Save Image --------------------------------------------------
 
-	public function saveImage( $savePath, $imageQuality = "100" ) {
+	/**
+	 * Save the image with given quality.
+	 *
+	 * @param string $savePath
+	 * @param integer $imageQuality
+	 */
+	public function saveImage( $savePath, $imageQuality = 100 ) {
 
 		// Get extension
 		$extension	 = strrchr( $savePath, '.' );
@@ -252,7 +312,7 @@ class ImageResizeUtil {
 
 				if( imagetypes() & IMG_JPG ) {
 
-					$input = imagejpeg( $this->imageResized, $savePath, $imageQuality );
+					$input = imagejpeg( $this->tempImage, $savePath, $imageQuality );
 				}
 
 				break;
@@ -261,7 +321,7 @@ class ImageResizeUtil {
 
 				if( imagetypes() & IMG_GIF ) {
 
-					imagegif( $this->imageResized, $savePath );
+					imagegif( $this->tempImage, $savePath );
 				}
 
 				break;
@@ -269,14 +329,14 @@ class ImageResizeUtil {
 			case '.png': {
 
 				// Scale quality from 0-100 to 0-9
-				$scaleQuality = round( ($imageQuality / 100) * 9 );
+				$scaleQuality = round( ( $imageQuality / 100 ) * 9 );
 
 				// Invert quality setting as 0 is best, not 9
 				$invertScaleQuality = 9 - $scaleQuality;
 
 				if( imagetypes() & IMG_PNG ) {
 
-					imagepng( $this->imageResized, $savePath, $invertScaleQuality );
+					imagepng( $this->tempImage, $savePath, $invertScaleQuality );
 				}
 
 				break;
@@ -287,7 +347,17 @@ class ImageResizeUtil {
 			}
 		}
 
-		imagedestroy( $this->imageResized );
+		imagedestroy( $this->tempImage );
+	}
+
+	// Image Filters
+
+	public function applyGaussionBlurFilter( $blurRange = 5 ) {
+
+		for( $i = 0; $i <= $blurRange; $i++ ) {
+
+			imagefilter( $this->tempImage, IMG_FILTER_GAUSSIAN_BLUR );
+		}
 	}
 
 }

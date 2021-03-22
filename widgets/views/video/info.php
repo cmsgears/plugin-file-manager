@@ -12,7 +12,6 @@ if( isset( $model ) ) {
 		<input type="hidden" name="<?= $modelClass ?>[type]" value="<?= $widget->type ?>" />
 		<input type="hidden" name="<?= $modelClass ?>[changed]" class="change" value="<?= $model->changed ?>" />
 	</div>
-
 <?php
 }
 else {

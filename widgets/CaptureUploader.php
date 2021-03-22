@@ -10,11 +10,11 @@
 namespace cmsgears\files\widgets;
 
 /**
- * DocumentUploader widget is pre-configured to upload documents.
+ * CaptureUploader widget is pre-configured to upload image from camera.
  *
  * @since 1.0.0
  */
-class MixedUploader extends FileUploader {
+class CaptureUploader extends ImageUploader {
 
 	// Variables ---------------------------------------------------
 
@@ -30,11 +30,18 @@ class MixedUploader extends FileUploader {
 
 	// Public -----------------
 
-	public $template = 'mixed';
+	public $template = 'capture';
 
 	// File - directory and type
-	public $directory	= 'mixed';
-	public $type		= 'mixed';
+	public $directory = 'capture';
+
+	// File - model and model class for loading by controller
+	public $modelClass = 'Capture';
+
+	// Widget - Container
+	public $fileIcon = 'cmti cmti-5x cmti-camera';
+
+	public $parentId;
 
 	// Protected --------------
 
@@ -54,6 +61,6 @@ class MixedUploader extends FileUploader {
 
 	// CMG parent classes --------------------
 
-	// DocumentUploader ----------------------
+	// CaptureUploader -----------------------
 
 }

@@ -30,17 +30,17 @@ class VideoUploader extends FileUploader {
 
 	// Public -----------------
 
-	public $template		= 'video';
+	public $template = 'video';
 
 	// File - directory and type
-	public $directory		= 'video';
-	public $type			= 'video';
+	public $directory	= 'video';
+	public $type		= 'video';
 
 	// File - model and model class for loading by controller
-	public $modelClass		= 'Video';
+	public $modelClass = 'Video';
 
 	// Widget - Container
-	public $fileIcon		= 'cmti cmti-5x cmti-file-video';
+	public $fileIcon = 'cmti cmti-5x cmti-file-video';
 
 	// Protected --------------
 

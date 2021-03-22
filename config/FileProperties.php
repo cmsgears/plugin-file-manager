@@ -35,6 +35,8 @@ class FileProperties extends Properties {
 
 	const PROP_EXTENSION_COMPRESSED = 'compressed_extensions';
 
+	const PROP_IMAGE_QUALITY		= 'image_quality';
+
 	const PROP_NAME_GENERATE		= 'generate_name';
 
 	const PROP_NAME_PRETTY			= 'pretty_name';
@@ -45,11 +47,19 @@ class FileProperties extends Properties {
 
 	const PROP_GENERATE_MEDIUM		= 'generate_medium';
 
+	const PROP_GENERATE_SMALL		= 'generate_medium';
+
+	const PROP_GENERATE_THUMB		= 'generate_thumb';
+
+	const PROP_GENERATE_PLACEHOLDER	= 'generate_placeholder';
+
 	const PROP_MEDIUM_WIDTH			= 'medium_width';
 
 	const PROP_MEDIUM_HEIGHT		= 'medium_height';
 
-	const PROP_GENERATE_THUMB		= 'generate_thumb';
+	const PROP_SMALL_WIDTH			= 'small_width';
+
+	const PROP_SMALL_HEIGHT			= 'small_height';
 
 	const PROP_THUMB_WIDTH			= 'thumb_width';
 
@@ -191,6 +201,24 @@ class FileProperties extends Properties {
 	}
 
 	/**
+	 * Returns the quality of saved image.
+	 *
+	 * @param type $default
+	 * @return string
+	 */
+	public function getImageQuality( $default = null ) {
+
+		$prop = $this->properties[ self::PROP_IMAGE_QUALITY ];
+
+		if( isset( $prop ) && strlen( $prop ) > 0 ) {
+
+			return $prop;
+		}
+
+		return $default;
+	}
+
+	/**
 	 * Check whether name must be auto generated while storing the file. The given file
 	 * name will be stored in title.
 	 *
@@ -283,6 +311,60 @@ class FileProperties extends Properties {
 	}
 
 	/**
+	 * Check whether small image must be generated while storing the image file.
+	 *
+	 * @param type $default
+	 * @return string
+	 */
+	public function isGenerateSmall( $default = null ) {
+
+		$prop = $this->properties[ self::PROP_GENERATE_SMALL ];
+
+		if( isset( $prop ) && strlen( $prop ) > 0 ) {
+
+			return $prop;
+		}
+
+		return $default;
+	}
+
+	/**
+	 * Check whether thumb image must be generated while storing the image file.
+	 *
+	 * @param type $default
+	 * @return string
+	 */
+	public function isGenerateThumb( $default = null ) {
+
+		$prop = $this->properties[ self::PROP_GENERATE_THUMB ];
+
+		if( isset( $prop ) && strlen( $prop ) > 0 ) {
+
+			return $prop;
+		}
+
+		return $default;
+	}
+
+	/**
+	 * Check whether placeholder image must be generated while storing the image file.
+	 *
+	 * @param type $default
+	 * @return string
+	 */
+	public function isGeneratePlaceholder( $default = null ) {
+
+		$prop = $this->properties[ self::PROP_GENERATE_PLACEHOLDER ];
+
+		if( isset( $prop ) && strlen( $prop ) > 0 ) {
+
+			return $prop;
+		}
+
+		return $default;
+	}
+
+	/**
 	 * Returns the width of medium image.
 	 *
 	 * @param type $default
@@ -319,14 +401,32 @@ class FileProperties extends Properties {
 	}
 
 	/**
-	 * Check whether thumb image must be generated while storing the image file.
+	 * Returns the width of small image.
 	 *
 	 * @param type $default
 	 * @return string
 	 */
-	public function isGenerateThumb( $default = null ) {
+	public function getSmallWidth( $default = null ) {
 
-		$prop = $this->properties[ self::PROP_GENERATE_THUMB ];
+		$prop = $this->properties[ self::PROP_SMALL_WIDTH ];
+
+		if( isset( $prop ) && strlen( $prop ) > 0 ) {
+
+			return $prop;
+		}
+
+		return $default;
+	}
+
+	/**
+	 * Returns the height of small image.
+	 *
+	 * @param type $default
+	 * @return string
+	 */
+	public function getSmallHeight( $default = null ) {
+
+		$prop = $this->properties[ self::PROP_SMALL_HEIGHT ];
 
 		if( isset( $prop ) && strlen( $prop ) > 0 ) {
 
